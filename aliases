@@ -1,0 +1,52 @@
+## React Native
+alias rn="react-native"
+
+# Xcode
+alias xcode="open *.xcworkspace"
+
+## Keytool Android
+alias keytool-google="keytool -list -v -keystore"
+
+## Disk Usage
+alias doosh="du -hs"
+
+## Git
+alias gitlog="git log --pretty=format:'%C(yellow)%h %Cred%ad %Cblue%an%Cgreen%d %Creset%s' --date=relative"
+alias gitsa="git stash"
+alias gmoff="git merge --no-ff"
+
+## Python
+alias virtualenvwrapper="source /usr/local/bin/virtualenvwrapper.sh"
+
+## SpeedTest
+alias speedtest="~/.local/speedtest-cli"
+
+## Disk Usage
+alias dush="du -sh"
+
+## NPM
+alias npmls="npm ls --depth=0"
+
+## Genymotion
+alias geny="open -a /Applications/Genymotion.app/Contents/MacOS/player.app --args --vm-name"
+
+alias ains="adb install"
+alias auins="adb uninstall"
+alias adb-restart="adb kill-server && adb root"
+alias pidcat="adb logcat -v brief | pidcat"
+
+## Dropbox
+alias dropbox="~/Applications/bin/dropbox_uploader.sh"
+
+## VSCode
+function vscode {  
+    if [[ $# = 0 ]]
+    then
+        open -a "Visual Studio Code"
+    else
+        local argPath="$1"
+        [[ $1 = /* ]] && argPath="$1" || argPath="$PWD/${1#./}"
+        open -a "Visual Studio Code" "$argPath"
+    fi
+}
+
