@@ -17,6 +17,7 @@ alias gmoff="git merge --no-ff"
 
 ## Python
 alias virtualenvwrapper="source /usr/local/bin/virtualenvwrapper.sh"
+alias simplehttpserver="python -m SimpleHTTPServer"
 
 ## SpeedTest
 alias speedtest="~/.local/speedtest-cli"
@@ -30,10 +31,10 @@ alias npmls="npm ls --depth=0"
 ## Genymotion
 alias geny="open -a /Applications/Genymotion.app/Contents/MacOS/player.app --args --vm-name"
 
+## Android
 alias ains="adb install"
 alias auins="adb uninstall"
 alias adb-restart="adb kill-server && adb root"
-alias pidcat="adb logcat -v brief | pidcat"
 
 ## Dropbox
 alias dropbox="~/Applications/bin/dropbox_uploader.sh"
