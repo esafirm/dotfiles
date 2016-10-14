@@ -51,3 +51,9 @@ function vscode {
     fi
 }
 
+
+## Get Primary IP
+alias cip="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'"
+
+## Pastebin for Terminal
+alias tb="nc termbin.com 9999"
