@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-source ~/.zshrc
+sh ./zsh.sh
