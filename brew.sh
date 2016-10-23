@@ -19,6 +19,7 @@ NONCASK=(
 	htop
 	ffmpeg
 	gifsicle
+	cdiff	
 )
 
 for item in ${NONCASK[*]}; do
