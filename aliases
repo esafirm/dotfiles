@@ -51,3 +51,5 @@ function vscode {
     fi
 }
 
+## Safe-rm
+alias rm="safe-rm"
