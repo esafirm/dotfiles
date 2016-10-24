@@ -1,4 +1,7 @@
-## React Native
+# Android Studio
+alias androidstudio="open -a /Applications/Android\ Studio.app"
+
+# React Native
 alias rn="react-native"
 
 # Xcode
