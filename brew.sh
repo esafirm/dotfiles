@@ -19,7 +19,9 @@ NONCASK=(
 	htop
 	ffmpeg
 	gifsicle
-	cdiff	
+	cdiff
+	tree
+	safe-rm
 )
 
 for item in ${NONCASK[*]}; do
