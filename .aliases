@@ -41,7 +41,7 @@ alias auins="adb uninstall"
 alias adb-restart="adb kill-server && adb root"
 
 ## Dropbox
-alias dropbox="~/Applications/bin/dropbox_uploader.sh"
+alias dropbox="~/dotfiles/dropbox/uploader.sh"
 
 ## VSCode
 function vscode {  
