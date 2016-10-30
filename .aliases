@@ -57,3 +57,6 @@ function vscode {
 
 # Safe-rm
 alias rm="safe-rm"
+
+# Open
+alias chrome="open -a 'Google Chrome'"
