@@ -60,3 +60,6 @@ alias rm="safe-rm"
 
 # Open
 alias chrome="open -a 'Google Chrome'"
+
+# Termbin
+alias tb="nc termbin.com 9999"
