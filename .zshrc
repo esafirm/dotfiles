@@ -182,4 +182,4 @@ BULLETTRAIN_DIR_FG="white"
 source ~/dotfiles/android/android.path
 
 ## Aliases
-source ~/dotfiles/.aliases
+source ~/dotfiles/aliases
