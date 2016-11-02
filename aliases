@@ -24,7 +24,7 @@ alias virtualenvwrapper="source /usr/local/bin/virtualenvwrapper.sh"
 alias simplehttpserver="python -m SimpleHTTPServer"
 
 ## SpeedTest
-alias speedtest="~/.local/speedtest-cli"
+alias speedtest="~/dotfiles/speedtest-cli"
 
 ## Disk Usage
 alias dush="du -sh"
