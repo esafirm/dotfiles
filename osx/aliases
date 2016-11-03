@@ -2,3 +2,7 @@
 
 alias setdns="networksetup -setdnsservers"
 alias getdns="networksetup -getdnsservers"
+
+# Open
+alias chrome="open -a 'Google Chrome'"
+
