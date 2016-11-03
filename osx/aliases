@@ -1,0 +1,4 @@
+# MacOS specific aliases
+
+alias setdns="networksetup -setdnsservers"
+alias getdns="networksetup -getdnsservers"

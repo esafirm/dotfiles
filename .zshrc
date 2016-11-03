@@ -183,3 +183,6 @@ source ~/dotfiles/android/android.path
 
 ## Aliases
 source ~/dotfiles/aliases
+
+## MacOS aliases
+source ~/dotfiles/osx/aliases

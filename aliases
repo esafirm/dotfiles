@@ -17,7 +17,6 @@ alias doosh="du -hs"
 alias gitlog="git log --pretty=format:'%C(yellow)%h %Cred%ad %Cblue%an%Cgreen%d %Creset%s' --date=relative"
 alias gitsa="git stash"
 alias gmoff="git merge --no-ff"
-alias gitlab="grep 'https' | awk '{print $2}'"
 
 ## Python
 alias virtualenvwrapper="source /usr/local/bin/virtualenvwrapper.sh"
