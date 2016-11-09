@@ -1,0 +1,6 @@
+<application>
+  <component name="InstantRunConfiguration">
+    <option name="INSTANT_RUN" value="false" />
+    <option name="ENABLE_RECORDER" value="true" />
+  </component>
+</application>

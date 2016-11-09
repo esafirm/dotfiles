@@ -1,0 +1,622 @@
+<application>
+  <component name="RecentProjectsManager">
+    <option name="recentPaths">
+      <list>
+        <option value="$USER_HOME$/Documents/OSS/android-boilerplate" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/driver-android-new" />
+        <option value="$USER_HOME$/Documents/OSS/android-playground" />
+        <option value="$USER_HOME$/Documents/OSS/ImagePicker" />
+        <option value="$USER_HOME$/Documents/OSS/android-kotlin-boilerplate" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/Rame" />
+        <option value="$USER_HOME$/Documents/OSS/rojak/rojak-ui-app/RojakAndroid" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/OSS/androidcommon" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/OSS/BaseNativeModule" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/OSS/RxDownloader" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/OSS/ImagePicker" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/jakpos" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/paytobee-driver" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/dbs" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/OSS/android-boilerplate" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/OSS/RNImagePicker" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/OSS/bonfire-firebase-sample/android" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/transition" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/paytobee-driver-AS22" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/MandiriReksadana" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/OSS/TestArtifactory" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/Sample/TestArtifactory" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/arx/flikn-app" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/Sample/DragRecyclerView" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/Sample/RxJava2-Android-Samples" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/mpm-driver-android" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/OSS/path-menu" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/OSS/etob-app" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/OSS/Android-ReactiveLocation" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/OSS/RxGeoFence" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/SalesApp" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/Sample/Arc" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/OSS/Arc" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/Sample/geofire-java/examples/SFVehicles" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/Sample/geofire-java/examples/RxGeoFence" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/Sample/geofire-java" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/OSS/DrawWhatever" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/Solo-Farm" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/Sample/mosby-conductor" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/Maci" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/OSS/ImageEffectFilter" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/Semar" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/OSS/PixelateAnimation" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/Sample/Pixel" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/Sample/Pixelate" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/PracticeSomething" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/OSS/PracticeSomething" />
+        <option value="$USER_HOME$/Documents/AndroidStudioProjects/Sample/android-gpuimage" />
+      </list>
+    </option>
+    <option name="additionalInfo">
+      <map>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/ClickSquare">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-145.3276617" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1474708584674" />
+              <option name="buildTimestamp" value="1473872400000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/Maci">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-143.2915827" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1467213950008" />
+              <option name="buildTimestamp" value="1464195600000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/MandiriReksadana">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-143.3101438" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1473569042199" />
+              <option name="buildTimestamp" value="1469638800000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/OSS/Android-ReactiveLocation">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-143.2915827" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1471164353052" />
+              <option name="buildTimestamp" value="1464195600000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/OSS/AndroidPlayground">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-145.3360264" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1477380175702" />
+              <option name="buildTimestamp" value="1476723600000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/OSS/Arc">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-143.2915827" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1470835773935" />
+              <option name="buildTimestamp" value="1464195600000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/OSS/BaseNativeModule">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-145.3360264" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1476959027264" />
+              <option name="buildTimestamp" value="1476723600000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/OSS/DrawWhatever">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-143.2915827" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1468807696137" />
+              <option name="buildTimestamp" value="1464195600000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/OSS/ImageEffectFilter">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-143.2915827" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1467186962867" />
+              <option name="buildTimestamp" value="1464195600000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/OSS/ImagePicker">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-145.3330264" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1476891146590" />
+              <option name="buildTimestamp" value="1475686800000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/OSS/PixelateAnimation">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-143.2915827" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1466918267675" />
+              <option name="buildTimestamp" value="1464195600000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/OSS/PracticeSomething">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-143.2915827" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1466695953794" />
+              <option name="buildTimestamp" value="1464195600000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/OSS/RNImagePicker">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-145.3330264" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1476369725845" />
+              <option name="buildTimestamp" value="1475686800000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/OSS/RxDownloader">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-145.3360264" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1476955093503" />
+              <option name="buildTimestamp" value="1476723600000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/OSS/RxGeoFence">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-143.2915827" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1471074196073" />
+              <option name="buildTimestamp" value="1464195600000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/OSS/TestArtifactory">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-143.3101438" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1473396433233" />
+              <option name="buildTimestamp" value="1469638800000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/OSS/android-boilerplate">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-145.3330264" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1476419573427" />
+              <option name="buildTimestamp" value="1475686800000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/OSS/androidcommon">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-145.3360264" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1477095179648" />
+              <option name="buildTimestamp" value="1476723600000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/OSS/bonfire-firebase-sample/android">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-145.3276617" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1475318683572" />
+              <option name="buildTimestamp" value="1473872400000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/OSS/etob-app">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-143.3101438" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1471928264274" />
+              <option name="buildTimestamp" value="1469638800000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/OSS/path-menu">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-143.3101438" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1472043431189" />
+              <option name="buildTimestamp" value="1469638800000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/PracticeSomething">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-143.2915827" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1466696539743" />
+              <option name="buildTimestamp" value="1464195600000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/Qlue">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-145.3360264" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1477380686005" />
+              <option name="buildTimestamp" value="1476723600000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/Rame">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-145.3360264" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1477612831149" />
+              <option name="buildTimestamp" value="1476723600000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/SalesApp">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-143.2915827" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1471067636581" />
+              <option name="buildTimestamp" value="1464195600000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/Sample/Arc">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-143.2915827" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1470897621581" />
+              <option name="buildTimestamp" value="1464195600000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/Sample/DragRecyclerView">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-143.3101438" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1472801294684" />
+              <option name="buildTimestamp" value="1469638800000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/Sample/Pixel">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-143.2915827" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1466918145644" />
+              <option name="buildTimestamp" value="1464195600000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/Sample/Pixelate">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-143.2915827" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1466918106928" />
+              <option name="buildTimestamp" value="1464195600000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/Sample/RxJava2-Android-Samples">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-143.3101438" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1472739128772" />
+              <option name="buildTimestamp" value="1469638800000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/Sample/TestArtifactory">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-143.3101438" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1473325555179" />
+              <option name="buildTimestamp" value="1469638800000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/Sample/android-gpuimage">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-143.2915827" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1466306269004" />
+              <option name="buildTimestamp" value="1464195600000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/Sample/geofire-java">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-143.2915827" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1469629038274" />
+              <option name="buildTimestamp" value="1464195600000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/Sample/geofire-java/examples/RxGeoFence">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-143.2915827" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1469775474982" />
+              <option name="buildTimestamp" value="1464195600000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/Sample/geofire-java/examples/SFVehicles">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-143.2915827" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1469775500817" />
+              <option name="buildTimestamp" value="1464195600000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/Sample/mosby-conductor">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-143.2915827" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1467255816356" />
+              <option name="buildTimestamp" value="1464195600000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/Semar">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-143.2915827" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1467080904258" />
+              <option name="buildTimestamp" value="1464195600000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/Solo-Farm">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-143.2915827" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1467269985511" />
+              <option name="buildTimestamp" value="1464195600000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/arx/flikn-app">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-143.3101438" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1473310277850" />
+              <option name="buildTimestamp" value="1469638800000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/dbs">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-145.3330264" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1476692300236" />
+              <option name="buildTimestamp" value="1475686800000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/driver-android-new">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-145.3360264" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1478596873474" />
+              <option name="buildTimestamp" value="1476723600000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/jakpos">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-145.3330264" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1476787911614" />
+              <option name="buildTimestamp" value="1475686800000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/mpm-driver-android">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-143.3101438" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1472719574378" />
+              <option name="buildTimestamp" value="1469638800000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/paytobee-driver">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-145.3330264" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1476774161964" />
+              <option name="buildTimestamp" value="1475686800000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/paytobee-driver-AS22">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-145.3276617" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1474358430072" />
+              <option name="buildTimestamp" value="1473872400000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/AndroidStudioProjects/transition">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-145.3276617" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1474359513745" />
+              <option name="buildTimestamp" value="1473872400000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/OSS/ImagePicker">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-145.3360264" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1478588563923" />
+              <option name="buildTimestamp" value="1476723600000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/OSS/android-boilerplate">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-145.3360264" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1478617155797" />
+              <option name="buildTimestamp" value="1476723600000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/OSS/android-kotlin-boilerplate">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-145.3360264" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1478318225464" />
+              <option name="buildTimestamp" value="1476723600000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/OSS/android-playground">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-145.3360264" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1478596728234" />
+              <option name="buildTimestamp" value="1476723600000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/OSS/rojak/rojak-ui-app/RojakAndroid">
+          <value>
+            <RecentProjectMetaInfo>
+              <option name="build" value="AI-145.3360264" />
+              <option name="productionCode" value="AI" />
+              <option name="binFolder" value="$APPLICATION_HOME_DIR$/bin" />
+              <option name="projectOpenTimestamp" value="1477405189544" />
+              <option name="buildTimestamp" value="1476723600000" />
+            </RecentProjectMetaInfo>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="lastProjectLocation" value="$USER_HOME$/Documents/OSS" />
+  </component>
+</application>

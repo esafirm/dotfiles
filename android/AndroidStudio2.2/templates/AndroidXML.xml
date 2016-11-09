@@ -1,0 +1,10 @@
+<templateSet group="AndroidXML">
+  <template name="divider" value="&lt;!-- ============================================= --&gt;&#10;&lt;!-- $var$ --&gt;&#10;&lt;!-- ============================================= --&gt;" toReformat="true" toShortenFQNames="true">
+    <variable name="var" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="XSL_TEXT" value="true" />
+      <option name="XML" value="true" />
+      <option name="XML_TEXT" value="true" />
+    </context>
+  </template>
+</templateSet>
