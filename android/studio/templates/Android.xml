@@ -13,6 +13,13 @@
       <option name="GROOVY_EXPRESSION" value="true" />
       <option name="GROOVY_STATEMENT" value="true" />
       <option name="GROOVY_DECLARATION" value="true" />
+      <option name="KOTLIN" value="true" />
+      <option name="KOTLIN_TOPLEVEL" value="true" />
+      <option name="KOTLIN_STATEMENT" value="true" />
+      <option name="KOTLIN_CLASS" value="true" />
+      <option name="KOTLIN_EXPRESSION" value="true" />
+      <option name="KOTLIN_COMMENT" value="true" />
+      <option name="KOTLIN_OBJECT_DECLARATION" value="true" />
     </context>
   </template>
 </templateSet>
