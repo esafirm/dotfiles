@@ -17,6 +17,8 @@ alias doosh="du -hs"
 alias gitlog="git log --pretty=format:'%C(yellow)%h %Cred%ad %Cblue%an%Cgreen%d %Creset%s' --date=relative"
 alias gitsa="git stash"
 alias gmoff="git merge --no-ff"
+alias glast="git rev-parse --short"
+alias glasthead="git rev-parse --short HEAD"
 
 ## Python
 alias virtualenvwrapper="source /usr/local/bin/virtualenvwrapper.sh"
