@@ -23,6 +23,7 @@ alias glasthead="git rev-parse --short HEAD"
 ## Python
 alias virtualenvwrapper="source /usr/local/bin/virtualenvwrapper.sh"
 alias simplehttpserver="python -m SimpleHTTPServer"
+alias python="python3"
 
 ## SpeedTest
 alias speedtest="~/dotfiles/speedtest-cli"
