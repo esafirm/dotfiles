@@ -19,6 +19,7 @@ alias gitsa="git stash"
 alias gmoff="git merge --no-ff"
 alias glast="git rev-parse --short"
 alias glasthead="git rev-parse --short HEAD"
+alias gammen="git add -A && git commit --amend" 
 
 ## Python
 alias virtualenvwrapper="source /usr/local/bin/virtualenvwrapper.sh"
