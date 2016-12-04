@@ -23,7 +23,7 @@ alias gammen="git add -A && git commit --amend"
 
 ## Python
 alias virtualenvwrapper="source /usr/local/bin/virtualenvwrapper.sh"
-alias simplehttpserver="python -m SimpleHTTPServer"
+alias simplehttpserver="python ~/dotfiles/python/server.py"
 alias python="python3"
 alias pip="pip3" 
 alias pip2="pip"
