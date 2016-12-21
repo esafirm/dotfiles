@@ -1,6 +1,7 @@
 <scheme name="Dracula Madep" version="142" parent_scheme="Darcula">
   <option name="LINE_SPACING" value="1.2" />
   <option name="EDITOR_FONT_SIZE" value="12" />
+  <option name="EDITOR_LIGATURES" value="true" />
   <option name="CONSOLE_FONT_NAME" value="Menlo" />
   <option name="CONSOLE_LINE_SPACING" value="1.0" />
   <option name="EDITOR_FONT_NAME" value="Fira Code" />
@@ -42,7 +43,7 @@
     </option>
     <option name="TEXT">
       <value>
-        <option name="FOREGROUND" value="a9b7c6" />
+        <option name="FOREGROUND" value="c0cfdd" />
         <option name="BACKGROUND" value="242424" />
         <option name="EFFECT_TYPE" value="5" />
       </value>

@@ -1,4 +1,8 @@
 <keymap version="1" name="Macos Madep" parent="Mac OS X 10.5+">
+  <action id="AceAction">
+    <keyboard-shortcut first-keystroke="ctrl semicolon" />
+    <keyboard-shortcut first-keystroke="meta semicolon" />
+  </action>
   <action id="AceJumpAction">
     <keyboard-shortcut first-keystroke="meta semicolon" />
   </action>
