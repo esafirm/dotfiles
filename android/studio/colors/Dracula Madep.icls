@@ -11,9 +11,9 @@
         <option name="FOREGROUND" value="c5cc03" />
       </value>
     </option>
-    <option name="KOTLIN_EXTENSION_PROPERTY">
+    <option name="KOTLIN_EXTENSION_FUNCTION_CALL">
       <value>
-        <option name="FOREGROUND" value="e8cda4" />
+        <option name="FONT_TYPE" value="2" />
       </value>
     </option>
     <option name="KOTLIN_MUTABLE_VARIABLE">

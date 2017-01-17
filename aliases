@@ -9,6 +9,9 @@ alias xcode="open *.xcworkspace"
 
 ## Keytool Android
 alias keytool-google="keytool -list -v -keystore"
+function keytool-facebook {
+    keytool -exportcert -alias androiddebugkey -keystore $1 | openssl sha1 -binary | openssl base64
+}
 
 ## Disk Usage
 alias doosh="du -hs"
