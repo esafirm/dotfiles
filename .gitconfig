@@ -11,3 +11,5 @@
 	smudge = git-lfs smudge %f
 	required = true
 [merge]
+[alias]
+	today = log --since=midnight --author='E' --oneline
