@@ -6,7 +6,11 @@
   <action id="AceJumpAction">
     <keyboard-shortcut first-keystroke="meta semicolon" />
   </action>
+  <action id="ActivateAndroidMonitorToolWindow">
+    <keyboard-shortcut first-keystroke="meta 6" />
+  </action>
   <action id="ActivateFavoritesToolWindow" />
+  <action id="ActivateTODOToolWindow" />
   <action id="ActivateTerminalToolWindow">
     <keyboard-shortcut first-keystroke="meta 2" />
   </action>

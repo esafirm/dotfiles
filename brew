@@ -5,6 +5,7 @@
 brew update && brew upgrade
 brew tap caskroom/cask
 brew tap buo/cask-upgrade
+brew tap homebrew/science
 
 # Non Cask
 
