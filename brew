@@ -10,6 +10,8 @@ brew tap homebrew/science
 # Non Cask
 
 NONCASK=(
+	android-sdk
+	android-ndk
 	zsh-syntax-highlighting
 	python3
 	ccat
