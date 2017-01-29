@@ -3,23 +3,8 @@
     <variable name="val" expression="" defaultValue="" alwaysStopAt="true" />
     <context>
       <option name="JAVA_CODE" value="true" />
-      <option name="JAVA_STATEMENT" value="true" />
-      <option name="JAVA_EXPRESSION" value="true" />
-      <option name="JAVA_DECLARATION" value="true" />
-      <option name="JAVA_COMMENT" value="true" />
-      <option name="JAVA_STRING" value="true" />
-      <option name="COMPLETION" value="true" />
-      <option name="GROOVY" value="true" />
-      <option name="GROOVY_EXPRESSION" value="true" />
-      <option name="GROOVY_STATEMENT" value="true" />
-      <option name="GROOVY_DECLARATION" value="true" />
       <option name="KOTLIN" value="true" />
-      <option name="KOTLIN_TOPLEVEL" value="true" />
-      <option name="KOTLIN_STATEMENT" value="true" />
-      <option name="KOTLIN_CLASS" value="true" />
-      <option name="KOTLIN_EXPRESSION" value="true" />
-      <option name="KOTLIN_COMMENT" value="true" />
-      <option name="KOTLIN_OBJECT_DECLARATION" value="true" />
+      <option name="GROOVY" value="true" />
     </context>
   </template>
 </templateSet>

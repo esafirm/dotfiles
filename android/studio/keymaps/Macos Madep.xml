@@ -19,7 +19,6 @@
   </action>
   <action id="Android.SyncProject">
     <keyboard-shortcut first-keystroke="ctrl meta 3" />
-    <keyboard-shortcut first-keystroke="shift alt 3" />
   </action>
   <action id="AndroidConnectDebuggerAction">
     <keyboard-shortcut first-keystroke="shift alt a" />
@@ -64,6 +63,7 @@
     <mouse-shortcut keystroke="meta alt button1" />
     <keyboard-shortcut first-keystroke="meta i" />
   </action>
+  <action id="MinimizeCurrentWindow" />
   <action id="NextTab">
     <keyboard-shortcut first-keystroke="shift meta close_bracket" />
   </action>
