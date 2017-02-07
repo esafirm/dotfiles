@@ -32,6 +32,7 @@ alias python="python3"
 alias pip="pip3" 
 alias pip2="pip"
 alias uuid="python -c 'import sys,uuid; sys.stdout.write(uuid.uuid4().hex)' | pbcopy && pbpaste && echo"
+alias piplist="pip3 list --format=legacy"
 
 ## SpeedTest
 alias speedtest="~/dotfiles/speedtest-cli"
