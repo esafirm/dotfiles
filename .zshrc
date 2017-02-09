@@ -193,5 +193,5 @@ source ~/dotfiles/completion/npm
 
 ## Scripts
 for file in scripts/*; do
-	source $file
+	source ~/dotfiles/$file
 done
