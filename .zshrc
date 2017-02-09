@@ -190,3 +190,8 @@ source ~/dotfiles/osx/aliases
 ## Completion
 source ~/dotfiles/completion/pip
 source ~/dotfiles/completion/npm
+
+## Scripts
+for file in scripts/*; do
+	source $file
+done
