@@ -39,6 +39,7 @@ CASKS=(
 	google-chrome
 	visual-studio-code
 	transmission
+	macdown
 )
 
 for item in ${CASKS[*]}; do
