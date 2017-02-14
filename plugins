@@ -2,4 +2,5 @@ plugins=(
 	git
 	yarn
 	lein
+	react-native
 )
