@@ -13,6 +13,12 @@ function keytool-facebook {
 ## Disk Usage
 alias doosh="du -hs"
 
+## Latest File
+alias las="ls -t | head -n1"
+
+## Refresh ZSH
+alias refresh="source ~/.zshrc"
+
 ## Git
 alias gitlog="git log --pretty=format:'%C(yellow)%h %Cred%ad %Cblue%an%Cgreen%d %Creset%s' --date=relative"
 alias gitsa="git stash"
@@ -30,6 +36,7 @@ alias pip="pip3"
 alias pip2="pip"
 alias uuid="python -c 'import sys,uuid; sys.stdout.write(uuid.uuid4().hex)' | pbcopy && pbpaste && echo"
 alias piplist="pip3 list --format=legacy"
+alias json="python -mjson.tool"
 
 ## SpeedTest
 alias speedtest="~/dotfiles/speedtest-cli"
