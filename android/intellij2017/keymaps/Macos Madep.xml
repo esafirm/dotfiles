@@ -14,11 +14,10 @@
   <action id="ActivateTerminalToolWindow">
     <keyboard-shortcut first-keystroke="meta 2" />
   </action>
-  <action id="Android.CleanRun" />
+  <action id="AddInjectionsAction" />
   <action id="Android.GenerateSignedApk">
     <keyboard-shortcut first-keystroke="meta f11" />
   </action>
-  <action id="Android.HotswapChanges" />
   <action id="Android.SyncProject">
     <keyboard-shortcut first-keystroke="ctrl meta 3" />
   </action>
@@ -65,9 +64,10 @@
     <mouse-shortcut keystroke="meta alt button1" />
     <keyboard-shortcut first-keystroke="meta i" />
   </action>
-  <action id="JRebelAndroidApplyChanges">
-    <keyboard-shortcut first-keystroke="meta f10" />
-    <keyboard-shortcut first-keystroke="ctrl r" />
+  <action id="GotoTypeDeclaration">
+    <keyboard-shortcut first-keystroke="shift ctrl b" />
+    <mouse-shortcut keystroke="shift meta button1" />
+    <mouse-shortcut keystroke="shift button2" />
   </action>
   <action id="MinimizeCurrentWindow" />
   <action id="NextTab">
@@ -85,9 +85,6 @@
     <keyboard-shortcut first-keystroke="shift meta r" />
   </action>
   <action id="ReplaceInPath" />
-  <action id="Run">
-    <keyboard-shortcut first-keystroke="ctrl meta r" />
-  </action>
   <action id="SendEOF" />
   <action id="ShowNavBar">
     <keyboard-shortcut first-keystroke="alt home" />
@@ -115,6 +112,10 @@
   </action>
   <action id="SwitchUp">
     <keyboard-shortcut first-keystroke="ctrl alt up" />
+  </action>
+  <action id="ToggleLineBreakpoint">
+    <keyboard-shortcut first-keystroke="meta f8" />
+    <keyboard-shortcut first-keystroke="shift meta b" />
   </action>
   <action id="UnsplitAll">
     <keyboard-shortcut first-keystroke="ctrl meta w" />

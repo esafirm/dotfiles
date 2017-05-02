@@ -1,0 +1,33 @@
+<scheme name="Idea Dracula" version="142" parent_scheme="Darcula">
+  <metaInfo>
+    <property name="created">2017-01-21T22:07:35</property>
+    <property name="ide">Idea</property>
+    <property name="ideVersion">2016.3.3.0.0</property>
+    <property name="modified">2017-01-23T16:37:52</property>
+    <property name="originalScheme">_@user_Darcula</property>
+  </metaInfo>
+  <option name="LINE_SPACING" value="1.2" />
+  <option name="EDITOR_FONT_SIZE" value="12" />
+  <option name="EDITOR_LIGATURES" value="true" />
+  <option name="CONSOLE_FONT_NAME" value="Menlo" />
+  <option name="CONSOLE_LINE_SPACING" value="1.0" />
+  <option name="EDITOR_FONT_NAME" value="Fira Code" />
+  <attributes>
+    <option name="KOTLIN_ANNOTATION" baseAttributes="ANNOTATION_NAME_ATTRIBUTES" />
+    <option name="LOGCAT_DEBUG_OUTPUT">
+      <value>
+        <option name="FOREGROUND" value="4c8dbb" />
+      </value>
+    </option>
+    <option name="LOGCAT_INFO_OUTPUT">
+      <value>
+        <option name="FOREGROUND" value="78bb8c" />
+      </value>
+    </option>
+    <option name="LOGCAT_WARNING_OUTPUT">
+      <value>
+        <option name="FOREGROUND" value="c1b008" />
+      </value>
+    </option>
+  </attributes>
+</scheme>
