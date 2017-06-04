@@ -196,4 +196,6 @@ source ~/dotfiles/completion/npm
 for file in ~/dotfiles/scripts/*; do
 	source $file
 done
+
 export PATH="/usr/local/opt/ruby@2.3/bin:$PATH"
+export PATH="$HOME/.fastlane/bin:$PATH"
