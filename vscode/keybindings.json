@@ -1,0 +1,83 @@
+// Place your key bindings in this file to overwrite the defaults
+[
+    {
+        "key": "cmd+d",
+        "command": "editor.action.deleteLines",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "cmd+shift+f",
+        "command": "editor.action.formatDocument",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "shift+cmd+r",
+        "command": "editor.action.rename",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "shift+cmd+]",
+        "command": "workbench.action.nextEditor",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "shift+cmd+[",
+        "command": "workbench.action.previousEditor",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "alt+up",
+        "command": "editor.action.smartSelect.grow",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "alt+down",
+        "command": "editor.action.smartSelect.shrink",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "shift+cmd+down",
+        "command": "editor.action.moveLinesDownAction",
+        "when": "editorTextFocus && !editorReadOnly"
+    },
+    {
+        "key": "shift+cmd+up",
+        "command": "editor.action.moveLinesUpAction",
+        "when": "editorTextFocus && !editorReadOnly"
+    },
+    {
+        "key": "cmd+;",
+        "command": "extension.jumpy-word",
+        "when": "editorTextFocus"
+    },{
+        "key": "cmd+l",
+        "command": "workbench.action.gotoLine",
+        "when": "editorTextFocus"
+    },{
+        "key": "shift+cmd+k",
+        "command": "journal.note",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "cmd+;",
+        "command": "extension.aceJump"
+    },
+    {
+        "key": "ctrl+f",
+        "command": "workbench.action.findInFiles",
+        "when": "!searchInputBoxFocus"
+    },
+    {
+        "key": "shift+cmd+f",
+        "command": "-workbench.action.findInFiles",
+        "when": "!searchInputBoxFocus"
+    },
+    {
+        "key": "ctrl+cmd+r",
+        "command": "code-runner.run"
+    },
+    {
+        "key": "ctrl+alt+n",
+        "command": "-code-runner.run"
+    }
+]

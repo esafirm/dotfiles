@@ -1,0 +1,10 @@
+// Place your settings in this file to overwrite the default settings
+{
+    "python.linting.pylintCategorySeverity.convention": "Hint",
+    "workbench.iconTheme": "material-icon-theme",
+    "workbench.colorTheme": "Darcula",
+    "files.autoSave": "afterDelay",
+    "window.restoreFullscreen": true,
+    "window.zoomLevel": 0,
+    "material-icon-theme.showUpdateMessage": false
+}
