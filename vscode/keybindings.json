@@ -46,14 +46,11 @@
         "when": "editorTextFocus && !editorReadOnly"
     },
     {
-        "key": "cmd+;",
-        "command": "extension.jumpy-word",
-        "when": "editorTextFocus"
-    },{
         "key": "cmd+l",
         "command": "workbench.action.gotoLine",
         "when": "editorTextFocus"
-    },{
+    },
+    {
         "key": "shift+cmd+k",
         "command": "journal.note",
         "when": "editorTextFocus"
@@ -61,16 +58,6 @@
     {
         "key": "cmd+;",
         "command": "extension.aceJump"
-    },
-    {
-        "key": "ctrl+f",
-        "command": "workbench.action.findInFiles",
-        "when": "!searchInputBoxFocus"
-    },
-    {
-        "key": "shift+cmd+f",
-        "command": "-workbench.action.findInFiles",
-        "when": "!searchInputBoxFocus"
     },
     {
         "key": "ctrl+cmd+r",
@@ -81,19 +68,15 @@
         "command": "-code-runner.run"
     },
     {
-        "key": "cmd+o",
+        "key": "ctrl+cmd+o",
         "command": "workbench.action.gotoSymbol"
     },
     {
-        "key": "shift+cmd+o",
-        "command": "-workbench.action.gotoSymbol"
-    },
-    {
-        "key": "shift+cmd+o",
-        "command": "workbench.action.files.openFileFolder"
-    },
-    {
         "key": "cmd+o",
-        "command": "-workbench.action.files.openFileFolder"
+        "command": "workbench.action.quickOpen"
+    },
+    {
+        "key": "shift+cmd+o",
+        "command": "workbench.action.showAllSymbols"
     }
 ]
