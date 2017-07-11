@@ -78,5 +78,15 @@
     {
         "key": "shift+cmd+o",
         "command": "workbench.action.showAllSymbols"
+    },
+    {
+        "key": "ctrl+f",
+        "command": "workbench.action.findInFiles",
+        "when": "!searchInputBoxFocus"
+    },
+    {
+        "key": "shift+cmd+f",
+        "command": "-workbench.action.findInFiles",
+        "when": "!searchInputBoxFocus"
     }
 ]
