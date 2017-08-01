@@ -3,6 +3,7 @@
     "python.linting.pylintCategorySeverity.convention": "Hint",
     "workbench.iconTheme": "material-icon-theme",
     "workbench.colorTheme": "Darcula",
+    "workbench.editor.enablePreviewFromQuickOpen": false,
     "files.autoSave": "afterDelay",
     "window.restoreFullscreen": true,
     "window.zoomLevel": 0,
