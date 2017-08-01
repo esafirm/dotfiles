@@ -85,6 +85,10 @@
     <keyboard-shortcut first-keystroke="shift meta r" />
   </action>
   <action id="ReplaceInPath" />
+  <action id="Resume">
+    <keyboard-shortcut first-keystroke="meta alt r" />
+    <keyboard-shortcut first-keystroke="f8" />
+  </action>
   <action id="Run">
     <keyboard-shortcut first-keystroke="ctrl meta r" />
   </action>
@@ -101,6 +105,7 @@
   <action id="SplitVertically">
     <keyboard-shortcut first-keystroke="ctrl meta close_bracket" />
   </action>
+  <action id="StepOver" />
   <action id="SwitchApply">
     <keyboard-shortcut first-keystroke="ctrl alt enter" />
   </action>

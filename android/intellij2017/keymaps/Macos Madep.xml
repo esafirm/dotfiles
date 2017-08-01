@@ -120,5 +120,6 @@
   <action id="UnsplitAll">
     <keyboard-shortcut first-keystroke="ctrl meta w" />
   </action>
+  <action id="com.layernet.adbwifi.AdbRestartAction" />
   <action id="openAssertEqualsDiff" />
 </keymap>
