@@ -185,8 +185,10 @@ source ~/dotfiles/android/android.path
 ## Aliases
 source ~/dotfiles/aliases
 
-## MacOS aliases
-source ~/dotfiles/osx/aliases
+## MacOS related
+for file in ~/dotfiles/osx/*; do
+	source $file
+done
 
 ## Completion
 source ~/dotfiles/completion/pip

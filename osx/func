@@ -1,0 +1,12 @@
+setupmitmproxy(){
+    DESTINATION=~/.mitmproxy/pf.conf
+
+    sysctl -w net.inet.ip.forwarding=1
+
+    echo "rdr on en2 inet proto tcp to any port 80 -> 127.0.0.1 port 8080
+rdr on en2 inet proto tcp to any port 443 -> 127.0.0.1 port 8080" > $DESTINATION
+    
+    pfctl -f $DESTINATION
+
+    echo "ALL ALL=NOPASSWD: /sbin/pfctl -s state" >> /etc/sudoers
+}

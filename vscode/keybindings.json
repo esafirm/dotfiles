@@ -92,5 +92,13 @@
     {
         "key": "cmd+f12",
         "command": "workbench.action.terminal.toggleTerminal"
+    },
+    {
+        "key": "shift+cmd+n",
+        "command": "-workbench.action.newWindow"
+    },
+    {
+        "key": "shift+cmd+n",
+        "command": "explorer.newFile"
     }
 ]

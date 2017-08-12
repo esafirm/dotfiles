@@ -1,8 +1,0 @@
-osascript -e 'tell application "System Preferences" to quit'
-
-
-tell application "Terminal"
-	set initialOpenedWindows to id of every window
-end tell
-
-defaults write com.apple.dt.Xcode ShowBuildOperationDuration YES

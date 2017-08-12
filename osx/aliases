@@ -6,3 +6,4 @@ alias getdns="networksetup -getdnsservers"
 # Open
 alias chrome="open -a 'Google Chrome'"
 alias simulator="open /Applications/Xcode.app/Contents/Developer/Applications/Simulator.app"
+
