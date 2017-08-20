@@ -3,4 +3,5 @@ plugins=(
 	yarn
 	lein
 	react-native
+	docker
 )

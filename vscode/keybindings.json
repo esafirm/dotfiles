@@ -100,5 +100,21 @@
     {
         "key": "shift+cmd+n",
         "command": "explorer.newFile"
+    },
+    {
+        "key": "cmd+k",
+        "command": "-workbench.action.git.input-commit"
+    },
+    {
+        "key": "shift+cmd+w",
+        "command": "-workbench.action.closeWindow"
+    },
+    {
+        "key": "shift+cmd+w",
+        "command": "workbench.action.closeAllEditors"
+    },
+    {
+        "key": "cmd+k cmd+w",
+        "command": "-workbench.action.closeAllEditors"
     }
 ]

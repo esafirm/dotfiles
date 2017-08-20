@@ -13,5 +13,7 @@
     "editor.fontLigatures": true,
     "terminal.integrated.fontFamily": "Fira Code",
     "terminal.integrated.fontSize": 12,
-    "terminal.integrated.fontLigatures": true
+    "terminal.integrated.fontLigatures": true,
+    "workbench.startupEditor": "newUntitledFile",
+    "explorer.openEditors.visible": 0
 }
