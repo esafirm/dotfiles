@@ -42,5 +42,9 @@
 	"Simple Jest Test": {
 		"prefix": "jtest",
 		"body": "test($1, () => {$2})"
+	},
+	"Importing": {
+		"prefix": "imp",
+		"body": "import $2 from '$1'"
 	}
 }
