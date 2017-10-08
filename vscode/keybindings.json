@@ -1,130 +1,134 @@
-// Place your key bindings in this file to overwrite the defaults
 [
-    {
-        "key": "cmd+d",
-        "command": "editor.action.deleteLines",
-        "when": "editorTextFocus"
-    },
-    {
-        "key": "cmd+shift+f",
-        "command": "editor.action.formatDocument",
-        "when": "editorTextFocus"
-    },
-    {
-        "key": "shift+cmd+r",
-        "command": "editor.action.rename",
-        "when": "editorTextFocus"
-    },
-    {
-        "key": "shift+cmd+]",
-        "command": "workbench.action.nextEditor",
-        "when": "editorTextFocus"
-    },
-    {
-        "key": "shift+cmd+[",
-        "command": "workbench.action.previousEditor",
-        "when": "editorTextFocus"
-    },
-    {
-        "key": "alt+up",
-        "command": "editor.action.smartSelect.grow",
-        "when": "editorTextFocus"
-    },
-    {
-        "key": "alt+down",
-        "command": "editor.action.smartSelect.shrink",
-        "when": "editorTextFocus"
-    },
-    {
-        "key": "shift+cmd+down",
-        "command": "editor.action.moveLinesDownAction",
-        "when": "editorTextFocus && !editorReadOnly"
-    },
-    {
-        "key": "shift+cmd+up",
-        "command": "editor.action.moveLinesUpAction",
-        "when": "editorTextFocus && !editorReadOnly"
-    },
-    {
-        "key": "cmd+l",
-        "command": "workbench.action.gotoLine",
-        "when": "editorTextFocus"
-    },
-    {
-        "key": "shift+cmd+k",
-        "command": "journal.note",
-        "when": "editorTextFocus"
-    },
-    {
-        "key": "cmd+;",
-        "command": "extension.aceJump"
-    },
-    {
-        "key": "ctrl+cmd+r",
-        "command": "code-runner.run"
-    },
-    {
-        "key": "ctrl+alt+n",
-        "command": "-code-runner.run"
-    },
-    {
-        "key": "ctrl+cmd+o",
-        "command": "workbench.action.gotoSymbol"
-    },
-    {
-        "key": "cmd+o",
-        "command": "workbench.action.quickOpen"
-    },
-    {
-        "key": "shift+cmd+o",
-        "command": "workbench.action.showAllSymbols"
-    },
-    {
-        "key": "ctrl+f",
-        "command": "workbench.action.findInFiles",
-        "when": "!searchInputBoxFocus"
-    },
-    {
-        "key": "shift+cmd+f",
-        "command": "-workbench.action.findInFiles",
-        "when": "!searchInputBoxFocus"
-    },
-    {
-        "key": "cmd+f12",
-        "command": "workbench.action.terminal.toggleTerminal"
-    },
-    {
-        "key": "shift+cmd+n",
-        "command": "-workbench.action.newWindow"
-    },
-    {
-        "key": "shift+cmd+n",
-        "command": "explorer.newFile"
-    },
-    {
-        "key": "cmd+k",
-        "command": "-workbench.action.git.input-commit"
-    },
-    {
-        "key": "shift+cmd+w",
-        "command": "-workbench.action.closeWindow"
-    },
-    {
-        "key": "shift+cmd+w",
-        "command": "workbench.action.closeAllEditors"
-    },
-    {
-        "key": "cmd+k cmd+w",
-        "command": "-workbench.action.closeAllEditors"
-    },
-    {
-        "key": "cmd+escape",
-        "command": "workbench.action.closeWindow",
-        "when": "!editorIsOpen"
-    },
-    {
-        "key": "cmd+w",
-        "command": "-workbench.action.closeWindow",
-        "when": "!editorIsOpen"
-    }
+  // Place your key bindings in this file to overwrite the defaults
+  {
+    "key": "cmd+d",
+    "command": "editor.action.deleteLines",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "cmd+shift+f",
+    "command": "editor.action.formatDocument",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "shift+cmd+r",
+    "command": "editor.action.rename",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "shift+cmd+]",
+    "command": "workbench.action.nextEditor",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "shift+cmd+[",
+    "command": "workbench.action.previousEditor",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "alt+up",
+    "command": "editor.action.smartSelect.grow",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "alt+down",
+    "command": "editor.action.smartSelect.shrink",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "shift+cmd+down",
+    "command": "editor.action.moveLinesDownAction",
+    "when": "editorTextFocus && !editorReadOnly"
+  },
+  {
+    "key": "shift+cmd+up",
+    "command": "editor.action.moveLinesUpAction",
+    "when": "editorTextFocus && !editorReadOnly"
+  },
+  {
+    "key": "cmd+l",
+    "command": "workbench.action.gotoLine",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "shift+cmd+k",
+    "command": "journal.note",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "cmd+;",
+    "command": "extension.aceJump"
+  },
+  {
+    "key": "ctrl+cmd+r",
+    "command": "code-runner.run"
+  },
+  {
+    "key": "ctrl+alt+n",
+    "command": "-code-runner.run"
+  },
+  {
+    "key": "ctrl+cmd+o",
+    "command": "workbench.action.gotoSymbol"
+  },
+  {
+    "key": "cmd+o",
+    "command": "workbench.action.quickOpen"
+  },
+  {
+    "key": "shift+cmd+o",
+    "command": "workbench.action.showAllSymbols"
+  },
+  {
+    "key": "ctrl+f",
+    "command": "workbench.action.findInFiles",
+    "when": "!searchInputBoxFocus"
+  },
+  {
+    "key": "shift+cmd+f",
+    "command": "-workbench.action.findInFiles",
+    "when": "!searchInputBoxFocus"
+  },
+  {
+    "key": "cmd+f12",
+    "command": "workbench.action.terminal.toggleTerminal"
+  },
+  {
+    "key": "shift+cmd+n",
+    "command": "-workbench.action.newWindow"
+  },
+  {
+    "key": "shift+cmd+n",
+    "command": "explorer.newFile"
+  },
+  {
+    "key": "cmd+k",
+    "command": "-workbench.action.git.input-commit"
+  },
+  {
+    "key": "shift+cmd+w",
+    "command": "-workbench.action.closeWindow"
+  },
+  {
+    "key": "shift+cmd+w",
+    "command": "workbench.action.closeAllEditors"
+  },
+  {
+    "key": "cmd+k cmd+w",
+    "command": "-workbench.action.closeAllEditors"
+  },
+  {
+    "key": "cmd+escape",
+    "command": "workbench.action.closeWindow",
+    "when": "!editorIsOpen"
+  },
+  {
+    "key": "cmd+w",
+    "command": "-workbench.action.closeWindow",
+    "when": "!editorIsOpen"
+  },
+  {
+    "key": "ctrl+cmd+n",
+    "command": "explorer.newFolder"
+  }
 ]

@@ -1,5 +1,5 @@
 {
-	/*
+  /*
 	// Place your snippets for Javascript (Babel) here. Each snippet is defined under a snippet name and has a prefix, body and 
 	// description. The prefix is what is used to trigger the snippet and the body will be expanded and inserted. Possible variables are:
 	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. Placeholders with the 
@@ -14,37 +14,41 @@
 		"description": "Log output to console"
 	}
 */
-	"Classic Console Log": {
-		"prefix": "clog",
-		"body": [
-			"console.log($1)"
-		]
-	},
-	"React Native Component": {
-		"prefix": "rncomp",
-		"body": [
-			"import React from 'react'",
-			"import { $1 } from 'react-native'",
-			"",
-			"class $2 extends React.Component {",
-			"}",
-			"export default $2"
-		]
-	},
-	"Style in React Component": {
-		"prefix": "rnsty",
-		"body": "style={ styles.$1 }"
-	},
-	"PropTypes": {
-		"prefix": "pt",
-		"body": "proptypes = { $1 }"
-	},
-	"Simple Jest Test": {
-		"prefix": "jtest",
-		"body": "test($1, () => {$2})"
-	},
-	"Importing": {
-		"prefix": "imp",
-		"body": "import $2 from '$1'"
-	}
+  "Classic Console Log": {
+    "prefix": "clog",
+    "body": ["console.log($1)"]
+  },
+  "React Native Component": {
+    "prefix": "rncomp",
+    "body": [
+      "import React from 'react'",
+      "import PropTypes from 'prop-types'",
+      "import { $2 } from 'react-native'",
+      "",
+      "class $1 extends React.Component {",
+      "}",
+      "$1.propTypes = {}",
+      "export default $1"
+    ]
+  },
+  "Style in React Component": {
+    "prefix": "rnsty",
+    "body": "style={ styles.$1 }"
+  },
+  "PropTypes": {
+    "prefix": "pt",
+    "body": "proptypes = { $1 }"
+  },
+  "Simple Jest Test": {
+    "prefix": "jtest",
+    "body": "test($1, () => {$2})"
+  },
+  "Importing": {
+    "prefix": "imp",
+    "body": "import $2 from '$1'"
+  },
+  "StyleSheet create": {
+    "prefix": "initsty",
+    "body": "const styles = StyleSheet.create({$1})"
+  }
 }
