@@ -179,6 +179,9 @@ source $ZSH/oh-my-zsh.sh
 BULLETTRAIN_DIR_BG="blue"
 BULLETTRAIN_DIR_FG="white"
 
+## Node
+source ~/dotfiles/node/nodepath
+
 ## Android
 source ~/dotfiles/android/android.path
 

@@ -15,5 +15,6 @@
     "terminal.integrated.fontLigatures": true,
     "workbench.startupEditor": "newUntitledFile",
     "explorer.openEditors.visible": 0,
-    "prettier.singleQuote": true
+    "prettier.singleQuote": true,
+    "extensions.ignoreRecommendations": false
 }
