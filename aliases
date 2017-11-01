@@ -55,6 +55,10 @@ alias ains="adb install"
 alias auins="adb uninstall"
 alias adb-restart="adb kill-server && adb root"
 
+function atcp {
+    adb tcpip 5555 && adb connect $1:5555
+}
+
 ## Dropbox
 alias dropbox="~/dotfiles/dropbox/uploader.sh"
 
