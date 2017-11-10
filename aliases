@@ -56,7 +56,7 @@ alias auins="adb uninstall"
 alias adb-restart="adb kill-server && adb root"
 
 function androidLocalProp() {
-    echo "sdk.dir=/usr/local/opt/android-sdk"
+    echo $ANDROID_LOCAL_PROP
 }
 
 function atcp {
