@@ -16,19 +16,21 @@
 */
   "Classic Console Log": {
     "prefix": "clog",
-    "body": ["console.log($1)"]
+    "body": [
+      "console.log($1)"
+    ]
   },
   "React Native Component": {
     "prefix": "rncomp",
     "body": [
       "import React from 'react'",
       "import PropTypes from 'prop-types'",
-      "import { $2 } from 'react-native'",
+      "import { $1 } from 'react-native'",
       "",
-      "class $1 extends React.Component {",
+      "class $TM_FILENAME_BASE extends React.Component {",
       "}",
-      "$1.propTypes = {}",
-      "export default $1"
+      "$TM_FILENAME_BASE.propTypes = {}",
+      "export default $TM_FILENAME_BASE"
     ]
   },
   "Style in React Component": {
