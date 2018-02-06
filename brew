@@ -26,6 +26,7 @@ NONCASK=(
 	cdiff
 	tree
 	safe-rm
+	dropbox-uploader
 )
 
 for item in ${NONCASK[*]}; do

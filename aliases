@@ -19,6 +19,10 @@ alias las="ls -t | head -n1"
 ## Refresh ZSH
 alias refresh="source ~/.zshrc"
 
+## Dropbox
+alias dropbox="dropbox_uploader.sh"
+alias dropshell="dropShell.sh"
+
 ## Git
 alias gitlog="git log --pretty=format:'%C(yellow)%h %Cred%ad %Cblue%an%Cgreen%d %Creset%s' --date=relative"
 alias gitsa="git stash"
@@ -62,9 +66,6 @@ function androidLocalProp() {
 function atcp {
     adb tcpip 5555 && adb connect $1:5555
 }
-
-## Dropbox
-alias dropbox="~/dotfiles/dropbox/uploader.sh"
 
 ## VSCode
 function vscode {  
