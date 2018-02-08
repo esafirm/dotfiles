@@ -90,3 +90,9 @@ alias myip="ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-
 
 # Grep with insensitive case
 alias igrep="grep -i"
+
+# Nohup no output
+function runbg {
+    echo "running $1 $2 $3"
+    nohup $1 $2 $3 </dev/null >/dev/null 2>&1 & 
+}
