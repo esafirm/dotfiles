@@ -35,7 +35,7 @@
   },
   "Style in React Component": {
     "prefix": "rnsty",
-    "body": "style={ styles.$1 }"
+    "body": "style={ $1 }"
   },
   "PropTypes": {
     "prefix": "pt",

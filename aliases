@@ -31,6 +31,7 @@ alias glast="git rev-parse --short"
 alias glasthead="git rev-parse --short HEAD"
 alias gammen="git add -A && git commit --amend" 
 alias gforce="git push origin HEAD -f"
+alias gatcm "git add -A && git commmit -m" 
 
 ## Python
 alias virtualenvwrapper="source /usr/local/bin/virtualenvwrapper.sh"
