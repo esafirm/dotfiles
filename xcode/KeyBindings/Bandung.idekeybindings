@@ -8,43 +8,43 @@
 		<array>
 			<dict>
 				<key>Action</key>
-				<string>openDocument:</string>
+				<string>analyzeActiveRunContext:</string>
 				<key>Alternate</key>
 				<string>NO</string>
 				<key>CommandID</key>
-				<string>Xcode.IDEKit.CmdDefinition.Open</string>
+				<string>Xcode.IDEKit.CmdDefinition.Analyze</string>
 				<key>Group</key>
-				<string>File Menu</string>
+				<string>Product Menu</string>
 				<key>GroupID</key>
 				<string>Xcode.IDEKit.MenuDefinition.Main</string>
 				<key>GroupedAlternate</key>
 				<string>NO</string>
 				<key>Keyboard Shortcut</key>
-				<string>$@O</string>
+				<string>^@a</string>
 				<key>Navigation</key>
 				<string>NO</string>
 				<key>Title</key>
-				<string>Open…</string>
+				<string>Analyze</string>
 			</dict>
 			<dict>
 				<key>Action</key>
-				<string>openQuickly:</string>
+				<string>buildActiveRunContext:</string>
 				<key>Alternate</key>
 				<string>NO</string>
 				<key>CommandID</key>
-				<string>Xcode.IDEKit.CmdDefinition.OpenQuickly</string>
+				<string>Xcode.IDEKit.CmdDefinition.Build</string>
 				<key>Group</key>
-				<string>File Menu</string>
+				<string>Product Menu</string>
 				<key>GroupID</key>
 				<string>Xcode.IDEKit.MenuDefinition.Main</string>
 				<key>GroupedAlternate</key>
 				<string>NO</string>
 				<key>Keyboard Shortcut</key>
-				<string>@o</string>
+				<string>@</string>
 				<key>Navigation</key>
 				<string>NO</string>
 				<key>Title</key>
-				<string>Open Quickly…</string>
+				<string>Build</string>
 			</dict>
 			<dict>
 				<key>Action</key>
@@ -66,43 +66,23 @@
 			</dict>
 			<dict>
 				<key>Action</key>
-				<string>showLibraryWithChoiceFromSender:</string>
+				<string>editAndAnalyzeActiveRunContext:</string>
 				<key>Alternate</key>
-				<string>NO</string>
+				<string>YES</string>
 				<key>CommandID</key>
-				<string>Xcode.IDEKit.LibraryCategory.Code</string>
+				<string>Xcode.IDEKit.CmdDefinition.EditAndAnalyze</string>
 				<key>Group</key>
-				<string>View Menu</string>
-				<key>GroupID</key>
-				<string>Xcode.IDEKit.MenuDefinition.Utilities</string>
-				<key>GroupedAlternate</key>
-				<string>NO</string>
-				<key>Navigation</key>
-				<string>NO</string>
-				<key>Parent Title</key>
-				<string>Utilities</string>
-				<key>Title</key>
-				<string>Show Code Snippet Library</string>
-			</dict>
-			<dict>
-				<key>Action</key>
-				<string>revealInProjectNavigator:</string>
-				<key>Alternate</key>
-				<string>NO</string>
-				<key>CommandID</key>
-				<string>Xcode.IDEKit.CmdDefinition.RevealInProjectNavigator</string>
-				<key>Group</key>
-				<string>Navigate Menu</string>
+				<string>Product Menu</string>
 				<key>GroupID</key>
 				<string>Xcode.IDEKit.MenuDefinition.Main</string>
 				<key>GroupedAlternate</key>
 				<string>NO</string>
 				<key>Keyboard Shortcut</key>
-				<string>^@s</string>
+				<string>^~@a</string>
 				<key>Navigation</key>
 				<string>NO</string>
 				<key>Title</key>
-				<string>Reveal in Project Navigator</string>
+				<string>Analyze…</string>
 			</dict>
 			<dict>
 				<key>Action</key>
@@ -166,63 +146,83 @@
 			</dict>
 			<dict>
 				<key>Action</key>
-				<string>analyzeActiveRunContext:</string>
+				<string>openDocument:</string>
 				<key>Alternate</key>
 				<string>NO</string>
 				<key>CommandID</key>
-				<string>Xcode.IDEKit.CmdDefinition.Analyze</string>
+				<string>Xcode.IDEKit.CmdDefinition.Open</string>
 				<key>Group</key>
-				<string>Product Menu</string>
+				<string>File Menu</string>
 				<key>GroupID</key>
 				<string>Xcode.IDEKit.MenuDefinition.Main</string>
 				<key>GroupedAlternate</key>
 				<string>NO</string>
 				<key>Keyboard Shortcut</key>
-				<string>^@a</string>
+				<string>$@O</string>
 				<key>Navigation</key>
 				<string>NO</string>
 				<key>Title</key>
-				<string>Analyze</string>
+				<string>Open…</string>
 			</dict>
 			<dict>
 				<key>Action</key>
-				<string>editAndAnalyzeActiveRunContext:</string>
+				<string>openQuickly:</string>
 				<key>Alternate</key>
-				<string>YES</string>
+				<string>NO</string>
 				<key>CommandID</key>
-				<string>Xcode.IDEKit.CmdDefinition.EditAndAnalyze</string>
+				<string>Xcode.IDEKit.CmdDefinition.OpenQuickly</string>
 				<key>Group</key>
-				<string>Product Menu</string>
+				<string>File Menu</string>
 				<key>GroupID</key>
 				<string>Xcode.IDEKit.MenuDefinition.Main</string>
 				<key>GroupedAlternate</key>
 				<string>NO</string>
 				<key>Keyboard Shortcut</key>
-				<string>^~@a</string>
+				<string>@o</string>
 				<key>Navigation</key>
 				<string>NO</string>
 				<key>Title</key>
-				<string>Analyze…</string>
+				<string>Open Quickly…</string>
 			</dict>
 			<dict>
 				<key>Action</key>
-				<string>buildActiveRunContext:</string>
+				<string>revealInProjectNavigator:</string>
 				<key>Alternate</key>
 				<string>NO</string>
 				<key>CommandID</key>
-				<string>Xcode.IDEKit.CmdDefinition.Build</string>
+				<string>Xcode.IDEKit.CmdDefinition.RevealInProjectNavigator</string>
 				<key>Group</key>
-				<string>Product Menu</string>
+				<string>Navigate Menu</string>
 				<key>GroupID</key>
 				<string>Xcode.IDEKit.MenuDefinition.Main</string>
 				<key>GroupedAlternate</key>
 				<string>NO</string>
 				<key>Keyboard Shortcut</key>
-				<string>@</string>
+				<string>^@s</string>
 				<key>Navigation</key>
 				<string>NO</string>
 				<key>Title</key>
-				<string>Build</string>
+				<string>Reveal in Project Navigator</string>
+			</dict>
+			<dict>
+				<key>Action</key>
+				<string>showLibraryWithChoiceFromSender:</string>
+				<key>Alternate</key>
+				<string>NO</string>
+				<key>CommandID</key>
+				<string>Xcode.IDEKit.LibraryCategory.Code</string>
+				<key>Group</key>
+				<string>View Menu</string>
+				<key>GroupID</key>
+				<string>Xcode.IDEKit.MenuDefinition.Utilities</string>
+				<key>GroupedAlternate</key>
+				<string>NO</string>
+				<key>Navigation</key>
+				<string>NO</string>
+				<key>Parent Title</key>
+				<string>Utilities</string>
+				<key>Title</key>
+				<string>Show Code Snippet Library</string>
 			</dict>
 		</array>
 		<key>Version</key>
@@ -234,10 +234,17 @@
 		<dict>
 			<key></key>
 			<array>
+				<string>pageUpAndModifySelection:</string>
+				<array>
+					<string>moveBackward:</string>
+					<string>moveToBeginningOfParagraph:</string>
+				</array>
 				<string>deleteToEndOfParagraph:</string>
 			</array>
 			<key>@d</key>
-			<string>deleteParagraph:</string>
+			<string>deleteLine:</string>
+			<key>~</key>
+			<string>selectWord:</string>
 		</dict>
 		<key>Version</key>
 		<integer>3</integer>

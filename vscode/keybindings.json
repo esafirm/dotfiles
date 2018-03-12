@@ -149,5 +149,25 @@
     "key": "cmd+k",
     "command": "-git.commitAll",
     "when": "!inDebugMode && !terminalFocus"
+  },
+  {
+    "key": "cmd+5",
+    "command": "workbench.debug.action.toggleRepl",
+    "when": "inDebugRepl"
+  },
+  {
+    "key": "shift+escape",
+    "command": "-workbench.debug.action.toggleRepl",
+    "when": "inDebugRepl"
+  },
+  {
+    "key": "cmd+5",
+    "command": "-workbench.view.debug",
+    "when": "editorFocus"
+  },
+  {
+    "key": "cmd+5",
+    "command": "-workbench.action.toggleSidebarVisibility",
+    "when": "!editorFocus"
   }
 ]
