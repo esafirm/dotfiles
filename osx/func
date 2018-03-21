@@ -10,3 +10,7 @@ rdr on en2 inet proto tcp to any port 443 -> 127.0.0.1 port 8080" > $DESTINATION
 
     echo "ALL ALL=NOPASSWD: /sbin/pfctl -s state" >> /etc/sudoers
 }
+
+notif() {
+    osascript -e "display notification \"$1\""
+}
