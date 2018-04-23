@@ -184,6 +184,7 @@ source ~/dotfiles/node/nodepath
 
 ## Android
 source ~/dotfiles/android/android.path
+source ~/dotfiles/android/func
 
 ## Aliases
 source ~/dotfiles/aliases

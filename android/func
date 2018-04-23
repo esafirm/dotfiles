@@ -1,0 +1,12 @@
+androidkeygen(){
+    KEY_PATH=$1
+    KEY_ALIAS=$2
+
+    if [[ "$KEY_PATH" = "-h" || -z $KEY_PATH ]] 
+    then
+        echo "usage: androidkeygen <path> <alias>"
+        return
+    fi
+      
+    keytool -genkey -v -keystore $KEY_PATH -alias $KEY_ALIAS -keyalg RSA -keysize 2048 -validity 10000
+}
