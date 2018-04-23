@@ -16,5 +16,8 @@
     "workbench.startupEditor": "newUntitledFile",
     "explorer.openEditors.visible": 0,
     "prettier.singleQuote": true,
-    "extensions.ignoreRecommendations": false
+    "extensions.ignoreRecommendations": false,
+    
+    // Clojure
+    "clojureVSCode.autoStartNRepl": true
 }

@@ -169,5 +169,17 @@
     "key": "cmd+5",
     "command": "-workbench.action.toggleSidebarVisibility",
     "when": "!editorFocus"
+  },
+  {
+    "key": "cmd+4",
+    "command": "workbench.action.output.toggleOutput"
+  },
+  {
+    "key": "shift+cmd+u",
+    "command": "-workbench.action.output.toggleOutput"
+  },
+  {
+    "key": "cmd+k e",
+    "command": "clojureVSCode.evalAndShowResult"
   }
 ]
