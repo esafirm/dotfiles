@@ -21,5 +21,17 @@
 			"  $1",
 			"}"
 		]
+	},
+	"DSON object": {
+		"prefix": "dson",
+		"body": [
+			"@JsonSerializable()",
+			"class $1 extends Object with _$$1SerializerMixin {",
+			"  $2;",
+			
+			"  $1();",
+			"  factory $1.fromJson(Map<String, dynamic> json) => _$$1FromJson(json);",
+			"}"
+		]
 	}
 }

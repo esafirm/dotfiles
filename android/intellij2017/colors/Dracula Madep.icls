@@ -1,8 +1,9 @@
 <scheme name="Dracula Madep" version="142" parent_scheme="Darcula">
+  <option name="FONT_SCALE" value="1.0" />
   <option name="LINE_SPACING" value="1.2" />
   <option name="EDITOR_FONT_SIZE" value="12" />
-  <option name="EDITOR_LIGATURES" value="true" />
   <option name="EDITOR_FONT_NAME" value="Fira Code" />
+  <option name="EDITOR_LIGATURES" value="true" />
   <attributes>
     <option name="CONSOLE_BLACK_OUTPUT">
       <value>
@@ -17,6 +18,16 @@
     <option name="CONSOLE_GRAY_OUTPUT">
       <value>
         <option name="FOREGROUND" value="d6d3cd" />
+      </value>
+    </option>
+    <option name="DART_ANNOTATION">
+      <value>
+        <option name="FOREGROUND" value="bbb529" />
+      </value>
+    </option>
+    <option name="DART_TOP_LEVEL_GETTER_REFERENCE">
+      <value>
+        <option name="FOREGROUND" value="bbb529" />
       </value>
     </option>
     <option name="KOTLIN_ANNOTATION">

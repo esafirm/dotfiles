@@ -181,5 +181,15 @@
   {
     "key": "cmd+k e",
     "command": "clojureVSCode.evalAndShowResult"
+  },
+  {
+    "key": "shift+cmd+r",
+    "command": "renameFile",
+    "when": "explorerViewletVisible && filesExplorerFocus"
+  },
+  {
+    "key": "shift+f6",
+    "command": "-renameFile",
+    "when": "explorerViewletVisible && filesExplorerFocus"
   }
 ]
