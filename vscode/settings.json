@@ -19,5 +19,10 @@
     "extensions.ignoreRecommendations": false,
     
     // Clojure
-    "clojureVSCode.autoStartNRepl": true
+    "clojureVSCode.autoStartNRepl": true,
+    
+    // Shell
+    "[shellscript]": {
+        "editor.tabSize": 4
+    }
 }
