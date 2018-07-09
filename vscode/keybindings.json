@@ -191,5 +191,9 @@
     "key": "shift+f6",
     "command": "-renameFile",
     "when": "explorerViewletVisible && filesExplorerFocus"
+  },
+  {
+    "key": "cmd+k c",
+    "command": "merge-conflict.next"
   }
 ]
