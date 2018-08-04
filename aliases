@@ -65,7 +65,12 @@ function androidLocalProp() {
 }
 
 function atcp {
-    adb tcpip 5555 && adb connect $1:5555
+    if [ -z "${1}" ]; then
+	IP=$(adb shell ifconfig | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}' | sed -e "s/addr://")
+    else
+	IP=$1
+    fi
+    adb tcpip 5555 && adb connect $IP":5555"
 }
 
 ## VSCode
