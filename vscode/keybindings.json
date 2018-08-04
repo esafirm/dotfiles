@@ -195,5 +195,17 @@
   {
     "key": "cmd+k c",
     "command": "merge-conflict.next"
+  },
+  {
+    "key": "cmd+5",
+    "command": "workbench.debug.action.toggleRepl"
+  },
+  {
+    "key": "shift+cmd+y",
+    "command": "-workbench.debug.action.toggleRepl"
+  },
+  {
+    "key": "cmd+5",
+    "command": "-workbench.action.focusFifthEditorGroup"
   }
 ]
