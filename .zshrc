@@ -191,7 +191,7 @@ source ~/dotfiles/aliases
 
 ## MacOS related
 for file in ~/dotfiles/osx/*; do
-	source $file
+    source $file
 done
 
 ## Completion
@@ -200,7 +200,7 @@ source ~/dotfiles/completion/npm
 
 ## Scripts
 for file in ~/dotfiles/scripts/*; do
-	source $file
+    source $file
 done
 
 source ~/dotfiles/kscripts/aliases
@@ -208,9 +208,6 @@ source ~/dotfiles/kscripts/aliases
 export PATH="/usr/local/opt/ruby@2.3/bin:$PATH"
 export PATH="$HOME/.fastlane/bin:$PATH"
 export PATH="/usr/local/Manual/flutter/bin:$PATH"
-
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-export PATH="$PATH:$HOME/.rvm/bin"
 
 # tabtab source for serverless package
 # uninstall by removing these lines or running `tabtab uninstall serverless`
@@ -221,3 +218,8 @@ export PATH="$PATH:$HOME/.rvm/bin"
 
 # Go Path
 export GOPATH="$HOME/Document/Go"
+export PATH="$GOPATH/bin:$PATH"
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="/Users/esa/.sdkman"
+[[ -s "/Users/esa/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/esa/.sdkman/bin/sdkman-init.sh"
