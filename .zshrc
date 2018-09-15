@@ -217,7 +217,7 @@ export PATH="/usr/local/Manual/flutter/bin:$PATH"
 [[ -f /usr/local/lib/node_modules/serverless/node_modules/tabtab/.completions/sls.zsh ]] && . /usr/local/lib/node_modules/serverless/node_modules/tabtab/.completions/sls.zsh
 
 # Go Path
-export GOPATH="$HOME/Document/Go"
+export GOPATH="$HOME/Documents/Go"
 export PATH="$GOPATH/bin:$PATH"
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
