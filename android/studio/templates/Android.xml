@@ -2,8 +2,8 @@
   <template name="divider" value="/* --------------------------------------------------- */&#10;/* &gt; $val$ */&#10;/* --------------------------------------------------- */" description="divider" toReformat="true" toShortenFQNames="true">
     <variable name="val" expression="" defaultValue="" alwaysStopAt="true" />
     <context>
-      <option name="JAVA_CODE" value="true" />
       <option name="GROOVY" value="true" />
+      <option name="JAVA_CODE" value="true" />
       <option name="KOTLIN" value="true" />
     </context>
   </template>

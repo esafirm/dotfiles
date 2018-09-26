@@ -9,6 +9,9 @@
   <action id="ActivateAndroidMonitorToolWindow">
     <keyboard-shortcut first-keystroke="meta 6" />
   </action>
+  <action id="ActivateBuildToolWindow">
+    <keyboard-shortcut first-keystroke="meta 0" />
+  </action>
   <action id="ActivateFavoritesToolWindow" />
   <action id="ActivateTODOToolWindow" />
   <action id="ActivateTerminalToolWindow">
@@ -85,6 +88,9 @@
     <keyboard-shortcut first-keystroke="shift meta r" />
   </action>
   <action id="ReplaceInPath" />
+  <action id="RerunTests">
+    <keyboard-shortcut first-keystroke="shift alt r" />
+  </action>
   <action id="Resume">
     <keyboard-shortcut first-keystroke="meta alt r" />
     <keyboard-shortcut first-keystroke="f8" />
@@ -101,6 +107,9 @@
   </action>
   <action id="ShowProjectStructureSettings">
     <keyboard-shortcut first-keystroke="shift meta semicolon" />
+  </action>
+  <action id="SmartTypeCompletion">
+    <keyboard-shortcut first-keystroke="shift space" second-keystroke="shift space" />
   </action>
   <action id="SplitVertically">
     <keyboard-shortcut first-keystroke="ctrl meta close_bracket" />
@@ -123,6 +132,9 @@
   </action>
   <action id="UnsplitAll">
     <keyboard-shortcut first-keystroke="ctrl meta w" />
+  </action>
+  <action id="XDebugger.MuteBreakpoints">
+    <keyboard-shortcut first-keystroke="ctrl meta f8" />
   </action>
   <action id="openAssertEqualsDiff" />
 </keymap>

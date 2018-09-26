@@ -1,0 +1,7 @@
+<templateSet group="surround">
+  <template name="P" value="($SELECTION$)" shortcut="NONE" description="Surround with ()" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="JSP" value="false" />
+    </context>
+  </template>
+</templateSet>

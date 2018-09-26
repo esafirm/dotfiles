@@ -1,0 +1,5 @@
+<templateSet group="Kotlin">
+  <template name="maino" value="@JvmStatic&#10;fun main(args: Array&lt;String&gt;) {&#10;  $END$&#10;}" description="main() function" toReformat="true" toShortenFQNames="true">
+    <context />
+  </template>
+</templateSet>
