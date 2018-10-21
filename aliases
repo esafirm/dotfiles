@@ -10,9 +10,6 @@ function keytool-facebook {
     keytool -exportcert -alias androiddebugkey -keystore $1 | openssl sha1 -binary | openssl base64
 }
 
-## Disk Usage
-alias doosh="du -hs"
-
 ## Latest File
 alias las="ls -t | head -n1"
 
@@ -38,7 +35,6 @@ alias virtualenvwrapper="source /usr/local/bin/virtualenvwrapper.sh"
 alias simplehttpserver="python ~/dotfiles/python/server.py"
 alias python="python3"
 alias pip="pip3" 
-alias pip2="pip"
 alias uuid="python -c 'import sys,uuid; sys.stdout.write(uuid.uuid4().hex)' | pbcopy && pbpaste && echo"
 alias piplist="pip3 list --format=legacy"
 alias json="python -mjson.tool"
@@ -71,18 +67,6 @@ function atcp {
 	IP=$1
     fi
     adb tcpip 5555 && adb connect $IP":5555"
-}
-
-## VSCode
-function vscode {  
-    if [[ $# = 0 ]]
-    then
-        open -a "Visual Studio Code"
-    else
-        local argPath="$1"
-        [[ $1 = /* ]] && argPath="$1" || argPath="$PWD/${1#./}"
-        open -a "Visual Studio Code" "$argPath"
-    fi
 }
 
 # Safe-rm
