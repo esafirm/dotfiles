@@ -105,5 +105,6 @@
                 }
             }
         ]
-    }
+    },
+    "prettier.eslintIntegration": true
 }
