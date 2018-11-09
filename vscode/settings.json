@@ -106,5 +106,7 @@
             }
         ]
     },
-    "prettier.eslintIntegration": true
+    "prettier.eslintIntegration": true,
+    "window.newWindowDimensions": "inherit",
+    "editor.minimap.enabled": false
 }
