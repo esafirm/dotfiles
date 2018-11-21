@@ -6,4 +6,10 @@ alias getdns="networksetup -getdnsservers"
 # Open
 alias chrome="open -a 'Google Chrome'"
 alias simulator="open /Applications/Xcode.app/Contents/Developer/Applications/Simulator.app"
-alias simluatorls="xcrun simctl list devices"
+alias simulatorls="xcrun simctl list devices"
+
+# Xcode
+alias xcode="open *.xcworkspace"
+
+# Android Studio
+alias androidstudio="open -a /Applications/Android\ Studio.app"
