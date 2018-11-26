@@ -10,3 +10,12 @@ androidkeygen(){
       
     keytool -genkey -v -keystore $KEY_PATH -alias $KEY_ALIAS -keyalg RSA -keysize 2048 -validity 10000
 }
+
+aidQuery() {
+    adb shell content query --uri content://settings/secure --where "name=\'android_id\'"
+}
+
+aidChange() {
+    adb shell content delete --uri content://settings/secure --where "name=\'android_id\'"
+    adb shell content insert --uri content://settings/secure --bind name:s:android_id --bind value:s:$1
+}

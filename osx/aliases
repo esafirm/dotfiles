@@ -7,6 +7,7 @@ alias getdns="networksetup -getdnsservers"
 alias chrome="open -a 'Google Chrome'"
 alias simulator="open /Applications/Xcode.app/Contents/Developer/Applications/Simulator.app"
 alias simulatorls="xcrun simctl list devices"
+alias simulatorprune="xcrun simctl delete unavailable && rm -rf ~/Library/Logs/CoreSimulator"
 
 # Xcode
 alias xcode="open *.xcworkspace"
