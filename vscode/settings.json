@@ -108,5 +108,6 @@
     },
     "prettier.eslintIntegration": true,
     "window.newWindowDimensions": "inherit",
-    "editor.minimap.enabled": false
+    "editor.minimap.enabled": false,
+    "typescript.updateImportsOnFileMove.enabled": "always"
 }

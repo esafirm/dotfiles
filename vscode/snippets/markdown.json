@@ -21,7 +21,7 @@
       "layout: post",
       "draft: false",
       "path: \"/posts/${2}/\"",
-      "category: \"$3\"",
+      "category: \"${3:Tech}\"",
       "tags:",
       " - \"Tech\"",
       "description: \"\"",

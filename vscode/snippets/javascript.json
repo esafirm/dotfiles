@@ -16,9 +16,7 @@
 */
   "Classic Console Log": {
     "prefix": "clog",
-    "body": [
-      "console.log($1)"
-    ]
+    "body": ["console.log($1)"]
   },
   "React Native Component": {
     "prefix": "rncomp",
