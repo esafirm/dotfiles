@@ -4,4 +4,5 @@ plugins=(
 	lein
 	react-native
 	docker
+	wd
 )
