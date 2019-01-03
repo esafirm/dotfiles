@@ -16,3 +16,4 @@
 	today = log --since=midnight --author='E' --oneline
 	unwatch = update-index --assume-unchanged
 	watch = update-index --no-assume-unchanged
+	recent = branch --sort=-committerdate
