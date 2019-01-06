@@ -206,6 +206,7 @@ done
 source ~/dotfiles/kscripts/aliases
 
 export PATH="/usr/local/opt/ruby@2.3/bin:$PATH"
+export PATH="/usr/local/lib/ruby/gems/2.3.0/bin:$PATH"
 export PATH="$HOME/.fastlane/bin:$PATH"
 export PATH="/usr/local/Manual/flutter/bin:$PATH"
 
