@@ -43,5 +43,13 @@
   "Empty function": {
     "prefix": "efu",
     "body": ["() => {}"]
+  },
+  "Props": {
+    "prefix": "rnp",
+    "body": ["interface ${TM_FILENAME_BASE}Props { $1 }"]
+  },
+  "State": {
+    "prefix": "rns",
+    "body": ["interface ${TM_FILENAME_BASE}State { $1 }"]
   }
 }
