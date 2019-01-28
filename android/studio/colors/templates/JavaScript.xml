@@ -1,0 +1,5 @@
+<templateSet group="JavaScript">
+  <template name="clog" value="console.log($exp$);" description="Console Log" toReformat="false" toShortenFQNames="true">
+    <variable name="exp" expression="" defaultValue="" alwaysStopAt="true" />
+  </template>
+</templateSet>

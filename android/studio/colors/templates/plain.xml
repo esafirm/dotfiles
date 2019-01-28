@@ -1,0 +1,5 @@
+<templateSet group="plain">
+  <template name="thr" value="throw new " description="throw new" toReformat="false" toShortenFQNames="false">
+    <context />
+  </template>
+</templateSet>
