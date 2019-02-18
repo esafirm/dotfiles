@@ -50,6 +50,12 @@ alias ains="adb install"
 alias auins="adb uninstall"
 alias adb-restart="adb kill-server && adb root"
 
+function adb-app-restart() {
+    echo "Restart app with id $1 ..."
+    adb shell am force-stop $1
+    adb shell am start $1
+}
+
 function androidLocalProp() {
     echo $ANDROID_LOCAL_PROP
 }
