@@ -98,6 +98,9 @@
   <action id="Run">
     <keyboard-shortcut first-keystroke="ctrl meta r" />
   </action>
+  <action id="RunToCursor">
+    <keyboard-shortcut first-keystroke="f9" />
+  </action>
   <action id="SendEOF" />
   <action id="ShowNavBar">
     <keyboard-shortcut first-keystroke="alt home" />
