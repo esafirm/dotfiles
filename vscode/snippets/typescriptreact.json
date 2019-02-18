@@ -51,5 +51,18 @@
   "State": {
     "prefix": "rns",
     "body": ["interface ${TM_FILENAME_BASE}State { $1 }"]
+  },
+  "Render": {
+    "prefix": "ren",
+    "body": ["public render() {", "  return ( ", "     $1", "  )", "}"]
+  },
+  "Redux Bind": {
+    "prefix": "redbind",
+    "body": [
+      "@AppStore.withStoreClass(",
+      " state => ({ $1 }),",
+      " dispatch => ({ $2 }),",
+      ")"
+    ]
   }
 }

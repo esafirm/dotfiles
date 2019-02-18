@@ -19,5 +19,32 @@
   "Import all as something": {
     "prefix": "ima",
     "body": ["import * as $1 from '$2'"]
+  },
+  "Redux type": {
+    "prefix": "retype",
+    "body": [
+      "const $1 = '$2'",
+      "const $1_SUCCESS = '$2_success'",
+      "const $1_FAIL = '$2_fail'"
+    ]
+  },
+  "Redux action": {
+    "prefix": "reaction",
+    "body": [
+      "const $1Start = () => action($2)",
+      "const $1Success = () => action($2_SUCCESS)",
+      "const $1Fail = (error: any) => action($2_FAIL, error)"
+    ]
+  },
+  "Redux case": {
+    "prefix": "recase",
+    "body": [
+      "case $1:",
+      " return { $2 }",
+      "case $1_SUCCESS:",
+      " return { $3 }",
+      "case $1_FAIL:",
+      " return { $4 }"
+    ]
   }
 }
