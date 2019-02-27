@@ -49,6 +49,8 @@ alias geny="open -a /Applications/Genymotion.app/Contents/MacOS/player.app --arg
 alias ains="adb install"
 alias auins="adb uninstall"
 alias adb-restart="adb kill-server && adb root"
+alias astart="adb shell am start"
+alias astop="adb shemm am force-stop"
 
 function adb-app-restart() {
     echo "Restart app with id $1 ..."
