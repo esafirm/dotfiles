@@ -51,6 +51,7 @@ alias auins="adb uninstall"
 alias adb-restart="adb kill-server && adb root"
 alias astart="adb shell am start"
 alias astop="adb shell am force-stop"
+alias astartview="adb shell am start -a android.intent.action.VIEW"
 
 function adb-app-restart() {
     echo "Restart app with id $1 ..."
