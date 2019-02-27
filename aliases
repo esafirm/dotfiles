@@ -50,7 +50,7 @@ alias ains="adb install"
 alias auins="adb uninstall"
 alias adb-restart="adb kill-server && adb root"
 alias astart="adb shell am start"
-alias astop="adb shemm am force-stop"
+alias astop="adb shell am force-stop"
 
 function adb-app-restart() {
     echo "Restart app with id $1 ..."
