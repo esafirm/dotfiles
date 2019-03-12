@@ -245,5 +245,9 @@
     "key": "f5",
     "command": "-workbench.action.debug.continue",
     "when": "inDebugMode"
+  },
+  {
+    "key": "ctrl+cmd+s",
+    "command": "workbench.files.action.refreshFilesExplorer"
   }
 ]
