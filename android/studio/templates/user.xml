@@ -1,5 +1,5 @@
 <templateSet group="user">
-  <template name="suxtemplate" value="class State &#10;    class Action(state: State) : SuxActions&lt;Fragment, Action, State&gt;(state)&#10;    &#10;    class Fragment : SuxFragment&lt;Fragment, Action, State&gt;() {&#10;        override fun initActions(state: State): Action = Action(state)&#10;        override fun initState(): State = State()&#10;    }" description="" toReformat="true" toShortenFQNames="true">
+  <template name="suxtemplate" value="class State&#10;    class Action(state: State) : AppMviActions&lt;Fragment, Action, State&gt;(state)&#10;&#10;    class Fragment : AppMviFragment&lt;Fragment, Action, State&gt;() {&#10;        override fun initActions(state: State): Action = Action(state)&#10;        override fun initState(): State = State()&#10; }" description="" toReformat="true" toShortenFQNames="true">
     <context>
       <option name="KOTLIN_CLASS" value="true" />
     </context>
