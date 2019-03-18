@@ -17,3 +17,4 @@
 	unwatch = update-index --assume-unchanged
 	watch = update-index --no-assume-unchanged
 	recent = branch --sort=-committerdate
+	addpush = remote set-url --add --push
