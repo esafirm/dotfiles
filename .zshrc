@@ -2,7 +2,7 @@
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it'll load a random theme each
 # time that oh-my-zsh is loaded.
-ZSH_THEME="bullet-train"
+ZSH_THEME="robbyrussell"
 
 source ~/dotfiles/plugins
 
@@ -18,7 +18,7 @@ BULLETTRAIN_CONTEXT_FG="red"
 source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
-source $ZSH
+source $ZSH/oh-my-zsh.sh
 
 ## Bullet-train
 BULLETTRAIN_DIR_BG="blue"
