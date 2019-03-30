@@ -57,7 +57,10 @@ source ~/dotfiles/kscripts/aliases
 export PATH="/usr/local/opt/ruby@2.3/bin:$PATH"
 export PATH="/usr/local/lib/ruby/gems/2.3.0/bin:$PATH"
 export PATH="$HOME/.fastlane/bin:$PATH"
+
+# Flutter
 export PATH="/usr/local/Manual/flutter/bin:$PATH"
+export PATH="$HOME/Applications/flutter/bin:$PATH"
 
 # tabtab source for serverless package
 # uninstall by removing these lines or running `tabtab uninstall serverless`
@@ -73,3 +76,5 @@ export PATH="$GOPATH/bin:$PATH"
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="/Users/esa/.sdkman"
 [[ -s "/Users/esa/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/esa/.sdkman/bin/sdkman-init.sh"
+
+
