@@ -1,8 +1,11 @@
+# Path to your oh-my-zsh installation.
+export ZSH=$HOME/.oh-my-zsh
+
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it'll load a random theme each
 # time that oh-my-zsh is loaded.
-ZSH_THEME="robbyrussell"
+ZSH_THEME="bullet-train"
 
 source ~/dotfiles/plugins
 
@@ -16,8 +19,8 @@ BULLETTRAIN_CONTEXT_FG="red"
 
 ## ZSH Syntax Highlighting
 source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-# Path to your oh-my-zsh installation.
-export ZSH=$HOME/.oh-my-zsh
+
+## Init Oh My ZSH
 source $ZSH/oh-my-zsh.sh
 
 ## Bullet-train
