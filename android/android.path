@@ -1,6 +1,6 @@
-export ANDROID_HOME="/usr/local/opt/android-sdk"
+export ANDROID_HOME="/Users/esafirm/Library/Android/sdk"
 export ANDROID_NDK_HOME="/usr/local/opt/android-ndk"
-export ANDROID_LOCAL_PROP="sdk.dir=/usr/local/opt/android-sdk"
+export ANDROID_LOCAL_PROP="sdk.dir=$ANDROID_HOME"
 export PATH=$PATH:$ANDROID_HOME"/platform-tools"
 export PATH=$PATH:$ANDROID_HOME"/emulator"
 export PATH=$PATH:$ANDROID_HOME"/tools"
