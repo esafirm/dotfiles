@@ -17,6 +17,7 @@ export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 BULLETTRAIN_CONTEXT_BG="red"
 BULLETTRAIN_CONTEXT_FG="red"
 BULLETTRAIN_CONTEXT_DEFAULT_USER="esafirm"
+BULLETTRAIN_PROMPT_ORDER=(${BULLETTRAIN_PROMPT_ORDER:#(context|ruby|nvm)})
 
 ## ZSH Syntax Highlighting
 source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
