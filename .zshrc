@@ -13,12 +13,6 @@ source ~/dotfiles/plugins
 export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 # export MANPATH="/usr/local/man:$MANPATH"
 
-## Bullet-train
-BULLETTRAIN_CONTEXT_BG="red"
-BULLETTRAIN_CONTEXT_FG="red"
-BULLETTRAIN_CONTEXT_DEFAULT_USER="esafirm"
-BULLETTRAIN_PROMPT_ORDER=(${BULLETTRAIN_PROMPT_ORDER:#(context|ruby|nvm)})
-
 ## ZSH Syntax Highlighting
 source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
@@ -28,6 +22,8 @@ source $ZSH/oh-my-zsh.sh
 ## Bullet-train
 BULLETTRAIN_DIR_BG="blue"
 BULLETTRAIN_DIR_FG="white"
+BULLETTRAIN_CONTEXT_DEFAULT_USER="esafirm"
+BULLETTRAIN_PROMPT_ORDER=(${BULLETTRAIN_PROMPT_ORDER:#(nvm)})
 
 ## Node
 source ~/dotfiles/node/nodepath
