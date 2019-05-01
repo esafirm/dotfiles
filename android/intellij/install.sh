@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 
-echo "Installing Android Studio version $1 dotfiles .."
+INTELLJ=$1
 
-STUDIO=~/Library/Preferences/AndroidStudio$1
+echo "Installing Intellij version $INTELLJ dotfiles .."
+
+STUDIO="~/Library/Preferences/IdeaIC$INTELLJ"
 for file in *; do rm -r $STUDIO/$file; done
-for file in *; do ln -sF ~/dotfiles/android/studio/$file $STUDIO; done
+for file in *; do ln -sF ~/dotfiles/android/intellij/$file $STUDIO; done
 
-echo "Done installing Android Studio dotfiles..."
+echo "Done installing IntelliJ dotfiles..."
