@@ -68,5 +68,5 @@ alias igrep="grep -i"
 # Nohup no output
 function runbg {
     echo "running $1 $2 $3"
-    nohup $1 $2 $3 </dev/null >/dev/null 2>&1 & 
+    nohup $1 $2 $3 </dev/null >/dev/null 2>&1 &|
 }
