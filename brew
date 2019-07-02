@@ -3,30 +3,22 @@
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
 brew update && brew upgrade
-brew tap caskroom/cask
-brew tap buo/cask-upgrade
-brew tap homebrew/science
 
 # Non Cask
-
 NONCASK=(
-	android-sdk
-	android-ndk
 	zsh-syntax-highlighting
-	python3
-	ccat
 	mitmproxy 
 	ssh-copy-id
 	tmux
 	httpie
 	wget
 	htop
-	ffmpeg
 	gifsicle
 	cdiff
 	tree
 	safe-rm
 	dropbox-uploader
+	tldr
 )
 
 for item in ${NONCASK[*]}; do
@@ -37,10 +29,10 @@ done;
 # Cask
 
 CASKS=(
+	android-studio
 	google-chrome
 	visual-studio-code
 	transmission
-	macdown
 )
 
 for item in ${CASKS[*]}; do

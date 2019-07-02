@@ -1,10 +1,15 @@
 #!/usr/bin/env bash
 
-sh ./zsh.sh
-sh ./brew.sh
+## Make sure we're on dotfiles
+cd ~/dotfiles
 
-# Symlink all
+## Setup ZSH and Brew
+bash ./zshr
+bash ./zsh_theme
+bash ./brew
+
+## Symlink all
 ln -s ~/dotfiles/.vimrc ~/.vimrc
+ln -s ~/dotfiles/.zshrc ~/.zshrc
+ln -s ~/dotfiles/.warprc ~/.warprc
 
-echo 'source ~/dotfiles/aliases' >> ~/.zshrc
-echo 'source ~/android/android.path' >> ~.zshrc
