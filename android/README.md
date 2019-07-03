@@ -1,5 +1,10 @@
 ## Android
 
+## Prerequisite
+
+1. You must first install Android Studio
+2. Or there's already configuration file folder in `~/Library/Preferences`
+
 ### Android Studio
 
 To install Android Studio configs, go to `./studio` and execute `./install.sh` 
