@@ -45,6 +45,9 @@ BULLETTRAIN_PROMPT_ORDER=(
 ## Node
 source ~/dotfiles/node/nodepath
 
+## Ruby
+source ~/dotfiles/ruby/ruby.path
+
 ## Android
 source ~/dotfiles/android/android.path
 source ~/dotfiles/android/func
@@ -66,6 +69,7 @@ for file in ~/dotfiles/scripts/*; do
     source $file
 done
 
+## Kscript (Kotlin Script)
 source ~/dotfiles/kscripts/aliases
 
 # Ruby path from Brew
@@ -93,5 +97,4 @@ export PATH="$GOPATH/bin:$PATH"
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="/Users/esa/.sdkman"
 [[ -s "/Users/esa/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/esa/.sdkman/bin/sdkman-init.sh"
-
 
