@@ -3,8 +3,15 @@
 ## Running systrace in ANDROID_HOME
 ## Result will be printed out in the stdout, if not please go to systrace dir
 strace() {
+    APP=$1
     setupStrace
-    python2.7 systrace.py sched freq idle am wm gfx view binder_driver hal dalvik camera input res
+
+    ## The difference is 
+    if [[ -z "$APP" ]] then
+        python2.7 systrace.py sched freq idle am wm gfx view binder_driver hal dalvik camera input res
+    else
+        python2.7 systrace.py -a $APP sched freq idle am wm gfx view binder_driver hal dalvik camera input res
+    fi    
 }
 
 strace-categories() {
