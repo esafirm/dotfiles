@@ -110,5 +110,6 @@
     "window.newWindowDimensions": "inherit",
     "editor.minimap.enabled": false,
     "typescript.updateImportsOnFileMove.enabled": "always",
-    "xmlTools.splitAttributesOnFormat": true
+    "xmlTools.splitAttributesOnFormat": true,
+    "go.useLanguageServer": true
 }

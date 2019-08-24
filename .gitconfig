@@ -19,3 +19,5 @@
 	recent = branch --sort=-committerdate
 	addpush = remote set-url --add --push
 	stat = diff HEAD^ --stat
+[color]
+	ui = auto
