@@ -2,10 +2,18 @@
 
 INTELLJ=$1
 
+
+if [ -z "$INTELLJ" ]; then
+    echo "No version specified"
+    echo "Usage: ./install.sh [version]"
+    echo "Example: ./install.sh 2019.2"
+    exit 1    
+fi
+
 echo "Installing Intellij version $INTELLJ dotfiles .."
 
-STUDIO="~/Library/Preferences/IdeaIC$INTELLJ"
-for file in *; do rm -r $STUDIO/$file; done
-for file in *; do ln -sF ~/dotfiles/android/intellij/$file $STUDIO; done
+INTELLIJ_PATH="~/Library/Preferences/IdeaIC$INTELLJ"
+for file in *; do rm -r $INTELLIJ_PATH/$file; done
+for file in *; do ln -sF ~/dotfiles/android/intellij/$file $INTELLIJ_PATH; done
 
 echo "Done installing IntelliJ dotfiles..."
