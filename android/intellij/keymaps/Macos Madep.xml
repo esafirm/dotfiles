@@ -1,4 +1,6 @@
 <keymap version="1" name="Macos Madep" parent="Mac OS X 10.5+">
+  <action id=":cursive.actions.paredit/close-curly-and-newline" />
+  <action id=":cursive.actions.paredit/wrap-curly" />
   <action id="AceAction">
     <keyboard-shortcut first-keystroke="ctrl semicolon" />
     <keyboard-shortcut first-keystroke="meta semicolon" />
