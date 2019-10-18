@@ -77,6 +77,7 @@
   </action>
   <action id="Images.Thumbnails.UpFolder" />
   <action id="MinimizeCurrentWindow" />
+  <action id="NextDiff" />
   <action id="NextTab">
     <keyboard-shortcut first-keystroke="shift meta close_bracket" />
   </action>
@@ -95,6 +96,10 @@
   <action id="RerunTests">
     <keyboard-shortcut first-keystroke="shift alt r" />
   </action>
+  <action id="Resume">
+    <keyboard-shortcut first-keystroke="meta alt r" />
+    <keyboard-shortcut first-keystroke="f8" />
+  </action>
   <action id="Run">
     <keyboard-shortcut first-keystroke="ctrl meta r" />
   </action>
@@ -110,6 +115,10 @@
   </action>
   <action id="SplitVertically">
     <keyboard-shortcut first-keystroke="ctrl meta close_bracket" />
+  </action>
+  <action id="StepInto" />
+  <action id="StepOver">
+    <keyboard-shortcut first-keystroke="f7" />
   </action>
   <action id="SwitchApply">
     <keyboard-shortcut first-keystroke="ctrl alt enter" />
