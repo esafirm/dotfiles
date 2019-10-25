@@ -94,6 +94,9 @@ export PATH="$HOME/Applications/flutter/bin:$PATH"
 export GOPATH="$HOME/Documents/Go"
 export PATH="$GOPATH/bin:$PATH"
 
+# OpenVPN
+export PATH="/usr/local/opt/openvpn/sbin:$PATH"
+
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="/Users/esa/.sdkman"
 [[ -s "/Users/esa/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/esa/.sdkman/bin/sdkman-init.sh"
