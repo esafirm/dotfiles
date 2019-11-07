@@ -6,11 +6,6 @@
 [user]
 	name = Esa Firman
 	email = esafirm21@gmail.com
-[filter "lfs"]
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	required = true
-	process = git-lfs filter-process
 [merge]
 [alias]
 	today = log --since=midnight --author='E' --oneline
@@ -21,3 +16,8 @@
 	stat = diff HEAD^ --stat
 [color]
 	ui = auto
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge --skip -- %f
+	process = git-lfs filter-process --skip
+	required = true

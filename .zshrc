@@ -110,3 +110,5 @@ if [ -f '/Users/esafirm/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/esafirm
 
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/esafirm/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/esafirm/google-cloud-sdk/completion.zsh.inc'; fi
+
+export COVERAGE_BLOCKING_LEVEL=35]
