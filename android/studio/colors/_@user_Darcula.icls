@@ -4,12 +4,12 @@
     <property name="created">2017-01-24T11:18:21</property>
     <property name="ide">Idea</property>
     <property name="ideVersion">2016.3.3.0.0</property>
-    <property name="modified">2019-04-21T13:06:15</property>
+    <property name="modified">2019-11-06T21:54:32</property>
     <property name="originalScheme">Darcula</property>
   </metaInfo>
   <option name="LINE_SPACING" value="1.2" />
   <option name="EDITOR_FONT_SIZE" value="12" />
-  <option name="EDITOR_FONT_NAME" value="Menlo" />
+  <option name="EDITOR_FONT_NAME" value="Fira Code Retina" />
   <option name="EDITOR_LIGATURES" value="true" />
   <option name="CONSOLE_FONT_NAME" value="Menlo" />
   <option name="CONSOLE_LINE_SPACING" value="1.0" />

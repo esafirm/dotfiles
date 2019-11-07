@@ -1,6 +1,5 @@
 // Place your settings in this file to overwrite the default settings
 {
-    "python.linting.pylintCategorySeverity.convention": "Hint",
     "workbench.iconTheme": "material-icon-theme",
     "workbench.editor.enablePreviewFromQuickOpen": false,
     "files.autoSave": "afterDelay",
@@ -18,14 +17,10 @@
     "prettier.singleQuote": true,
     "extensions.ignoreRecommendations": false,
     
-    // Clojure
-    "clojureVSCode.autoStartNRepl": true,
-    
     // Shell
     "[shellscript]": {
         "editor.tabSize": 4
     },
-    "python.formatting.provider": "black",
     "editor.tokenColorCustomizations": {
         "textMateRules": [
             {
@@ -106,10 +101,17 @@
             }
         ]
     },
-    "prettier.eslintIntegration": true,
     "window.newWindowDimensions": "inherit",
     "editor.minimap.enabled": false,
     "typescript.updateImportsOnFileMove.enabled": "always",
-    "xmlTools.splitAttributesOnFormat": true,
-    "go.useLanguageServer": true
+    "go.useLanguageServer": true,
+    "jenkins-jack.jenkins.connections": [
+        {
+            "name": "Local Jenkins",
+            "uri": "http://localhost:8080",
+            "username": "esafirm",
+            "password": "1171969d62ca49cfd459effe51d01561ca",
+            "active": true
+        }
+    ]
 }
