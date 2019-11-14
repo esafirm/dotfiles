@@ -112,6 +112,13 @@
             "username": "esafirm",
             "password": "1171969d62ca49cfd459effe51d01561ca",
             "active": true
+        },
+        {
+            "name": "Remote Jenkins",
+            "uri": "http://jenkins.bl:8080/",
+            "username": "esafirm",
+            "password": "1113beabf0ef7ee1f92c70ebf3be5a07a7",
+            "active": false
         }
     ]
 }
