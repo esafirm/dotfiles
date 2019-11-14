@@ -249,5 +249,9 @@
   {
     "key": "ctrl+cmd+s",
     "command": "workbench.files.action.refreshFilesExplorer"
+  },
+  {
+    "key": "cmd+k j",
+    "command": "extension.jenkins-jack.jacks"
   }
 ]

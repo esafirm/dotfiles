@@ -112,6 +112,13 @@
             "username": "esafirm",
             "password": "REDACTED",
             "active": true
+        },
+        {
+            "name": "Remote Jenkins",
+            "uri": "http://jenkins.bl:8080/",
+            "username": "esafirm",
+            "password": "REDACTED",
+            "active": false
         }
     ]
 }
