@@ -55,6 +55,9 @@ source ~/dotfiles/android/func
 ## Aliases
 source ~/dotfiles/aliases
 
+## Secrets
+source ~/dotfiles/secrets
+
 ## MacOS related
 for file in ~/dotfiles/osx/*; do
     source $file
@@ -111,4 +114,4 @@ if [ -f '/Users/esafirm/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/esafirm
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/esafirm/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/esafirm/google-cloud-sdk/completion.zsh.inc'; fi
 
-export COVERAGE_BLOCKING_LEVEL=35]
+export COVERAGE_BLOCKING_LEVEL=35
