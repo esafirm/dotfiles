@@ -111,14 +111,14 @@
             "uri": "http://localhost:8080",
             "username": "esafirm",
             "password": "REDACTED",
-            "active": true
+            "active": false
         },
         {
             "name": "Remote Jenkins",
             "uri": "http://jenkins.bl:8080/",
             "username": "esafirm",
             "password": "REDACTED",
-            "active": false
+            "active": true
         }
     ]
 }
