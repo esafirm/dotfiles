@@ -86,6 +86,9 @@ export PATH="$HOME/.fastlane/bin:$PATH"
 export PATH="/usr/local/Manual/flutter/bin:$PATH"
 export PATH="$HOME/Applications/flutter/bin:$PATH"
 
+# Local bin
+export PATH="$HOME/Applications/local/bin:$PATH"
+
 # tabtab source for serverless package
 # uninstall by removing these lines or running `tabtab uninstall serverless`
 [[ -f /usr/local/lib/node_modules/serverless/node_modules/tabtab/.completions/serverless.zsh ]] && . /usr/local/lib/node_modules/serverless/node_modules/tabtab/.completions/serverless.zsh
