@@ -107,7 +107,6 @@ export PATH="/usr/local/opt/openvpn/sbin:$PATH"
 export SDKMAN_DIR="/Users/esa/.sdkman"
 [[ -s "/Users/esa/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/esa/.sdkman/bin/sdkman-init.sh"
 
-
 # added by travis gem
 [ -f /Users/esafirm/.travis/travis.sh ] && source /Users/esafirm/.travis/travis.sh
 
