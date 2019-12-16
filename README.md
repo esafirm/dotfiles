@@ -29,6 +29,10 @@ Please read the script first when you want to run it.
 
 > We do have an instruction in the README file in `/android` 
 
+## Vim
+
+For plugin we use [vim-plug](https://github.com/junegunn/vim-plug) and the setup is already included in `setup.sh`
+
 ## Author
 
 esafirm 
