@@ -4,7 +4,6 @@ set clipboard=unnamed
 let python_highlight_all=1
 set laststatus=2
 let g:airline_powerline_fonts=1
-let g:airline_theme='solarized'
 
 " Split Pane Pro Tips
 set splitright
@@ -19,45 +18,35 @@ let mapleader=" "
 set nocompatible              " required
 filetype off                  " required
 
-" set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
+set noshowmode
 
-" alternatively, pass a path where Vundle should install plugins
-"call vundle#begin('~/some/path/here')
+" --- PLUGIN ----
 
-" let Vundle manage Vundle, required
-Plugin 'gmarik/Vundle.vim'
-
-" Add all your plugins here (note older versions of Vundle used Bundle instead of Plugin)
+" Specify a directory for plugins
+" - For Neovim: stdpath('data') . '/plugged'
+" - Avoid using standard Vim directory names like 'plugin'
+call plug#begin('~/.vim/plugged')
 
 " Easy motion like AceJump on emacs
-Plugin 'easymotion/vim-easymotion'
+Plug 'easymotion/vim-easymotion'
 
 " Vim Airline (Powerline)
-Plugin 'vim-airline/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
-
-" Search
-Plugin 'kien/ctrlp.vim'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 
 " File Tree
-Plugin 'scrooloose/nerdtree'
+Plug 'scrooloose/nerdtree'
 let NERDTreeIgnore=['\.pyc$', '\~$'] "ignore files in NERDTree
 
 " Python Specific 
-Plugin 'vim-scripts/indentpython.vim' " Python Indentation
+Plug 'vim-scripts/indentpython.vim' " Python Indentation
 set encoding=utf-8 " set encoding
 
 let g:ycm_autoclose_preview_window_after_completion=1
 map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
 
-Plugin 'scrooloose/syntastic' " syntax higlight
-Plugin 'nvie/vim-flake8' " PEP8 idk what that is
+Plug 'scrooloose/syntastic' " syntax higlight
+Plug 'nvie/vim-flake8' " PEP8 idk what that is
 
-
-" All of your Plugins must be added before the following line
-call vundle#end()            " required
-filetype plugin indent on    " required
-
-set noshowmode
+" Initialize plugin system
+call plug#end()
