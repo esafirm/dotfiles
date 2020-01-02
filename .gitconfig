@@ -11,7 +11,8 @@
 	today = log --since=midnight --author='E' --oneline
 	unwatch = update-index --assume-unchanged
 	watch = update-index --no-assume-unchanged
-	recent = branch --sort=-committerdate
+	recent = branch --sort=-committerdate 
+	rdate = branch --sort=-committerdate --format='%(HEAD) %(refname:short) %(color:bold red) %(authordate:relative)'
 	addpush = remote set-url --add --push
 	stat = diff HEAD^ --stat
 [color]
