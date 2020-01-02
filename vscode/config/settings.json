@@ -3,6 +3,7 @@
     "workbench.iconTheme": "material-icon-theme",
     "workbench.editor.enablePreviewFromQuickOpen": false,
     "files.autoSave": "afterDelay",
+    "editor.insertSpaces": false,
     "window.restoreFullscreen": true,
     "window.zoomLevel": 0,
     "material-icon-theme.showUpdateMessage": false,
@@ -16,7 +17,6 @@
     "explorer.openEditors.visible": 0,
     "prettier.singleQuote": true,
     "extensions.ignoreRecommendations": false,
-    
     // Shell
     "[shellscript]": {
         "editor.tabSize": 4
