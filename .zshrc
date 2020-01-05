@@ -85,6 +85,7 @@ export PATH="$HOME/.fastlane/bin:$PATH"
 # Flutter
 export PATH="/usr/local/Manual/flutter/bin:$PATH"
 export PATH="$HOME/Applications/flutter/bin:$PATH"
+export PATH="$HOME/Applications/flutter/bin/cache/dart-sdk/bin:$PATH"
 
 # Local bin
 export PATH="$HOME/Applications/local/bin:$PATH"

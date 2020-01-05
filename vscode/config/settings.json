@@ -120,5 +120,8 @@
             "password": "1113beabf0ef7ee1f92c70ebf3be5a07a7",
             "active": true
         }
-    ]
+    ],
+    "files.associations": {
+        "aliases": "shellscript"
+    }
 }
