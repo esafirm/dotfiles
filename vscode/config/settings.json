@@ -120,5 +120,8 @@
             "password": "REDACTED",
             "active": true
         }
-    ]
+    ],
+    "files.associations": {
+        "aliases": "shellscript"
+    }
 }
