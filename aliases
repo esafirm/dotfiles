@@ -20,15 +20,23 @@ alias gitsa="git stash"
 alias gmoff="git merge --no-ff"
 alias glast="git rev-parse --short"
 alias glasthead="git rev-parse --short HEAD"
-alias gammen="git add -A && git commit --amend" 
+alias gammen="git add -A && git commit --amend"
 alias gforce="git push origin HEAD -f"
-alias gacma="git add -A && git commit -m" 
+alias gacma="git add -A && git commit -m"
+
+guwd() {
+    for f in $(git diff --name-only); do git unwatch $f; done
+}
+
+gwu() {
+    for f in $(git unwatched); do git watch $f; done
+}
 
 ## Python
 alias virtualenvwrapper="source /usr/local/bin/virtualenvwrapper.sh"
 alias simplehttpserver="python ~/dotfiles/python/server.py"
 alias python="python3"
-alias pip="pip3" 
+alias pip="pip3"
 alias uuid="python -c 'import sys,uuid; sys.stdout.write(uuid.uuid4().hex)' | pbcopy && pbpaste && echo"
 alias piplist="pip3 list --format=legacy"
 alias json="python -mjson.tool"
