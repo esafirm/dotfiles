@@ -10,6 +10,7 @@
 [alias]
 	today = log --since=midnight --author='E' --oneline
 	unwatch = update-index --assume-unchanged
+	unwatched = !git ls-files -v | grep "^[[:lower:]]" | cut -d' ' -f2
 	watch = update-index --no-assume-unchanged
 	recent = branch --sort=-committerdate 
 	rdate = branch --sort=-committerdate --format='%(HEAD) %(refname:short) %(color:bold red) %(authordate:relative)'
