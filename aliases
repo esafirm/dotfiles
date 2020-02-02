@@ -27,7 +27,6 @@ alias pbg="git_current_branch | pbcopy"
 
 ## Using git select
 alias gb="$DOT/ruby/git_select.rb git branch"
-alias g="$DOT/ruby/git_select.rb git recent"
 
 guwd() {
     for f in $(git diff --name-only); do git unwatch $f; done
