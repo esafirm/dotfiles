@@ -122,7 +122,8 @@
         }
     ],
     "files.associations": {
-        "aliases": "shellscript"
+        "aliases": "shellscript",
+        "*.path": "shellscript"
     },
     // Ruby Related
     "solargraph.diagnostics": false,
