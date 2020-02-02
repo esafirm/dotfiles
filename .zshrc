@@ -42,6 +42,9 @@ BULLETTRAIN_PROMPT_ORDER=(
     cmd_exec_time
   )
 
+# Dotfiles
+export DOT="$HOME/dotfiles"
+
 ## Node
 source ~/dotfiles/node/nodepath
 
