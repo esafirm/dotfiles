@@ -25,9 +25,6 @@ alias gforce="git push origin HEAD -f"
 alias gacma="git add -A && git commit -m"
 alias pbg="git_current_branch | pbcopy"
 
-## Using git select
-alias gb="$DOT/ruby/git_select.rb git branch"
-
 guwd() {
     for f in $(git diff --name-only); do git unwatch $f; done
 }
