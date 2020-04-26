@@ -21,6 +21,12 @@
     "[shellscript]": {
         "editor.tabSize": 4
     },
+    // Typescript
+    "[typescript]": {
+        "editor.tabSize": 2,
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "typescript.updateImportsOnFileMove.enabled": "always",
     "editor.tokenColorCustomizations": {
         "textMateRules": [
             {
@@ -103,7 +109,6 @@
     },
     "window.newWindowDimensions": "inherit",
     "editor.minimap.enabled": false,
-    "typescript.updateImportsOnFileMove.enabled": "always",
     "go.useLanguageServer": true,
     "jenkins-jack.jenkins.connections": [
         {
@@ -128,4 +133,10 @@
     // Ruby Related
     "solargraph.diagnostics": false,
     "solargraph.formatting": false,
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[javascriptreact]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
 }
