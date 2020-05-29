@@ -121,3 +121,6 @@ if [ -f '/Users/esafirm/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/esafirm
 if [ -f '/Users/esafirm/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/esafirm/google-cloud-sdk/completion.zsh.inc'; fi
 
 export COVERAGE_BLOCKING_LEVEL=35
+
+## Make ^ working
+setopt NO_NOMATCH
