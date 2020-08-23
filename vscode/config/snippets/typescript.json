@@ -20,6 +20,10 @@
     "prefix": "ima",
     "body": ["import * as $1 from '$2'"]
   },
+  "Import somthing": {
+    "prefix": "imp",
+    "body": ["import $2 from '$1'"]
+  },
   "Redux type": {
     "prefix": "retype",
     "body": [
