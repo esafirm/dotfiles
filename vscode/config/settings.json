@@ -24,7 +24,7 @@
     // Typescript
     "[typescript]": {
         "editor.tabSize": 2,
-        "editor.defaultFormatter": "vscode.typescript-language-features"
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "typescript.updateImportsOnFileMove.enabled": "always",
     "editor.tokenColorCustomizations": {

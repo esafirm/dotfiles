@@ -168,6 +168,7 @@
   <template name="link" value="&lt;link rel=&quot;stylesheet&quot; href=&quot;$END$&quot;&gt;" description="&lt;link rel=&quot;stylesheet&quot; href=&quot;...&quot;&gt;" toReformat="true" toShortenFQNames="true">
     <context>
       <option name="JSX_EXPRESSION" value="true" />
+      <option name="JSX_HTML" value="true" />
       <option name="JSX_STATEMENT" value="true" />
     </context>
   </template>
@@ -289,6 +290,7 @@
   <template name="script:src" value="&lt;script src=&quot;$END$&quot;&gt;&lt;/script&gt;" description="&lt;script src=&quot;...&quot;&gt;...&lt;/script&gt;" toReformat="true" toShortenFQNames="true">
     <context>
       <option name="JSX_EXPRESSION" value="true" />
+      <option name="JSX_HTML" value="true" />
       <option name="JSX_STATEMENT" value="true" />
     </context>
   </template>
