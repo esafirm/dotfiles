@@ -16,7 +16,7 @@ git_result = `#{git_command}`.chomp.split("\n")
 abort('Invalid git command') if git_result.nil?
 
 prompt = TTY::Prompt.new
-selected = prompt.select('Choose branch:', git_result)
+selected = prompt.select('Choose branch:', git_result, filter: true)
 
 return if selected.include?('*')
 
