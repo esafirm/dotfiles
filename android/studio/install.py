@@ -6,11 +6,18 @@ import shutil
 from pathlib import Path
 
 if len(sys.argv) < 2:
-	print("You must provide version number ex: install.py 4.1")
+	print("./install.py [version] [variant]")
+	print("\nvariants: \n- prod (default)\n- preview")
 	sys.exit()
 
 current_path = os.getcwd()
 studio_path = str(Path.home()) + "/Library/Application\ Support/Google/AndroidStudioPreview" + sys.argv[1] + "/"
+
+print("Path: " + studio_path)
+answer = input("Is this the right path? Y/N")
+
+if answer != "Y":
+	sys.exit()
 
 if os.path.exists(studio_path):
 	print("Android Studio path not exist")
