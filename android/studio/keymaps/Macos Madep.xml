@@ -13,6 +13,9 @@
     <keyboard-shortcut first-keystroke="meta 0" />
   </action>
   <action id="ActivateFavoritesToolWindow" />
+  <action id="ActivateLogcatToolWindow">
+    <keyboard-shortcut first-keystroke="meta 6" />
+  </action>
   <action id="ActivateTODOToolWindow" />
   <action id="ActivateTerminalToolWindow">
     <keyboard-shortcut first-keystroke="meta 2" />
