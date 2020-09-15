@@ -10,11 +10,14 @@ if len(sys.argv) < 2:
 	print("\nvariants: \n- prod (default)\n- preview")
 	sys.exit()
 
+FLAVOR = sys.argv[2] if len(sys.argv) == 3 else "prod"
+DIR_NAME = "AndroidStudioPreview" if FLAVOR == "preview" else "AndroidStudio"
+
 current_path = os.getcwd()
-studio_path = str(Path.home()) + "/Library/Application\ Support/Google/AndroidStudioPreview" + sys.argv[1] + "/"
+studio_path = str(Path.home()) + "/Library/Application\ Support/Google/" + DIR_NAME + sys.argv[1] + "/"
 
 print("Path: " + studio_path)
-answer = input("Is this the right path? Y/N")
+answer = input("Is this the right path? Y/n:  ")
 
 if answer != "Y":
 	sys.exit()
