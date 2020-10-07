@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 
+THEME_FILE=~/dotfiles/theme/theme.sh
+
 # Sometimes the custom path is empty. Use default one
 ZSH_CUSTOM="$ZSH/custom"
 
 # Oh My ZSH Bullet Train theme
-URL='https://raw.githubusercontent.com/caiogondim/bullet-train-oh-my-zsh-theme/master/bullet-train.zsh-theme'
 BULLET_DIR=$ZSH_CUSTOM/themes/bullet-train.zsh-theme
 
-curl $URL > $BULLET_DIR
+ln -s $THEME_FILE $BULLET_DIR
 sed -i '' 's/ZSH_THEME="robbyrussell"/ZSH_THEME="bullet-train"/g' ~/.zshrc

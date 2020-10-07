@@ -5,7 +5,7 @@ cd ~/dotfiles
 
 ## Setup ZSH and Brew
 bash ./zsh
-bash ./zsh_theme
+bash ./themes/setup.sh
 bash ./brew
 
 ## Symlink all
