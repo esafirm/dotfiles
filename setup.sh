@@ -4,7 +4,7 @@
 cd ~/dotfiles
 
 ## Setup ZSH and Brew
-bash ./zshr
+bash ./zsh
 bash ./zsh_theme
 bash ./brew
 
