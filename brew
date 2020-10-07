@@ -19,6 +19,7 @@ NONCASK=(
 	safe-rm
 	dropbox-uploader
 	tldr
+	wd
 )
 
 for item in ${NONCASK[*]}; do
@@ -29,10 +30,10 @@ done;
 # Cask
 
 CASKS=(
-	android-studio
 	google-chrome
 	visual-studio-code
 	transmission
+	jetbrains-toolbox
 )
 
 for item in ${CASKS[*]}; do
