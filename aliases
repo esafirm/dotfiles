@@ -91,3 +91,6 @@ function abs { echo $(cd $(dirname "$1") && pwd -P)/$(basename "$1") }
 
 ## PHP
 alias composer="php /usr/local/bin/composer.phar"
+
+## ADB to GADB
+alias adb="gadb"
