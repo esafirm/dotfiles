@@ -12,7 +12,8 @@
 	unwatch = update-index --assume-unchanged
 	unwatched = !git ls-files -v | grep "^[[:lower:]]" | cut -d' ' -f2
 	watch = update-index --no-assume-unchanged
-	recent = !ruby ~/dotfiles/ruby/git_select.rb recent
+	recent = !ruby ~/dotfiles/ruby/git_select.rb command:recent mode:select action:checkout
+	del = !ruby ~/dotfiles/ruby/git_select.rb command:recent mode:multiselect action:delete
 	rdate = branch --sort=-committerdate --format='%(HEAD) %(refname:short) %(color:bold red) %(authordate:relative)'
 	addpush = remote set-url --add --push
 	stat = diff HEAD^ --stat
