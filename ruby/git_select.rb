@@ -39,7 +39,7 @@ end
 
 return if selected.include?('*')
 
-selected_string = selected.map(&:chomp).join(' ')
+selected_string = selected.map(&:chomp).join(' ') if selected.is_a?(Array)
 
 ## Execute action
 case action
