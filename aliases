@@ -93,4 +93,5 @@ function abs { echo $(cd $(dirname "$1") && pwd -P)/$(basename "$1") }
 alias composer="php /usr/local/bin/composer.phar"
 
 ## ADB to GADB
+alias oadb="~/Library/Android/sdk/platform-tools/adb"
 alias adb="gadb"
