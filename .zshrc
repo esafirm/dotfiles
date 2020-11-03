@@ -40,7 +40,7 @@ BULLETTRAIN_PROMPT_ORDER=(
     git
     #hg
     cmd_exec_time
-  )
+)
 
 # Dotfiles
 export DOT="$HOME/dotfiles"
