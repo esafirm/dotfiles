@@ -9,10 +9,7 @@ bash ./themes/setup.sh
 bash ./brew
 
 ## Symlink all
-ln -s ~/dotfiles/.vimrc ~/.vimrc
-ln -s ~/dotfiles/.zshrc ~/.zshrc
-ln -s ~/dotfiles/.warprc ~/.warprc
-ln -s ~/dotfiles/.gitconfig ~/.gitconfig
+./setup-symlink.sh
 
 ## Vim Plug install
 curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
