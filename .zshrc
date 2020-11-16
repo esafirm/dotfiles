@@ -1,3 +1,6 @@
+# Incldue stdlib
+source ./stdlib.sh
+
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
 
@@ -44,6 +47,11 @@ BULLETTRAIN_PROMPT_ORDER=(
 
 # Dotfiles
 export DOT="$HOME/dotfiles"
+
+# Linux specific
+if isLinux; then
+    source ./linux/path.sh
+fi
 
 ## Node
 source ~/dotfiles/node/nodepath
