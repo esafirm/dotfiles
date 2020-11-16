@@ -1,5 +1,5 @@
 # Incldue stdlib
-source ./stdlib.sh
+source ~/dotfiles/stdlib.sh
 
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
