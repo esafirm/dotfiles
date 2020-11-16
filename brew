@@ -6,38 +6,38 @@ brew update && brew upgrade
 
 # Non Cask
 NONCASK=(
-	zsh-syntax-highlighting
-	mitmproxy 
-	ssh-copy-id
-	tmux
-	httpie
-	wget
-	htop
-	gifsicle
-	cdiff
-	tree
-	safe-rm
-	dropbox-uploader
-	tldr
-	wd
+    zsh-syntax-highlighting
+    mitmproxy
+    ssh-copy-id
+    tmux
+    httpie
+    wget
+    htop
+    gifsicle
+    cdiff
+    tree
+    safe-rm
+    dropbox-uploader
+    tldr
+    wd
 )
 
 for item in ${NONCASK[*]}; do
-	brew install $item
+    brew install $item
 done;
 
 
 # Cask
 
 CASKS=(
-	google-chrome
-	visual-studio-code
-	transmission
-	jetbrains-toolbox
+    google-chrome
+    visual-studio-code
+    transmission
+    jetbrains-toolbox
 )
 
 for item in ${CASKS[*]}; do
-	brew cask install $item
+    brew cask install $item
 done;
 
 # Cleanup
