@@ -14,6 +14,7 @@
 	watch = update-index --no-assume-unchanged
 	recent = !ruby ~/dotfiles/ruby/git_select.rb command:recent mode:select action:checkout
 	del = !ruby ~/dotfiles/ruby/git_select.rb command:recent mode:multiselect action:delete
+	clog = !ruby ~/dotfiles/ruby/git_select.rb command:recent mode:select action:log
 	rdate = branch --sort=-committerdate --format='%(HEAD) %(refname:short) %(color:bold red) %(authordate:relative)'
 	addpush = remote set-url --add --push
 	stat = diff HEAD^ --stat
