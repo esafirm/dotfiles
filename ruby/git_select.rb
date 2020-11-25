@@ -8,7 +8,7 @@ require_relative 'arg_parser'
 # Here's the options of the parameters
 # command: recent
 # mode: select, multiselect
-# action: checkout, delete
+# action: checkout, delete, log
 
 ARGS = ARGV.parse_named_params
 command, mode, action = ARGS.values_at(
@@ -47,6 +47,8 @@ when 'checkout'
   system "git checkout #{selected}"
 when 'delete'
   system "git branch -D #{selected_string}"
+when 'log'
+  system "git log --pretty=format:'%C(yellow)%h %Cred%ad %Cblue%an%Cgreen%d %Creset%s' --date=relative #{selected}"
 else
   abort("Action #{action} is not defined")
 end
