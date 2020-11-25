@@ -8,5 +8,3 @@ isLinux() {
 isMac() {
     [ "$(uname)" = "Darwin" ]
 }
-
-if isMac; then echo "This is BUG SUR"; fi
