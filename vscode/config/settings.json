@@ -166,5 +166,6 @@
             "viewType": "jupyter.notebook.ipynb",
             "filenamePattern": "*.ipynb"
         }
-    ]
+    ],
+    "javascript.preferences.importModuleSpecifier": "non-relative"
 }
