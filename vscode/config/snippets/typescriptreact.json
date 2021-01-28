@@ -34,10 +34,8 @@
       "import React from 'react'",
       "import { $1 } from 'react-native'",
       "",
-      "class $TM_FILENAME_BASE extends React.Component<{}> {",
-      "}",
-      "",
-      "export default $TM_FILENAME_BASE"
+      "export default function $TM_FILENAME_BASE() {",
+      "}"
     ]
   },
   "Empty function": {
@@ -55,14 +53,5 @@
   "Render": {
     "prefix": "ren",
     "body": ["public render() {", "  return ( ", "     $1", "  )", "}"]
-  },
-  "Redux Bind": {
-    "prefix": "redbind",
-    "body": [
-      "@AppStore.withStoreClass(",
-      " state => ({ $1 }),",
-      " dispatch => ({ $2 }),",
-      ")"
-    ]
   }
 }

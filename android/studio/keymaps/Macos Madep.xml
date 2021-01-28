@@ -46,6 +46,9 @@
     <keyboard-shortcut first-keystroke="meta escape" />
   </action>
   <action id="CompareTwoFiles" />
+  <action id="Diff.PrevChange">
+    <keyboard-shortcut first-keystroke="ctrl left" />
+  </action>
   <action id="Diff.ShowDiff" />
   <action id="DuplicatesForm.SendToRight" />
   <action id="EditorDeleteLine">
