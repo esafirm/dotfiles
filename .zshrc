@@ -86,10 +86,6 @@ done
 ## Kscript (Kotlin Script)
 source ~/dotfiles/kscripts/aliases
 
-# Ruby path from Brew
-export PATH="/usr/local/opt/ruby@2.3/bin:$PATH"
-export PATH="/usr/local/lib/ruby/gems/2.3.0/bin:$PATH"
-
 # Fastlane
 export PATH="$HOME/.fastlane/bin:$PATH"
 
