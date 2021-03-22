@@ -8,7 +8,6 @@
     "window.zoomLevel": 0,
     "material-icon-theme.showUpdateMessage": false,
     "editor.fontFamily": "Fira Code",
-    "editor.fontSize": 12,
     "editor.fontLigatures": true,
     "terminal.integrated.fontFamily": "Fira Code",
     "terminal.integrated.fontSize": 12,
@@ -167,5 +166,6 @@
             "filenamePattern": "*.ipynb"
         }
     ],
-    "javascript.preferences.importModuleSpecifier": "non-relative"
+    "javascript.preferences.importModuleSpecifier": "non-relative",
+    "dart.lineLength": 120
 }
