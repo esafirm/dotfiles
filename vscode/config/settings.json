@@ -167,5 +167,9 @@
         }
     ],
     "javascript.preferences.importModuleSpecifier": "non-relative",
-    "dart.lineLength": 120
+    "dart.lineLength": 120,
+    "terminal.explorerKind": "external",
+    "[html]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
 }
