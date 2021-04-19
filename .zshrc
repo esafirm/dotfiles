@@ -111,10 +111,6 @@ export PATH="$GOPATH/bin:$PATH"
 # OpenVPN
 export PATH="/usr/local/opt/openvpn/sbin:$PATH"
 
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="/Users/esa/.sdkman"
-[[ -s "/Users/esa/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/esa/.sdkman/bin/sdkman-init.sh"
-
 # added by travis gem
 [ -f /Users/esafirm/.travis/travis.sh ] && source /Users/esafirm/.travis/travis.sh
 
@@ -128,3 +124,7 @@ export COVERAGE_BLOCKING_LEVEL=35
 
 ## Make ^ working
 setopt NO_NOMATCH
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="/Users/esafirm/.sdkman"
+[[ -s "/Users/esafirm/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/esafirm/.sdkman/bin/sdkman-init.sh"

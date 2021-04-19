@@ -95,3 +95,6 @@ alias composer="php /usr/local/bin/composer.phar"
 ## ADB to GADB
 alias oadb="~/Library/Android/sdk/platform-tools/adb"
 alias adb="gadb"
+
+## Gradle
+alias gw="./gradlew"
