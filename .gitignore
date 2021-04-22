@@ -1,2 +1,6 @@
+## Hold installation files
+bin
+
+## Hold secret
 secrets
 secret_dir
