@@ -47,6 +47,9 @@ BULLETTRAIN_PROMPT_ORDER=(
 
 # Dotfiles
 export DOT="$HOME/dotfiles"
+export BIN="$DOT/bin"
+
+mkdir -p $BIN
 
 # Linux specific
 if isLinux; then
@@ -83,8 +86,9 @@ for file in ~/dotfiles/scripts/*; do
     source $file
 done
 
-## Kscript (Kotlin Script)
-source ~/dotfiles/kscripts/aliases
+## Kotlin
+source $DOT/kotlin/kotlin.sh
+source ~/dotfiles/kotlin/kscripts/aliases
 
 # Fastlane
 export PATH="$HOME/.fastlane/bin:$PATH"

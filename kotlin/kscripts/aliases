@@ -1,4 +1,4 @@
 ## Kscripts Path
-KSP="~/dotfiles/kscripts/"
+KSP="~/dotfiles/kotlin/kscripts/"
 
 alias isvalidjson=$KSP"is_valid_json.kts"
