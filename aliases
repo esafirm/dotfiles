@@ -23,6 +23,7 @@ alias glasthead="git rev-parse --short HEAD"
 alias gammen="git add -A && git commit --amend"
 alias gforce="git push origin HEAD -f"
 alias gacma="git add -A && git commit -m"
+alias gom="git commit -m"
 alias pbg="git_current_branch | pbcopy"
 
 guwd() {
