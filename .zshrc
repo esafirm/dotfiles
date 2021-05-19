@@ -64,7 +64,7 @@ source ~/dotfiles/ruby/ruby.path
 
 ## Android
 source ~/dotfiles/android/android.path
-source ~/dotfiles/android/func
+source ~/dotfiles/android/func.sh
 
 ## Aliases
 source ~/dotfiles/aliases
