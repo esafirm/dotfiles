@@ -1,5 +1,9 @@
+# Dotfiles
+export DOT="$HOME/dotfiles"
+export BIN="$DOT/bin"
+
 # Incldue stdlib
-source ~/dotfiles/stdlib.sh
+source $DOT/stdlib.sh
 
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
@@ -10,7 +14,7 @@ export ZSH=$HOME/.oh-my-zsh
 # time that oh-my-zsh is loaded.
 ZSH_THEME="bullet-train"
 
-source ~/dotfiles/plugins
+source $DOT/plugins
 
 # User configuration
 export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
@@ -44,10 +48,6 @@ BULLETTRAIN_PROMPT_ORDER=(
     #hg
     cmd_exec_time
 )
-
-# Dotfiles
-export DOT="$HOME/dotfiles"
-export BIN="$DOT/bin"
 
 mkdir -p $BIN
 
@@ -88,7 +88,11 @@ done
 
 ## Kotlin
 source $DOT/kotlin/kotlin.sh
-source ~/dotfiles/kotlin/kscripts/aliases
+source $DOT/kotlin/kscripts/aliases
+
+## Python
+source $DOT/python/aliases
+source $DOT/python/python.path
 
 # Fastlane
 export PATH="$HOME/.fastlane/bin:$PATH"

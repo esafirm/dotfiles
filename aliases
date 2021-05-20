@@ -34,20 +34,6 @@ gwu() {
     for f in $(git unwatched); do git watch $f; done
 }
 
-## Python
-if [ -e "/usr/local/Cellar/python@3.9/3.9.0/bin" ]; then
-    alias py="/usr/local/Cellar/python@3.9/3.9.0/bin/python3"
-    alias pip="/usr/local/Cellar/python@3.9/3.9.0/bin/pip3"
-else
-    alias py="python3"
-    alias pip="pip3"
-fi
-
-alias python="py"
-alias simplehttpserver="python ~/dotfiles/python/server.py"
-alias uuid="python -c 'import sys,uuid; sys.stdout.write(uuid.uuid4().hex)' | pbcopy && pbpaste && echo"
-alias json="python -mjson.tool"
-
 ## SpeedTest
 alias speedtest="~/dotfiles/speedtest-cli"
 
