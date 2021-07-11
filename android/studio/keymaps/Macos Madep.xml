@@ -16,6 +16,9 @@
   <action id="ActivateLogcatToolWindow">
     <keyboard-shortcut first-keystroke="meta 6" />
   </action>
+  <action id="ActivateProblemsViewToolWindow">
+    <keyboard-shortcut first-keystroke="meta 4" />
+  </action>
   <action id="ActivateTODOToolWindow" />
   <action id="ActivateTerminalToolWindow">
     <keyboard-shortcut first-keystroke="meta 2" />
@@ -73,6 +76,7 @@
     <keyboard-shortcut first-keystroke="alt f7" />
     <keyboard-shortcut first-keystroke="meta g" />
   </action>
+  <action id="GotoBookmark3" />
   <action id="GotoChangedFile" />
   <action id="GotoClass">
     <keyboard-shortcut first-keystroke="shift meta o" />

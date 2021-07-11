@@ -5,7 +5,6 @@
     "files.autoSave": "afterDelay",
     "editor.insertSpaces": false,
     "window.restoreFullscreen": true,
-    "window.zoomLevel": 0,
     "material-icon-theme.showUpdateMessage": false,
     "editor.fontFamily": "Fira Code",
     "editor.fontLigatures": true,
@@ -160,12 +159,9 @@
         "120",
         "--experimental"
     ],
-    "workbench.editorAssociations": [
-        {
-            "viewType": "jupyter.notebook.ipynb",
-            "filenamePattern": "*.ipynb"
-        }
-    ],
+    "workbench.editorAssociations": {
+        "*.ipynb": "jupyter-notebook"
+    },
     "javascript.preferences.importModuleSpecifier": "non-relative",
     "dart.lineLength": 120,
     "terminal.explorerKind": "external",
@@ -178,5 +174,17 @@
             "!Module"
         ],
         "editor.wordBasedSuggestions": false
+    },
+    "tabnine.experimentalAutoImports": true,
+    "notebook.cellToolbarLocation": {
+        "default": "right",
+        "jupyter-notebook": "left"
+    },
+    "editor.inlineSuggest.enabled": true,
+    "github.copilot.enable": {
+        "*": true,
+        "yaml": false,
+        "plaintext": false,
+        "markdown": false
     }
 }

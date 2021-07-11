@@ -42,14 +42,6 @@
     "prefix": "efu",
     "body": ["() => {}"]
   },
-  "Props": {
-    "prefix": "rnp",
-    "body": ["interface ${TM_FILENAME_BASE}Props { $1 }"]
-  },
-  "State": {
-    "prefix": "rns",
-    "body": ["interface ${TM_FILENAME_BASE}State { $1 }"]
-  },
   "Render": {
     "prefix": "ren",
     "body": ["public render() {", "  return ( ", "     $1", "  )", "}"]
