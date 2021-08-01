@@ -69,9 +69,6 @@ source ~/dotfiles/android/func.sh
 ## Aliases
 source ~/dotfiles/aliases
 
-## Secrets
-source ~/dotfiles/secrets
-
 ## MacOS related
 for file in ~/dotfiles/osx/*; do
     source $file
@@ -128,11 +125,12 @@ if [ -f '/Users/esafirm/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/esafirm
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/esafirm/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/esafirm/google-cloud-sdk/completion.zsh.inc'; fi
 
-export COVERAGE_BLOCKING_LEVEL=35
-
 ## Make ^ working
 setopt NO_NOMATCH
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="/Users/esafirm/.sdkman"
+export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "/Users/esafirm/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/esafirm/.sdkman/bin/sdkman-init.sh"
+
+## Secrets
+source ~/dotfiles/secrets
