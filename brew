@@ -20,6 +20,7 @@ NONCASK=(
     dropbox-uploader
     tldr
     wd
+    git-secret
 )
 
 for item in ${NONCASK[*]}; do
@@ -37,7 +38,7 @@ CASKS=(
 )
 
 for item in ${CASKS[*]}; do
-    brew cask install $item
+    brew install $item
 done;
 
 # Cleanup

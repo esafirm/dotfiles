@@ -134,3 +134,4 @@ export SDKMAN_DIR="$HOME/.sdkman"
 
 ## Secrets
 source ~/dotfiles/secrets
+source ~/dotfiles/keepsecret/secrets.sh

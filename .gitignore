@@ -4,3 +4,6 @@ bin
 ## Hold secret
 secrets
 secret_dir
+
+## Secret Repo
+keepsecret
