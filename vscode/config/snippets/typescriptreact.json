@@ -45,5 +45,13 @@
   "Render": {
     "prefix": "ren",
     "body": ["public render() {", "  return ( ", "     $1", "  )", "}"]
+  },
+  "ReactFragment" :{
+    "prefix": "rfra" ,
+    "body": [
+      "<>",
+      "$1",
+      "</>"
+    ]
   }
 }
