@@ -3,9 +3,10 @@
 ## Make sure we're on dotfiles
 cd ~/dotfiles
 
-## Setup ZSH and Brew
-bash ./zsh
+## Setup ZSH theme
 bash ./themes/setup.sh
+
+## Install softwares
 bash ./brew
 
 ## Symlink all
