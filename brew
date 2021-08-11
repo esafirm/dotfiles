@@ -21,6 +21,7 @@ NONCASK=(
     tldr
     wd
     git-secret
+    go
 )
 
 for item in ${NONCASK[*]}; do

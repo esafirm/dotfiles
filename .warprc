@@ -1,7 +1,4 @@
 oss:~/Documents/OSS
-bl:~/Documents/BL
-bla:~/Documents/BL/bukalapak_android
-rnp:~/Documents/ReactNativeProjects
 asp:~/Documents/AndroidStudioProjects
 dot:~/dotfiles
 adb:~/Documents/OSS/adb-indonesia
@@ -11,6 +8,4 @@ gesa:~/Documents/Go/src/github.com/esafirm
 pro:~/Documents/projects
 tungku:~/Documents/BL/tungku
 pref:~/Library/Preferences
-bli:~/Documents/BL/bukalapak_ios
 lib:~/Library
-o2o:~/Documents/BL/bukalapak_android/projects/bukalapak_mitra
