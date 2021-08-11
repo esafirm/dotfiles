@@ -1,20 +1,17 @@
 echo 'Installing NodeJs'
 
-#brew install node
+## Installing NodeJS
+brew install node
 
 modules=(
-	eslint
-	grunt
-	nodemon
-	create-react-app
-	surge
+    yarn
 )
 
 for module in ${modules[*]}; do
-	script="$script $module"
+    script="$script $module"
 done;
 
-echo "executing npm install -g$script" 
+echo "executing npm install -g $script"
 
 npm install -g $script
 
