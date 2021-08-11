@@ -28,13 +28,15 @@ for item in ${NONCASK[*]}; do
 done;
 
 
-# Cask
+## Cask
+## This is now more like a GUI app
 
 CASKS=(
     google-chrome
     visual-studio-code
     transmission
     jetbrains-toolbox
+    shiftit
 )
 
 for item in ${CASKS[*]}; do
@@ -43,4 +45,3 @@ done;
 
 # Cleanup
 brew cleanup
-brew cask cleanup

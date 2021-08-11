@@ -18,7 +18,9 @@ You don't need to:
 
 So what you've got to do is:
 
-Run `./setup.sh` in `~/dotfiles`
+1. Run `./setup-zsh.sh` to setup ZSH
+2. Run `./setup.sh` to install everything else
+
 Please read the script first when you want to run it. 
 
 ## VScode 
