@@ -186,6 +186,5 @@
         "yaml": false,
         "plaintext": false,
         "markdown": false
-    },
-    "workbench.colorTheme": "Visual Studio Dark"
+    }
 }
