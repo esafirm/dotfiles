@@ -3,7 +3,8 @@ export ANDROID_NDK_HOME="/usr/local/opt/android-ndk"
 export ANDROID_LOCAL_PROP="sdk.dir=$ANDROID_HOME"
 export PATH=$PATH:$ANDROID_HOME"/platform-tools"
 export PATH=$PATH:$ANDROID_HOME"/emulator"
-export PATH=$PATH:$ANDROID_HOME"/tools"
-export PATH=$PATH:$ANDROID_HOME"/tools/bin"
-export PATH=$PATH:$ANDROID_HOME"/build-tools/29.0.2"
 export PATH=$PATH:$DOT"/android/jetifier/jetifier-standalone/bin"
+
+## This path only works if you donwload the component from SDK manager
+export PATH=$PATH:$ANDROID_HOME"/build-tools/30.0.3"
+export PATH=$PATH:$ANDROID_HOME"/cmdline-tools/latest/bin"

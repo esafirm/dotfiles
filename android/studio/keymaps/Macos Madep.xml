@@ -12,6 +12,7 @@
   <action id="ActivateBuildToolWindow">
     <keyboard-shortcut first-keystroke="meta 0" />
   </action>
+  <action id="ActivateCommitToolWindow" />
   <action id="ActivateFavoritesToolWindow" />
   <action id="ActivateLogcatToolWindow">
     <keyboard-shortcut first-keystroke="meta 6" />
