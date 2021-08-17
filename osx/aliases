@@ -15,3 +15,6 @@ alias xb="xcodebuild"
 
 # Android Studio
 alias androidstudio="open -a /Applications/Android\ Studio.app"
+
+# Add executable to quarantine
+alias quarantine="xattr -d com.apple.quarantine"
