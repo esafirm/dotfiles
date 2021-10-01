@@ -3,11 +3,14 @@
     "workbench.iconTheme": "material-icon-theme",
     "workbench.editor.enablePreviewFromQuickOpen": false,
     "files.autoSave": "afterDelay",
-    "editor.insertSpaces": false,
     "window.restoreFullscreen": true,
     "material-icon-theme.showUpdateMessage": false,
+    // Editor
+    "editor.insertSpaces": false,
     "editor.fontFamily": "Fira Code",
     "editor.fontLigatures": true,
+    "editor.definitionLinkOpensInPeek": false,
+    // Terminal font
     "terminal.integrated.fontFamily": "Fira Code",
     "terminal.integrated.fontSize": 12,
     "terminal.integrated.fontLigatures": true,
@@ -22,9 +25,14 @@
     // Typescript
     "[typescript]": {
         "editor.tabSize": 2,
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
     },
     "typescript.updateImportsOnFileMove.enabled": "always",
+    // Typescript React
+    "[typescriptreact]": {
+        "editor.tabSize": 2,
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
     "editor.tokenColorCustomizations": {
         "textMateRules": [
             {
@@ -131,9 +139,6 @@
     // Ruby Related
     "solargraph.diagnostics": false,
     "solargraph.formatting": false,
-    "[typescriptreact]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
     "[javascriptreact]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
@@ -169,7 +174,6 @@
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "[python]": {
-    
         "gitlens.codeLens.symbolScopes": [
             "!Module"
         ],
