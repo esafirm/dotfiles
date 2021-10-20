@@ -90,3 +90,7 @@ alias adb="gadb"
 
 ## Gradle
 alias gw="./gradlew"
+
+## Cat to Bat
+alias cat="bat --paging=never"
+alias ocat="cat"
