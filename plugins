@@ -5,4 +5,5 @@ plugins=(
 	react-native
 	docker
 	wd
+	zsh-syntax-highlighting
 )

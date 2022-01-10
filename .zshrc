@@ -20,9 +20,6 @@ source $DOT/plugins
 export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 # export MANPATH="/usr/local/man:$MANPATH"
 
-## ZSH Syntax Highlighting
-isMac && source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
 ## Init Oh My ZSH
 source $ZSH/oh-my-zsh.sh
 
@@ -102,35 +99,16 @@ export PATH="$HOME/Applications/flutter/bin/cache/dart-sdk/bin:$PATH"
 # Local bin
 export PATH="$HOME/Applications/local/bin:$PATH"
 
-# tabtab source for serverless package
-# uninstall by removing these lines or running `tabtab uninstall serverless`
-[[ -f /usr/local/lib/node_modules/serverless/node_modules/tabtab/.completions/serverless.zsh ]] && . /usr/local/lib/node_modules/serverless/node_modules/tabtab/.completions/serverless.zsh
-# tabtab source for sls package
-# uninstall by removing these lines or running `tabtab uninstall sls`
-[[ -f /usr/local/lib/node_modules/serverless/node_modules/tabtab/.completions/sls.zsh ]] && . /usr/local/lib/node_modules/serverless/node_modules/tabtab/.completions/sls.zsh
-
 # Go Path
 export GOPATH="$HOME/Documents/Go"
 export PATH="$GOPATH/bin:$PATH"
-
-# OpenVPN
-export PATH="/usr/local/opt/openvpn/sbin:$PATH"
-
-# added by travis gem
-[ -f /Users/esafirm/.travis/travis.sh ] && source /Users/esafirm/.travis/travis.sh
-
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/esafirm/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/esafirm/google-cloud-sdk/path.zsh.inc'; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f '/Users/esafirm/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/esafirm/google-cloud-sdk/completion.zsh.inc'; fi
 
 ## Make ^ working
 setopt NO_NOMATCH
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="$HOME/.sdkman"
-[[ -s "/Users/esafirm/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/esafirm/.sdkman/bin/sdkman-init.sh"
+# export SDKMAN_DIR="$HOME/.sdkman"
+# [[ -s "/Users/esafirm/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/esafirm/.sdkman/bin/sdkman-init.sh"
 
 ## Secrets
-source ~/dotfiles/keepsecret/secrets.sh
+# source ~/dotfiles/keepsecret/secrets.sh
