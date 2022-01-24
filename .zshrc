@@ -35,7 +35,7 @@ BULLETTRAIN_PROMPT_ORDER=(
     context
     dir
     #perl
-    ruby
+    # ruby
     virtualenv
     #nvm
     #aws
@@ -106,9 +106,12 @@ export PATH="$GOPATH/bin:$PATH"
 ## Make ^ working
 setopt NO_NOMATCH
 
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-# export SDKMAN_DIR="$HOME/.sdkman"
-# [[ -s "/Users/esafirm/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/esafirm/.sdkman/bin/sdkman-init.sh"
-
 ## Secrets
-# source ~/dotfiles/keepsecret/secrets.sh
+# This is where you keep the configurations specific to the machine
+if [ -d "$DOT/keepsecret" ]; then
+    source $DOT/keepsecret/secrets.sh
+fi
+
+if [ -f "$DOT/secrets" ]; then
+    source $DOT/secrets
+fi
