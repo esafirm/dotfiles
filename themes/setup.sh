@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-THEME_FILE=~/dotfiles/themes/theme.sh
+THEME_FILE=$DOT/themes/theme.sh
 
 # Sometimes the custom path is empty. Use default one
 ZSH_CUSTOM="$ZSH/custom"

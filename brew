@@ -17,7 +17,6 @@ NONCASK=(
     cdiff
     tree
     safe-rm
-    dropbox-uploader
     tldr
     wd
     git-secret
