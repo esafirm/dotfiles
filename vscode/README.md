@@ -16,7 +16,7 @@ Extension have two functions.
 How to use?
 
 ```
-cd ~/dotfiles/vscode/ext
+cd $DOT/vscode/ext
 ./ext.sh install 
 ./ext.sh update
 ```

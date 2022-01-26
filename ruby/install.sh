@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-cd ~/dotfiles/ruby
+cd $DOT/ruby
 
 ## Install required gemfiles
 bundle install

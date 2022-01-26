@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
 ## Make sure we're on dotfiles
-cd ~/dotfiles
+cd $DOT
 
 ## Setup ZSH theme
-bash ./themes/setup.sh
+./themes/setup.sh
 
 ## Install softwares
-bash ./brew
+./brew
 
 ## Symlink all
 ./setup-symlink.sh

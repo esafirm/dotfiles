@@ -54,29 +54,29 @@ if isLinux; then
 fi
 
 ## Node
-source ~/dotfiles/node/nodepath
+source $DOT/node/nodepath
 
 ## Ruby
-source ~/dotfiles/ruby/ruby.path
+source $DOT/ruby/ruby.path
 
 ## Android
-source ~/dotfiles/android/android.path
-source ~/dotfiles/android/func.sh
+source $DOT/android/android.path
+source $DOT/android/func.sh
 
 ## Aliases
-source ~/dotfiles/aliases
+source $DOT/aliases
 
 ## MacOS related
-for file in ~/dotfiles/osx/*; do
+for file in $DOT/osx/*; do
     source $file
 done
 
 ## Completion
-source ~/dotfiles/completion/pip
-source ~/dotfiles/completion/npm
+source $DOT/completion/pip
+source $DOT/completion/npm
 
 ## Scripts
-for file in ~/dotfiles/scripts/*; do
+for file in $DOT/scripts/*; do
     source $file
 done
 
