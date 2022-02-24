@@ -1,3 +1,5 @@
+## This files declare what plugin to use in our ZSH setup
+
 plugins=(
 	git
 	yarn

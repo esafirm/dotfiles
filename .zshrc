@@ -14,6 +14,7 @@ export ZSH=$HOME/.oh-my-zsh
 # time that oh-my-zsh is loaded.
 ZSH_THEME="bullet-train"
 
+# ZSH plugins
 source $DOT/plugins
 
 # User configuration
@@ -112,6 +113,7 @@ if [ -d "$DOT/keepsecret" ]; then
     source $DOT/keepsecret/secrets.sh
 fi
 
+# Same as above but for local only secrets that's not worth to be synced
 if [ -f "$DOT/secrets" ]; then
     source $DOT/secrets
 fi
