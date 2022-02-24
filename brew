@@ -6,7 +6,6 @@ brew update && brew upgrade
 
 # Non Cask
 NONCASK=(
-    zsh-syntax-highlighting
     mitmproxy
     ssh-copy-id
     tmux
