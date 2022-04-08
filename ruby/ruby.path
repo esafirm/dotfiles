@@ -4,4 +4,4 @@ LAST_RUBY_VERSION=$(ls -t /usr/local/lib/ruby/gems | head -1)
 export RUBY_VERSION=$LAST_RUBY_VERSION
 export PATH="/usr/local/lib/ruby/gems/$RUBY_VERSION/bin:$PATH"
 export PATH="/usr/local/opt/ruby/bin:$PATH"
-export PATH="$PATH:$HOME/.rvm/bin"
+# export PATH="$HOME/.rvm/bin:$PATH"
