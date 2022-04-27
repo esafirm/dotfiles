@@ -5,12 +5,18 @@
     "files.autoSave": "afterDelay",
     "window.restoreFullscreen": true,
     "material-icon-theme.showUpdateMessage": false,
-    // Editor
+    // ===========================
+    // EDITOR
+    // ===========================
     "editor.insertSpaces": false,
     "editor.fontFamily": "Fira Code",
-    "editor.fontLigatures": true,
     "editor.definitionLinkOpensInPeek": false,
-    // Terminal font
+    "editor.fontLigatures": true,
+    "editor.inlayHints.enabled": false,
+    "editor.minimap.enabled": false,
+    // ===========================
+    // TERMINAL
+    // ===========================
     "terminal.integrated.fontFamily": "Fira Code",
     "terminal.integrated.fontSize": 12,
     "terminal.integrated.fontLigatures": true,
@@ -114,7 +120,6 @@
         ]
     },
     "window.newWindowDimensions": "inherit",
-    "editor.minimap.enabled": false,
     "go.useLanguageServer": true,
     "jenkins-jack.jenkins.connections": [
         {
@@ -136,9 +141,6 @@
         "aliases": "shellscript",
         "*.path": "shellscript"
     },
-    // Ruby Related
-    "solargraph.diagnostics": false,
-    "solargraph.formatting": false,
     "[javascriptreact]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
@@ -179,7 +181,6 @@
         ],
         "editor.wordBasedSuggestions": false
     },
-    "tabnine.experimentalAutoImports": true,
     "notebook.cellToolbarLocation": {
         "default": "right",
         "jupyter-notebook": "left"
@@ -187,9 +188,21 @@
     "editor.inlineSuggest.enabled": true,
     "github.copilot.enable": {
         "*": true,
-        "yaml": false,
+        "yaml": true,
         "plaintext": false,
         "markdown": false
     },
-    "ruby.rubocop.onSave": false
+    // ===========================
+    // RUBY
+    // ===========================
+    "[ruby]": {
+        "editor.defaultFormatter": "castwide.solargraph"
+    },
+    "ruby.lint": {
+        "rubocop": true
+    },
+    "ruby.rubocop.onSave": false,
+    "ruby.useLanguageServer": true,
+    "solargraph.diagnostics": false,
+    "solargraph.formatting": false,
 }
