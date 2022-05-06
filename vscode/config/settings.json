@@ -189,6 +189,7 @@
         "*": false,
         "yaml": false,
         "plaintext": false,
-        "markdown": false
+        "markdown": false,
+        "typescript": true
     }
 }

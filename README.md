@@ -35,6 +35,11 @@ Please read the script first when you want to run it.
 
 For plugin we use [vim-plug](https://github.com/junegunn/vim-plug) and the setup is already included in `setup.sh`
 
+## Manual Setup
+
+Currently, we still need to manually setup this because we haven't found a way to automate it.
+
+- Initliazation of [Cleanshot](https://cleanshot.com/)
 ## Author
 
 esafirm 
