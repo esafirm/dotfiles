@@ -21,11 +21,13 @@ ms-azuretools.vscode-docker
 ms-python.python
 ms-python.vscode-pylance
 ms-toolsai.jupyter
+ms-toolsai.jupyter-keymap
+ms-toolsai.jupyter-renderers
 naco-siren.gradle-language
 PKief.material-icon-theme
+rangav.vscode-thunder-client
 rebornix.ruby
 rust-lang.rust
 shakram02.bash-beautify
-tabeyti.jenkins-jack
 vncz.vscode-apielements
 wingrunr21.vscode-ruby
