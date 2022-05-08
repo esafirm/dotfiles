@@ -97,3 +97,15 @@ fi
 if [ -f "$DOT/secrets" ]; then
     source $DOT/secrets
 fi
+
+# SDKMan installation
+# THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="$HOME/.sdkman"
+if [ -d $SDKMAN_DIR ]; then
+    [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+else
+    echo "SDKMAN! is not installed"
+fi
+
+## Rust env
+source $DOT/rust/rust.env
