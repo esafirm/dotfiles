@@ -10,4 +10,4 @@ export PATH=$PATH:$ANDROID_HOME"/build-tools/30.0.3"
 export PATH=$PATH:$ANDROID_HOME"/cmdline-tools/latest/bin"
 
 ## Java related
-export JAVA_HOME=$(java -XshowSettings:properties -version 2>&1 > /dev/null | grep 'java.home' | cut -d'=' -f2 | trim)
+# export JAVA_HOME=$(java -XshowSettings:properties -version 2>&1 > /dev/null | grep 'java.home' | cut -d'=' -f2 | trim)
