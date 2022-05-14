@@ -42,39 +42,66 @@ questions = [
 ]
 answers = inquirer.prompt(questions)
 
+
+def link_files(current_path, install_path, excluded_files):
+    print("Source: {}".format(current_path))
+    print("Dest: {}".format(install_path))
+
+    answer = input("Is this the right path? Y/n:  ")
+
+    if answer != "Y":
+        print("Run again if you have the right path")
+        sys.exit()
+
+    if os.path.exists(install_path) == False:
+        print("IDE path not exist")
+        sys.exit()
+
+    files = []
+    for file in os.listdir(current_path):
+        print("Path - {}".format(file))
+        if file not in excluded_files:
+            files.append(file)
+
+    print("Files will be replaced: {}".format(files))
+
+    for file in files:
+        studio_file = install_path + file
+        current_file = current_path + "/" + file
+
+        # Removing files in IDE dir
+        if os.path.exists(studio_file):
+            if os.path.isdir(studio_file):
+                shutil.rmtree(studio_file)
+            else:
+                os.remove(studio_file)
+            print("Removing: {}".format(studio_file))
+
+        # Copy dotfiles to IDE dir
+        os.symlink(current_file, studio_file)
+        print("Create link for: {}".format(current_file))
+
+    print("Done replacing files to {}\n\n".format(install_path))
+
+
 current_path = os.getcwd()
-install_path = base_dir + answers['path'] + "/"
+root_path = base_dir + answers['path'] + "/"
 
-print("Path: " + install_path)
-answer = input("Is this the right path? Y/n:  ")
+# Link root
+link_files(
+    current_path=current_path,
+    install_path=root_path,
+    excluded_files=["options", "."]
+)
 
-if answer != "Y":
-    print("Run again if you have the right path")
-    sys.exit()
-
-if os.path.exists(install_path) == False:
-    print("IDE path not exist")
-    sys.exit()
-
-files = []
-for file in os.listdir(current_path):
-    if "." not in file:
-        files.append(file)
-
-print("Files ready to be replaced: {}".format(len(files)))
-
-for file in files:
-    studio_file = install_path + file
-    current_file = current_path + "/" + file
-
-    # Removing files in IDE dir
-    if os.path.exists(studio_file):
-        shutil.rmtree(studio_file)
-        print("Removing: {}".format(studio_file))
-
-    # Copy dotfiles to IDE dir
-    os.symlink(current_file, studio_file)
-    print("Create link for: {}".format(current_file))
+# Link options
+options_path = current_path + "/options/"
+options_install_path = root_path + "options/"
+link_files(
+    current_path=options_path,
+    install_path=options_install_path,
+    excluded_files=[]
+)
 
 
 print("Done.")

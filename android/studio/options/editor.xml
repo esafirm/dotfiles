@@ -1,0 +1,32 @@
+<application>
+  <component name="CodeInsightSettings">
+    <option name="AUTO_POPUP_COMPLETION_LOOKUP" value="false" />
+    <EXCLUDED_PACKAGE NAME="java.lang.reflect.Modifier" />
+    <EXCLUDED_PACKAGE NAME="java.nio.file.WatchEvent.Modifier" />
+    <EXCLUDED_PACKAGE NAME="android.app.LauncherActivity.ListItem" />
+    <EXCLUDED_PACKAGE NAME="android.graphics.drawable.Icon" />
+    <EXCLUDED_PACKAGE NAME="android.graphics.fonts.FontFamily" />
+    <EXCLUDED_PACKAGE NAME="android.inputmethodservice.Keyboard.Row" />
+    <EXCLUDED_PACKAGE NAME="android.text.layout.Alignment" />
+    <EXCLUDED_PACKAGE NAME="android.widget.GridLayout.Alignment" />
+    <EXCLUDED_PACKAGE NAME="android.view.RoundedCorner" />
+    <EXCLUDED_PACKAGE NAME="android.view.Surface" />
+    <EXCLUDED_PACKAGE NAME="java.time.format.TextStyle" />
+    <EXCLUDED_PACKAGE NAME="org.w3c.dom.Text" />
+  </component>
+  <component name="DefaultFont">
+    <option name="FONT_FAMILY" value="Fira Code" />
+    <option name="FONT_REGULAR_SUB_FAMILY" value="Regular" />
+    <option name="FONT_BOLD_SUB_FAMILY" value="Bold" />
+    <option name="USE_LIGATURES" value="true" />
+  </component>
+  <component name="EditorSettings">
+    <option name="USE_SOFT_WRAPS" value="" />
+    <option name="SHOW_QUICK_DOC_ON_MOUSE_OVER_ELEMENT" value="false" />
+    <option name="IS_WHEEL_FONTCHANGE_ENABLED" value="true" />
+  </component>
+  <component name="InlayHintsSettings">
+    <option name="lastViewedProviderKeyId" value="parameter.hints.old" />
+  </component>
+</application>
+
