@@ -197,7 +197,7 @@
     // RUBY
     // ===========================
     "[ruby]": {
-        "editor.defaultFormatter": "castwide.solargraph"
+        "editor.defaultFormatter": "misogi.ruby-rubocop"
     },
     "ruby.lint": {
         "rubocop": true
