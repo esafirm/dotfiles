@@ -49,6 +49,10 @@ when 'delete'
   system "git branch -D #{selected_string}"
 when 'log'
   system "git log --pretty=format:'%C(yellow)%h %Cred%ad %Cblue%an%Cgreen%d %Creset%s' --date=relative #{selected}"
+when 'rebase'
+  system "git rebase #{selected}"
+when 'merge'
+  system "git merge #{selected}"
 else
   abort("Action #{action} is not defined")
 end

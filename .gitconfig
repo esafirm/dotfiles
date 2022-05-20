@@ -12,13 +12,19 @@
 	unwatch = update-index --assume-unchanged
 	unwatched = !git ls-files -v | grep "^[[:lower:]]" | cut -d' ' -f2
 	watch = update-index --no-assume-unchanged
-	recent = !ruby $DOT/ruby/git_select.rb command:recent mode:select action:checkout
-	del = !ruby $DOT/ruby/git_select.rb command:recent mode:multiselect action:delete
-	clog = !ruby $DOT/ruby/git_select.rb command:recent mode:select action:log
-	cr = !ruby $DOT/ruby/git_select.rb command:recent mode:select action:rebase
 	rdate = branch --sort=-committerdate --format='%(HEAD) %(refname:short) %(color:bold red) %(authordate:relative)'
 	addpush = remote set-url --add --push
 	stat = diff HEAD^ --stat
+
+	recent = !ruby $DOT/ruby/git_select.rb command:recent mode:select action:checkout
+	del = !ruby $DOT/ruby/git_select.rb command:recent mode:multiselect action:delete
+	clog = !ruby $DOT/ruby/git_select.rb command:recent mode:select action:log
+
+	## cr -> choose rebase
+	cr = !ruby $DOT/ruby/git_select.rb command:recent mode:select action:rebase
+	## cm -> choose merge
+	cm = !ruby $DOT/ruby/git_select.rb command:recent mode:select action:merge
+
 [color]
 	ui = auto
 [filter "lfs"]

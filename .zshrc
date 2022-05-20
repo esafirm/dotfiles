@@ -98,6 +98,12 @@ if [ -f "$DOT/secrets" ]; then
     source $DOT/secrets
 fi
 
+## Rust env
+source $DOT/rust/rust.env
+
+## RVM
+export PATH="$PATH:$HOME/.rvm/bin"
+
 # SDKMan installation
 # THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="$HOME/.sdkman"
@@ -106,6 +112,3 @@ if [ -d $SDKMAN_DIR ]; then
 else
     echo "SDKMAN! is not installed"
 fi
-
-## Rust env
-source $DOT/rust/rust.env
