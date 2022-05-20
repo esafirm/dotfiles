@@ -190,7 +190,8 @@
         "*": true,
         "yaml": true,
         "plaintext": false,
-        "markdown": false
+        "markdown": false,
+        "typescript": true
     },
     // ===========================
     // RUBY
