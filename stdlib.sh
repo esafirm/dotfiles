@@ -8,3 +8,7 @@ isLinux() {
 isMac() {
     [ "$(uname)" = "Darwin" ]
 }
+
+trim() {
+    awk '{$1=$1};1'
+}

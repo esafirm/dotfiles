@@ -14,6 +14,7 @@ export ZSH=$HOME/.oh-my-zsh
 # time that oh-my-zsh is loaded.
 ZSH_THEME="bullet-train"
 
+# ZSH plugins
 source $DOT/plugins
 
 # User configuration
@@ -24,27 +25,7 @@ export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 source $ZSH/oh-my-zsh.sh
 
 ## Bullet-train
-BULLETTRAIN_DIR_BG="blue"
-BULLETTRAIN_DIR_FG="white"
-BULLETTRAIN_CONTEXT_DEFAULT_USER=$(whoami)
-BULLETTRAIN_PROMPT_ORDER=(${BULLETTRAIN_PROMPT_ORDER:#(nvm)})
-BULLETTRAIN_PROMPT_ORDER=(
-    time
-    status
-    custom
-    context
-    dir
-    #perl
-    # ruby
-    virtualenv
-    #nvm
-    #aws
-    #go
-    #elixir
-    git
-    #hg
-    cmd_exec_time
-)
+source $DOT/zsh-theme.sh
 
 mkdir -p $BIN
 
@@ -112,6 +93,19 @@ if [ -d "$DOT/keepsecret" ]; then
     source $DOT/keepsecret/secrets.sh
 fi
 
+# Same as above but for local only secrets that's not worth to be synced
 if [ -f "$DOT/secrets" ]; then
     source $DOT/secrets
 fi
+
+# SDKMan installation
+# THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="$HOME/.sdkman"
+if [ -d $SDKMAN_DIR ]; then
+    [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+else
+    echo "SDKMAN! is not installed"
+fi
+
+## Rust env
+source $DOT/rust/rust.env
