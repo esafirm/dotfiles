@@ -253,5 +253,9 @@
   {
     "key": "cmd+k j",
     "command": "extension.jenkins-jack.jacks"
+  },
+  {
+    "key": "ctrl+alt+cmd+l",
+    "command": "ruby.rubocop"
   }
 ]

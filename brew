@@ -20,6 +20,7 @@ NONCASK=(
     wd
     git-secret
     go
+    tokei
 )
 
 for item in ${NONCASK[*]}; do
