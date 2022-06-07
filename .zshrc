@@ -104,6 +104,9 @@ source $DOT/rust/rust.env
 ## RVM
 export PATH="$PATH:$HOME/.rvm/bin"
 
+## Brew
+export HOMEBREW_NO_AUTO_UPDATE=1
+
 # SDKMan installation
 # THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="$HOME/.sdkman"
