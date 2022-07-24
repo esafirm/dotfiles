@@ -1,5 +1,9 @@
 export ANDROID_HOME="$HOME/Library/Android/sdk"
-export ANDROID_NDK_HOME="/usr/local/opt/android-ndk"
+
+latest_ndk=$(ls -t $ANDROID_HOME/ndk | head -n1)
+
+export ANDROID_NDK_HOME="$ANDROID_HOME/ndk/$latest_ndk"
+
 export ANDROID_LOCAL_PROP="sdk.dir=$ANDROID_HOME"
 export PATH=$PATH:$ANDROID_HOME"/platform-tools"
 export PATH=$PATH:$ANDROID_HOME"/emulator"
