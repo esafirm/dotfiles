@@ -205,6 +205,5 @@
     "ruby.rubocop.onSave": false,
     "ruby.useLanguageServer": true,
     "solargraph.diagnostics": false,
-    "solargraph.formatting": false,
     "workbench.colorTheme": "Darcula Theme from IntelliJ",
 }
