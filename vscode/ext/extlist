@@ -1,4 +1,3 @@
-AlanWalk.markdown-toc
 alexcvzz.vscode-sqlite
 bungcip.better-toml
 castwide.solargraph
@@ -7,13 +6,14 @@ Dart-Code.flutter
 eamodio.gitlens
 esbenp.prettier-vscode
 formulahendry.code-runner
-fwcd.kotlin
 GitHub.copilot
 golang.go
 GraphQL.vscode-graphql
+GraphQL.vscode-graphql-syntax
 ivory-lab.jenkinsfile-support
 jebbs.plantuml
 k--kato.intellij-idea-keybindings
+kaiwood.endwise
 mathiasfrohlich.Kotlin
 mechatroner.rainbow-csv
 misogi.ruby-rubocop
@@ -21,13 +21,11 @@ ms-azuretools.vscode-docker
 ms-python.python
 ms-python.vscode-pylance
 ms-toolsai.jupyter
-ms-toolsai.jupyter-keymap
-ms-toolsai.jupyter-renderers
 naco-siren.gradle-language
 PKief.material-icon-theme
-rangav.vscode-thunder-client
-rebornix.ruby
 rust-lang.rust
+sabieber.HOCON
 shakram02.bash-beautify
+trinm1709.dracula-theme-from-intellij
 vncz.vscode-apielements
 wingrunr21.vscode-ruby
