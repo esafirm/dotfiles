@@ -4,4 +4,7 @@ LAST_RUBY_VERSION=$(ls -t /usr/local/lib/ruby/gems | head -1)
 export RUBY_VERSION=$LAST_RUBY_VERSION
 export PATH="/usr/local/lib/ruby/gems/$RUBY_VERSION/bin:$PATH"
 export PATH="/usr/local/opt/ruby/bin:$PATH"
-# export PATH="$HOME/.rvm/bin:$PATH"
+
+## --- RVM ----
+## There should be a script that automatically or at least help the installation of RVM.
+export PATH="$PATH:$HOME/.rvm/bin"

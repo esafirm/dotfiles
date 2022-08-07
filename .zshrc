@@ -101,9 +101,6 @@ fi
 ## Rust env
 source $DOT/rust/rust.env
 
-## RVM
-export PATH="$PATH:$HOME/.rvm/bin"
-
 ## Brew
 export HOMEBREW_NO_AUTO_UPDATE=1
 
