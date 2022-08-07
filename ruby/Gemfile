@@ -1,5 +1,18 @@
 # frozen_string_literal: true
 
+## This is all gems that required for the system to works properly
+## Every gem should have a description of where it is used
+##
+## In case you forgot, to install this you must use `bundle install`
+##
+
 source 'https://rubygems.org'
 
+# This used on git_select.rb scripts
 gem 'tty-prompt'
+
+# This is used for VSCode rubocop extension
+gem 'rubocop'
+
+# This is used for VSCode solargraph extension
+gem 'solargraph'

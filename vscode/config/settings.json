@@ -2,7 +2,10 @@
 {
     "workbench.iconTheme": "material-icon-theme",
     "workbench.editor.enablePreviewFromQuickOpen": false,
+    "workbench.colorTheme": "Darcula Theme from IntelliJ",
+    "files.insertFinalNewline": true,
     "files.autoSave": "afterDelay",
+    "files.autoSaveDelay": 500,
     "window.restoreFullscreen": true,
     "material-icon-theme.showUpdateMessage": false,
     // ===========================
@@ -205,5 +208,5 @@
     "ruby.rubocop.onSave": false,
     "ruby.useLanguageServer": true,
     "solargraph.diagnostics": false,
-    "workbench.colorTheme": "Darcula Theme from IntelliJ",
+    "solargraph.formatting": false,
 }
