@@ -17,6 +17,8 @@
 	stat = diff HEAD^ --stat
 
 	recent = !ruby $DOT/ruby/git_select.rb command:recent mode:select action:checkout
+	r = recent
+	
 	del = !ruby $DOT/ruby/git_select.rb command:recent mode:multiselect action:delete
 	clog = !ruby $DOT/ruby/git_select.rb command:recent mode:select action:log
 
