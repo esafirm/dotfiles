@@ -91,3 +91,7 @@ alias gw="./gradlew"
 ## Cat to Bat
 alias cat="bat --paging=never"
 alias ocat="cat"
+
+## Suspend
+alias suspend="pkill -SIGSTOP"
+alias cont="pkill -SIGCONT"
