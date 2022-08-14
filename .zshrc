@@ -112,3 +112,6 @@ if [ -d $SDKMAN_DIR ]; then
 else
     echo "SDKMAN! is not installed"
 fi
+
+## Flutter
+source $DOT/flutter/config.sh
