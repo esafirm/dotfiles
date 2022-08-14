@@ -1,4 +1,6 @@
 Coverage
+Lombook Plugin
+PerforceDirectPlugin
 Subversion
 TestNG-J
 com.google.appindexing
@@ -8,10 +10,16 @@ com.google.gct.core
 com.google.gct.login
 com.google.gct.testing
 com.google.services.firebase
+com.intellij.laf.macos
+com.intellij.plugins.eclipsekeymap
+com.intellij.plugins.netbeanskeymap
+com.intellij.plugins.visualstudiokeymap
 com.intellij.tasks
+com.intellij.uiDesigner
+com.jetbrains.space
 hg4idea
 org.arkivanov.mvikotlin.plugin.idea.timetravel
 org.jetbrains.debugger.streams
+org.jetbrains.idea.eclipse
 org.jetbrains.plugins.github
 org.jetbrains.plugins.terminal
-
