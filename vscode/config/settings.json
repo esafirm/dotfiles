@@ -7,6 +7,10 @@
     "files.autoSave": "afterDelay",
     "files.autoSaveDelay": 500,
     "window.restoreFullscreen": true,
+    "git.mergeEditor": false,
+    // ===========================
+    // EDITOR APPEARANCE
+    // ===========================
     "material-icon-theme.showUpdateMessage": false,
     // ===========================
     // EDITOR
