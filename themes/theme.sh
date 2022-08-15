@@ -421,9 +421,20 @@ prompt_git() {
   fi
 
   local ref dirty mode repo_path git_prompt
-  repo_path=$(git rev-parse --git-dir 2>/dev/null)
 
   if $(git rev-parse --is-inside-work-tree >/dev/null 2>&1); then
+
+    ## In fast mode we don't care about all fancy stuff
+    if [[ "$(__git_prompt_git config --get dotfiles.fast-mode 2>/dev/null)" = 1 ]]; then
+      prompt_segment $BULLETTRAIN_GIT_BG $BULLETTRAIN_GIT_FG
+      eval prompt=$(fast_git_prompt)
+      echo -n ${prompt}
+      return
+    fi
+
+    # TODO: figure out what this line is doing, delete it if it's not needed
+    repo_path=$(git rev-parse --git-dir 2>/dev/null)
+
     if [[ $BULLETTRAIN_GIT_COLORIZE_DIRTY == true && -n $(git status --porcelain --ignore-submodules) ]]; then
       BULLETTRAIN_GIT_BG=$BULLETTRAIN_GIT_COLORIZE_DIRTY_BG_COLOR
       BULLETTRAIN_GIT_FG=$BULLETTRAIN_GIT_COLORIZE_DIRTY_FG_COLOR
@@ -438,6 +449,18 @@ prompt_git() {
     fi
   fi
 }
+
+function fast_git_prompt() {
+    local branch rev
+    branch=$(git branch --show-current 2>/dev/null)
+    if [ -n "$branch" ]; then
+        echo "\${ZSH_THEME_GIT_PROMPT_PREFIX}${branch}"
+    else
+        rev=$(git rev-parse --short HEAD 2>/dev/null)
+        echo "\${ZSH_THEME_GIT_PROMPT_PREFIX}${rev}"
+    fi
+}
+
 
 prompt_hg() {
   local rev status
