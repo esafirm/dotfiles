@@ -257,5 +257,43 @@
   {
     "key": "ctrl+alt+cmd+l",
     "command": "ruby.rubocop"
+  },
+  {
+    "key": "cmd+k r",
+    "command": "-workbench.action.files.revealActiveFileInWindows"
+  },
+  {
+    "key": "cmd+k r",
+    "command": "dart.hotReload",
+    "when": "inDebugMode && debugType == 'dart'"
+  },
+  {
+    "key": "ctrl+f5",
+    "command": "-dart.hotReload",
+    "when": "inDebugMode && debugType == 'dart'"
+  },
+  {
+    "key": "ctrl+cmd+r",
+    "command": "flutter.hotReload",
+    "when": "inDebugMode"
+  },
+  {
+    "key": "cmd+k shift+cmd+r",
+    "command": "workbench.action.debug.restart",
+    "when": "inDebugMode"
+  },
+  {
+    "key": "shift+cmd+f5",
+    "command": "-workbench.action.debug.restart",
+    "when": "inDebugMode"
+  },
+  {
+    "key": "cmd+k cmd+r",
+    "command": "-workbench.action.keybindingsReference"
+  },
+  {
+    "key": "cmd+k cmd+r",
+    "command": "-git.revertSelectedRanges",
+    "when": "isInDiffEditor"
   }
 ]

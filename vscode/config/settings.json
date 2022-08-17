@@ -8,6 +8,7 @@
     "files.autoSaveDelay": 500,
     "window.restoreFullscreen": true,
     "git.mergeEditor": false,
+    "debug.toolBarLocation": "docked",
     // ===========================
     // EDITOR APPEARANCE
     // ===========================
@@ -213,4 +214,6 @@
     "ruby.useLanguageServer": true,
     "solargraph.diagnostics": false,
     "solargraph.formatting": false,
+    "dart.debugExternalPackageLibraries": true,
+    "dart.debugSdkLibraries": false,
 }
