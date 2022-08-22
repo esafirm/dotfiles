@@ -19,7 +19,8 @@ alias gitlog="git log --pretty=format:'%C(yellow)%h %Cred%ad %Cblue%an%Cgreen%d 
 alias glast="git rev-parse --short"
 alias glasthead="git rev-parse --short HEAD"
 alias gammen="git add -A && git commit --amend --no-edit"
-alias gforce="git push origin HEAD -f"
+alias gforce="git push origin HEAD --force-with-lease"
+alias gforceforce="git push origin HEAD -f"
 alias gam="git add -A && git commit -m"
 alias pbg="git_current_branch | pbcopy"
 
