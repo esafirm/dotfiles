@@ -1,8 +1,10 @@
+AntSupport
 Coverage
 Lombook Plugin
 PerforceDirectPlugin
 Subversion
 TestNG-J
+XSLT-Debugger
 com.google.appindexing
 com.google.cluestick.studioclient
 com.google.gct
@@ -11,15 +13,25 @@ com.google.gct.login
 com.google.gct.testing
 com.google.services.firebase
 com.intellij.laf.macos
+com.intellij.marketplace
 com.intellij.plugins.eclipsekeymap
 com.intellij.plugins.netbeanskeymap
 com.intellij.plugins.visualstudiokeymap
 com.intellij.tasks
 com.intellij.uiDesigner
+com.jetbrains.changeReminder
+com.jetbrains.codeWithMe
+com.jetbrains.idea.refactoring.detector
+com.jetbrains.settingsSync
 com.jetbrains.space
 hg4idea
 org.arkivanov.mvikotlin.plugin.idea.timetravel
 org.jetbrains.debugger.streams
 org.jetbrains.idea.eclipse
+org.jetbrains.idea.maven
 org.jetbrains.plugins.github
+org.jetbrains.plugins.javaFX
 org.jetbrains.plugins.terminal
+org.jetbrains.settingsRepository
+training
+training.git
