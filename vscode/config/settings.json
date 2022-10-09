@@ -178,7 +178,6 @@
         "*.ipynb": "jupyter-notebook"
     },
     "javascript.preferences.importModuleSpecifier": "non-relative",
-    "dart.lineLength": 120,
     "terminal.explorerKind": "external",
     "[html]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
@@ -214,6 +213,10 @@
     "ruby.useLanguageServer": true,
     "solargraph.diagnostics": false,
     "solargraph.formatting": false,
+    // ===============
+    // DART
+    // ==============-
+    "dart.lineLength": 120,
     "dart.debugExternalPackageLibraries": true,
     "dart.debugSdkLibraries": false,
 }
