@@ -1,7 +1,8 @@
 # Aliases for python related stuff
 
 alias py="python3"
-alias pip="python -m pip"
+alias pip="py -m pip"
+alias pbase="py -m site --user-base"
 alias python="py"
 alias simplehttpserver="python ~/dotfiles/python/server.py"
 alias uuid="python -c 'import sys,uuid; sys.stdout.write(uuid.uuid4().hex)' | pbcopy && pbpaste && echo"
