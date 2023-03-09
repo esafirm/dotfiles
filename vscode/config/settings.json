@@ -186,7 +186,8 @@
         "gitlens.codeLens.symbolScopes": [
             "!Module"
         ],
-        "editor.wordBasedSuggestions": false
+        "editor.wordBasedSuggestions": false,
+        "editor.formatOnType": true
     },
     "notebook.cellToolbarLocation": {
         "default": "right",
@@ -219,4 +220,5 @@
     "dart.lineLength": 120,
     "dart.debugExternalPackageLibraries": true,
     "dart.debugSdkLibraries": false,
+    "diffEditor.renderSideBySide": false,
 }
