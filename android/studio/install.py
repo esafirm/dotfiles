@@ -71,10 +71,13 @@ def link_files(current_path, install_path, excluded_files):
 
         # Removing files in IDE dir
         if os.path.exists(studio_file):
-            if os.path.isdir(studio_file):
+            if os.path.islink(studio_file):
+                os.remove(studio_file)
+            elif os.path.isdir(studio_file):
                 shutil.rmtree(studio_file)
             else:
                 os.remove(studio_file)
+
             print("Removing: {}".format(studio_file))
 
         # Copy dotfiles to IDE dir
