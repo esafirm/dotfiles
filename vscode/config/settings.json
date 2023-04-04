@@ -147,7 +147,8 @@
     ],
     "files.associations": {
         "aliases": "shellscript",
-        "*.path": "shellscript"
+        "*.path": "shellscript",
+        "*.scenarios": "hocon"
     },
     "[javascriptreact]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
