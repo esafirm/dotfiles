@@ -99,6 +99,9 @@
   <action id="NextTab">
     <keyboard-shortcut first-keystroke="shift meta close_bracket" />
   </action>
+  <action id="OptimizeImports">
+    <keyboard-shortcut first-keystroke="meta k" second-keystroke="o" />
+  </action>
   <action id="PreviousTab">
     <keyboard-shortcut first-keystroke="shift meta open_bracket" />
   </action>
