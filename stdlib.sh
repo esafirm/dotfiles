@@ -12,3 +12,10 @@ isMac() {
 trim() {
     awk '{$1=$1};1'
 }
+
+# Verbose echo
+vecho() {
+    if [ "$DISABLE_VERBOSE_ECHO" = "true" ]; then return; fi
+
+    echo $1
+}

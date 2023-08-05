@@ -7,5 +7,5 @@ CARGO_ENV=$HOME/.cargo/env
 if [ -f $CARGO_ENV ]; then
     source $HOME/.cargo/env
 else
-    echo "> Rust is not installed"
+    vecho "> Rust is not installed"
 fi

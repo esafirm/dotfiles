@@ -1,14 +1,10 @@
-adb:~/Documents/OSS/adb-indonesia
-asp:~/Documents/AndroidStudioProjects
-blog:~/Documents/OSS/nolambda.stream
 dot:~/dotfiles
-gesa:~/Documents/Go/src/github.com/esafirm
 go:~/Documents/Go
 lib:~/Library
-minecraft:~/Applications/minecraft
 oss:~/Documents/OSS
 pref:~/Library/Preferences
 pro:~/Documents/projects
-skt:~/Documents/sekitar
-tka:~/Documents/tiket/tiketandroid
-tungku:~/Documents/BL/tungku
+
+## Gojek Related
+goh:~/Documents/gojek/GoHost
+goj:~/Documents/gojek
