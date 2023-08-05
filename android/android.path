@@ -1,8 +1,11 @@
 export ANDROID_HOME="$HOME/Library/Android/sdk"
 
-latest_ndk=$(ls -t $ANDROID_HOME/ndk | head -n1)
+# If ANDROID_HOME exists, then search for latest NDK dir too
+if [ -d $ANDROID_HOME ]; then
+	latest_ndk=$(ls -t $ANDROID_HOME/ndk | head -n1)
 
-export ANDROID_NDK_HOME="$ANDROID_HOME/ndk/$latest_ndk"
+	export ANDROID_NDK_HOME="$ANDROID_HOME/ndk/$latest_ndk"
+fi
 
 export ANDROID_LOCAL_PROP="sdk.dir=$ANDROID_HOME"
 export PATH=$PATH:$ANDROID_HOME"/platform-tools"
