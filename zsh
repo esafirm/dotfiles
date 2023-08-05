@@ -8,4 +8,3 @@ source zsh_theme
 
 # Change Shell Default to ZSH
 chsh -s $(which zsh)
-
