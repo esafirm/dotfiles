@@ -103,6 +103,7 @@ source $DOT/rust/rust.env
 
 ## Brew
 export HOMEBREW_NO_AUTO_UPDATE=1
+eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # SDKMan installation
 # THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
