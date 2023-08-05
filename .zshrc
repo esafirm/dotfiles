@@ -99,7 +99,7 @@ if [ -f "$DOT/secrets" ]; then
 fi
 
 ## Rust env
-source $DOT/rust/rust.env
+source $DOT/rust/rust.sh
 
 ## Brew
 export HOMEBREW_NO_AUTO_UPDATE=1
