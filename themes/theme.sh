@@ -425,6 +425,7 @@ prompt_git() {
   if $(git rev-parse --is-inside-work-tree >/dev/null 2>&1); then
 
     ## In fast mode we don't care about all fancy stuff
+    ## To enable: `git config --add dotfiles.fast-mode 1`
     if [[ "$(__git_prompt_git config --get dotfiles.fast-mode 2>/dev/null)" = 1 ]]; then
       prompt_segment $BULLETTRAIN_GIT_BG $BULLETTRAIN_GIT_FG
       eval prompt=$(fast_git_prompt)
