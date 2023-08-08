@@ -1,2 +1,2 @@
-export PY_PATH="/Users/esafirm/Library/Python/3.9"
+export PY_PATH="$HOME/Library/Python/3.9"
 export PATH=$PATH:$PY_PATH"/bin"
