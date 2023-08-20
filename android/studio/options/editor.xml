@@ -14,6 +14,9 @@
     <EXCLUDED_PACKAGE NAME="java.time.format.TextStyle" />
     <EXCLUDED_PACKAGE NAME="org.w3c.dom.Text" />
   </component>
+  <component name="CodeVisionSettings">
+    <option name="enabled" value="false" />
+  </component>
   <component name="EditorSettings">
     <option name="USE_SOFT_WRAPS" value="" />
     <option name="SHOW_QUICK_DOC_ON_MOUSE_OVER_ELEMENT" value="false" />
