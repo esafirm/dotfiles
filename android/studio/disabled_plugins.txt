@@ -33,5 +33,6 @@ org.jetbrains.plugins.github
 org.jetbrains.plugins.javaFX
 org.jetbrains.plugins.terminal
 org.jetbrains.settingsRepository
+org.nik.presentation-assistant
 training
 training.git
