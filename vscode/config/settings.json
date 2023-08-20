@@ -223,4 +223,6 @@
     "dart.debugExternalPackageLibraries": true,
     "dart.debugSdkLibraries": false,
     "diffEditor.renderSideBySide": false,
+    "kotlin.languageServer.enabled": false,
+    "kotlin.debugAdapter.enabled": false,
 }
