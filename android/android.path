@@ -7,7 +7,6 @@ if [ -d $ANDROID_HOME ]; then
 	export ANDROID_NDK_HOME="$ANDROID_HOME/ndk/$latest_ndk"
 fi
 
-export ANDROID_LOCAL_PROP="sdk.dir=$ANDROID_HOME"
 export PATH=$PATH:$ANDROID_HOME"/platform-tools"
 export PATH=$PATH:$ANDROID_HOME"/emulator"
 export PATH=$PATH:$DOT"/android/jetifier/jetifier-standalone/bin"
@@ -15,6 +14,3 @@ export PATH=$PATH:$DOT"/android/jetifier/jetifier-standalone/bin"
 ## This path only works if you donwload the component from SDK manager
 export PATH=$PATH:$ANDROID_HOME"/build-tools/30.0.3"
 export PATH=$PATH:$ANDROID_HOME"/cmdline-tools/latest/bin"
-
-## Java related
-# export JAVA_HOME=$(java -XshowSettings:properties -version 2>&1 > /dev/null | grep 'java.home' | cut -d'=' -f2 | trim)
