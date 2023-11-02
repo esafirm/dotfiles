@@ -1,10 +1,8 @@
-echo 'Installing NodeJs'
-
-## Installing NodeJS
-brew install node
+echo 'Installing Javascript related packages…'
 
 modules=(
-    yarn
+    node
+    pnpm
 )
 
 for module in ${modules[*]}; do
