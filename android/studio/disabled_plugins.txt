@@ -5,6 +5,7 @@ PerforceDirectPlugin
 Subversion
 TestNG-J
 XSLT-Debugger
+com.android.tools.apk
 com.google.appindexing
 com.google.cluestick.studioclient
 com.google.gct
@@ -12,11 +13,14 @@ com.google.gct.core
 com.google.gct.login
 com.google.gct.testing
 com.google.services.firebase
+com.google.urlassistant
+com.intellij.cidr.lang.clangdBridge
 com.intellij.laf.macos
 com.intellij.marketplace
 com.intellij.plugins.eclipsekeymap
 com.intellij.plugins.netbeanskeymap
 com.intellij.plugins.visualstudiokeymap
+com.intellij.settingsSync
 com.intellij.tasks
 com.intellij.uiDesigner
 com.jetbrains.changeReminder
@@ -30,8 +34,10 @@ org.jetbrains.debugger.streams
 org.jetbrains.idea.eclipse
 org.jetbrains.idea.maven
 org.jetbrains.plugins.github
+org.jetbrains.plugins.gitlab
 org.jetbrains.plugins.javaFX
 org.jetbrains.plugins.terminal
+org.jetbrains.security.package-checker
 org.jetbrains.settingsRepository
 org.nik.presentation-assistant
 training

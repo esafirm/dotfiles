@@ -25,16 +25,6 @@ funtion adb-unlock(){
     adb root && adb remount
 }
 
-function adb-app-restart() {
-    echo "Restart app with id $1 ..."
-    adb shell am force-stop $1
-    adb shell am start $1
-}
-
-function androidLocalProp() {
-    echo $ANDROID_LOCAL_PROP
-}
-
 function atcp {
     if [ -z "${1}" ]; then
 	IP=$(adb shell ifconfig | grep "inet " | grep -v 127.0.0.1 | awk '{print $2}' | sed -e "s/addr://")
