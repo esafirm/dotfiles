@@ -8,5 +8,8 @@ secret_dir
 ## Secret Repo
 keepsecret
 
+## Temporary configuration
+temp.sh
+
 ## Mac relatad
 .DS_store

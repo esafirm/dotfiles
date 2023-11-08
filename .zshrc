@@ -98,6 +98,11 @@ if [ -f "$DOT/secrets" ]; then
     source $DOT/secrets
 fi
 
+# This for temporary configuration that still in evaluation
+if [ -f "$DOT/temp.sh" ]; then
+    source $DOT/temp.sh
+fi
+
 ## Rust env
 source $DOT/rust/rust.sh
 
