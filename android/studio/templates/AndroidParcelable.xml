@@ -1,5 +1,6 @@
 <templateSet group="AndroidParcelable">
   <template name="ParcelableEnumTest" value="@Test&#10;public void testDescribeContents() throws Exception {&#10;  for ($className$ value : $className$.values()) {&#10;    assertEquals(0, value.describeContents());&#10;  }&#10;}&#10;&#10;@Test&#10;public void testWriteToParcel() throws Exception {&#10;  Parcel parcel;&#10;  for ($className$ value : $className$.values()) {&#10;    parcel = Parcel.obtain();&#10;&#10;    Parcel parceled$className$ = ParcelableHelper.writeToParcelAndResetDataPosition(value, 0);&#10;    value.writeToParcel(parcel, 0);&#10;    parcel.setDataPosition(0);&#10;&#10;    $className$ unparceled$className$ = $className$.CREATOR.createFromParcel(parceled$className$);&#10;    assertEquals(value, unparceled$className$);&#10;  }&#10;}&#10;&#10;@Test&#10;public void testArrayParcelable() throws Exception {&#10;  $className$[] values = $className$.CREATOR.newArray($className$.values().length);&#10;  assertEquals($className$.values().length, values.length);&#10;}" description="Creates basic parcelable enum test methods" toReformat="true" toShortenFQNames="true" deactivated="true">
     <variable name="className" expression="" defaultValue="" alwaysStopAt="true" />
+    <context />
   </template>
 </templateSet>
