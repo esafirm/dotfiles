@@ -34,8 +34,8 @@ if isLinux; then
     source ./linux/path.sh
 fi
 
-## Node
-source $DOT/node/nodepath
+## JS
+source $DOT/js/js.path
 
 ## Ruby
 source $DOT/ruby/ruby.path
@@ -103,7 +103,7 @@ source $DOT/rust/rust.sh
 
 ## Brew
 export HOMEBREW_NO_AUTO_UPDATE=1
-eval "$(/opt/homebrew/bin/brew shellenv)"
+eval "$(/usr/local/bin/brew shellenv)"
 
 # SDKMan installation
 # THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
