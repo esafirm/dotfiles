@@ -121,3 +121,6 @@ fi
 
 ## Flutter
 source $DOT/flutter/config.sh
+
+## JetBrains Toolbox Shell Shortcut
+export PATH="$PATH:$DOT/toolbox"
