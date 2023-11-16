@@ -728,7 +728,7 @@
         <option name="FOREGROUND" value="9373a5" />
       </value>
     </option>
-    <option name="Instance property reference ID" baseAttributes="" />
+    <option name="Instance property reference ID" baseAttributes="INSTANCE_FIELD_ATTRIBUTES" />
     <option name="JAVA_COMMA">
       <value>
         <option name="FOREGROUND" value="a7dbd8" />
