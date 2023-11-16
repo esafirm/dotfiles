@@ -2,7 +2,7 @@ export ANDROID_HOME="$HOME/Library/Android/sdk"
 
 # If ANDROID_HOME exists, then search for latest NDK dir too
 if [ -d $ANDROID_HOME ]; then
-	latest_ndk=$(ls -t $ANDROID_HOME/ndk | head -n1)
+	latest_ndk=$(ls -t $ANDROID_HOME/ndk 2>/dev/null | head -n1 &> 2)
 
 	export ANDROID_NDK_HOME="$ANDROID_HOME/ndk/$latest_ndk"
 fi
