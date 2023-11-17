@@ -73,9 +73,11 @@ source $DOT/python/python.path
 export PATH="$HOME/.fastlane/bin:$PATH"
 
 # Flutter
+FLUTTER_HOME=$HOME/Library/flutter
+
 export PATH="/usr/local/Manual/flutter/bin:$PATH"
-export PATH="$HOME/Applications/flutter/bin:$PATH"
-export PATH="$HOME/Applications/flutter/bin/cache/dart-sdk/bin:$PATH"
+export PATH="$FLUTTER_HOME/bin:$PATH"
+export PATH="$FLUTTER_HOME/bin/cache/dart-sdk/bin:$PATH"
 
 # Local bin
 export PATH="$HOME/Applications/local/bin:$PATH"
