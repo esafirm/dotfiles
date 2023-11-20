@@ -193,10 +193,6 @@
     "when": "explorerViewletVisible && filesExplorerFocus"
   },
   {
-    "key": "cmd+k c",
-    "command": "merge-conflict.next"
-  },
-  {
     "key": "cmd+5",
     "command": "workbench.debug.action.toggleRepl"
   },
@@ -315,5 +311,17 @@
     "key": "shift+alt+f12",
     "command": "-references-view.findReferences",
     "when": "editorHasReferenceProvider"
+  },
+  {
+    "key": "cmd+k shift+c",
+    "command": "workbench.files.action.compareWithClipboard"
+  },
+  {
+    "key": "cmd+k c",
+    "command": "-workbench.files.action.compareWithClipboard"
+  },
+  {
+    "key": "cmd+k c",
+    "command": "workbench.panel.chat.view.copilot.focus"
   }
 ]

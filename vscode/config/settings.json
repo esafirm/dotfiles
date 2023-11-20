@@ -2,7 +2,6 @@
 {
     "workbench.iconTheme": "material-icon-theme",
     "workbench.editor.enablePreviewFromQuickOpen": false,
-    "workbench.colorTheme": "Darcula Theme from IntelliJ",
     "files.insertFinalNewline": true,
     "files.autoSave": "afterDelay",
     "files.autoSaveDelay": 500,
@@ -225,5 +224,11 @@
     "diffEditor.renderSideBySide": false,
     "kotlin.languageServer.enabled": false,
     "kotlin.debugAdapter.enabled": false,
-    "inlineChat.showDiff": false
+    "inlineChat.showDiff": false,
+    "dart.flutterSdkPath": "/Users/esafirm/Library/flutter",
+    "workbench.colorTheme": "Darcula Theme from IntelliJ",
+    "workbench.colorCustomizations": {
+        "editor.background": "#242020"
+    },
+    "editor.fontSize": 13
 }
