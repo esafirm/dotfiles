@@ -1,5 +1,5 @@
 ## Hold installation files
-bin
+./bin
 
 ## Hold secret
 secrets
