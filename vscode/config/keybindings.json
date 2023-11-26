@@ -323,5 +323,20 @@
   {
     "key": "cmd+k c",
     "command": "workbench.panel.chat.view.copilot.focus"
+  },
+  {
+    "key": "cmd+k o",
+    "command": "-workbench.action.files.showOpenedFileInNewWindow",
+    "when": "emptyWorkspaceSupport"
+  },
+  {
+    "key": "cmd+k o",
+    "command": "editor.action.organizeImports",
+    "when": "textInputFocus && !editorReadonly && supportedCodeAction =~ /(\\s|^)source\\.organizeImports\\b/"
+  },
+  {
+    "key": "shift+alt+o",
+    "command": "-editor.action.organizeImports",
+    "when": "textInputFocus && !editorReadonly && supportedCodeAction =~ /(\\s|^)source\\.organizeImports\\b/"
   }
 ]
