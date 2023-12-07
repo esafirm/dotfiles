@@ -2,6 +2,11 @@
 {
     "workbench.iconTheme": "material-icon-theme",
     "workbench.editor.enablePreviewFromQuickOpen": false,
+    "workbench.colorTheme": "Darcula Theme from IntelliJ",
+    "workbench.colorCustomizations": {
+        "editor.background": "#242020"
+    },
+    "workbench.startupEditor": "newUntitledFile",
     "files.insertFinalNewline": true,
     "files.autoSave": "afterDelay",
     "files.autoSaveDelay": 500,
@@ -9,25 +14,21 @@
     "git.mergeEditor": false,
     "debug.toolBarLocation": "docked",
     // ===========================
-    // EDITOR APPEARANCE
-    // ===========================
-    "material-icon-theme.showUpdateMessage": false,
-    // ===========================
     // EDITOR
     // ===========================
     "editor.insertSpaces": false,
     "editor.fontFamily": "Fira Code",
     "editor.definitionLinkOpensInPeek": false,
     "editor.fontLigatures": true,
-    "editor.inlayHints.enabled": false,
     "editor.minimap.enabled": false,
+    "editor.fontSize": 13,
+    "editor.inlineSuggest.enabled": true,
     // ===========================
     // TERMINAL
     // ===========================
     "terminal.integrated.fontFamily": "Fira Code",
     "terminal.integrated.fontSize": 12,
     "terminal.integrated.fontLigatures": true,
-    "workbench.startupEditor": "newUntitledFile",
     "explorer.openEditors.visible": 0,
     "prettier.singleQuote": true,
     "extensions.ignoreRecommendations": false,
@@ -193,7 +194,6 @@
         "default": "right",
         "jupyter-notebook": "left"
     },
-    "editor.inlineSuggest.enabled": true,
     "github.copilot.enable": {
         "*": true,
         "plaintext": false,
@@ -221,14 +221,18 @@
     "dart.lineLength": 120,
     "dart.debugExternalPackageLibraries": true,
     "dart.debugSdkLibraries": false,
+    "dart.flutterSdkPath": "/Users/esafirm/Library/flutter",
+    "[dart]": {
+        "editor.rulers": [
+            120
+        ]
+    },
     "diffEditor.renderSideBySide": false,
+    /// ===========================
+    // Kotlin
+    // ===========================
     "kotlin.languageServer.enabled": false,
     "kotlin.debugAdapter.enabled": false,
     "inlineChat.showDiff": false,
-    "dart.flutterSdkPath": "/Users/esafirm/Library/flutter",
-    "workbench.colorTheme": "Darcula Theme from IntelliJ",
-    "workbench.colorCustomizations": {
-        "editor.background": "#242020"
-    },
-    "editor.fontSize": 13
+    "gitlens.codeLens.enabled": false
 }
