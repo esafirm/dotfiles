@@ -165,16 +165,22 @@
     "[jsonc]": {
         "editor.defaultFormatter": "vscode.json-language-features"
     },
-    // Python Related
+    /* ------------------------------------------ */
+    /* PYTHON LANGUAGE */
+    /* ------------------------------------------ */
+    "python.languageServer": "Pylance",
     "python.formatting.blackArgs": [
         "--line-length",
         "120"
     ],
-    "python.formatting.autopep8Args": [
-        "--max-line-length",
-        "120",
-        "--experimental"
-    ],
+    "[python]": {
+        "gitlens.codeLens.symbolScopes": [
+            "!Module"
+        ],
+        "editor.wordBasedSuggestions": "off",
+        "editor.formatOnType": true,
+        "editor.defaultFormatter": "ms-python.black-formatter",
+    },
     "workbench.editorAssociations": {
         "*.ipynb": "jupyter-notebook"
     },
@@ -182,13 +188,6 @@
     "terminal.explorerKind": "external",
     "[html]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[python]": {
-        "gitlens.codeLens.symbolScopes": [
-            "!Module"
-        ],
-        "editor.wordBasedSuggestions": false,
-        "editor.formatOnType": true
     },
     "notebook.cellToolbarLocation": {
         "default": "right",
@@ -208,13 +207,7 @@
     "[ruby]": {
         "editor.defaultFormatter": "misogi.ruby-rubocop"
     },
-    "ruby.lint": {
-        "rubocop": true
-    },
     "ruby.rubocop.onSave": false,
-    "ruby.useLanguageServer": true,
-    "solargraph.diagnostics": false,
-    "solargraph.formatting": false,
     // ===============
     // DART
     // ==============-
