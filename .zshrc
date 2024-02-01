@@ -62,7 +62,6 @@ for file in $DOT/scripts/*; do
 done
 
 ## Kotlin
-source $DOT/kotlin/kotlin.sh
 source $DOT/kotlin/kscripts/aliases
 
 ## Python
