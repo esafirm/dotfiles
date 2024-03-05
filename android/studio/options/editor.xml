@@ -1,16 +1,16 @@
 <application>
   <component name="CodeInsightSettings">
     <option name="AUTO_POPUP_COMPLETION_LOOKUP" value="false" />
-    <EXCLUDED_PACKAGE NAME="java.lang.reflect.Modifier" />
-    <EXCLUDED_PACKAGE NAME="java.nio.file.WatchEvent.Modifier" />
     <EXCLUDED_PACKAGE NAME="android.app.LauncherActivity.ListItem" />
     <EXCLUDED_PACKAGE NAME="android.graphics.drawable.Icon" />
     <EXCLUDED_PACKAGE NAME="android.graphics.fonts.FontFamily" />
     <EXCLUDED_PACKAGE NAME="android.inputmethodservice.Keyboard.Row" />
     <EXCLUDED_PACKAGE NAME="android.text.layout.Alignment" />
-    <EXCLUDED_PACKAGE NAME="android.widget.GridLayout.Alignment" />
     <EXCLUDED_PACKAGE NAME="android.view.RoundedCorner" />
     <EXCLUDED_PACKAGE NAME="android.view.Surface" />
+    <EXCLUDED_PACKAGE NAME="android.widget.GridLayout.Alignment" />
+    <EXCLUDED_PACKAGE NAME="java.lang.reflect.Modifier" />
+    <EXCLUDED_PACKAGE NAME="java.nio.file.WatchEvent.Modifier" />
     <EXCLUDED_PACKAGE NAME="java.time.format.TextStyle" />
     <EXCLUDED_PACKAGE NAME="org.w3c.dom.Text" />
   </component>
@@ -19,6 +19,8 @@
   </component>
   <component name="EditorSettings">
     <option name="USE_SOFT_WRAPS" value="" />
+    <option name="IS_ENSURE_NEWLINE_AT_EOF" value="true" />
+    <option name="REMOVE_TRAILING_BLANK_LINES" value="true" />
     <option name="SHOW_QUICK_DOC_ON_MOUSE_OVER_ELEMENT" value="false" />
     <option name="IS_WHEEL_FONTCHANGE_ENABLED" value="true" />
   </component>
