@@ -24,7 +24,6 @@ com.intellij.settingsSync
 com.intellij.tasks
 com.intellij.uiDesigner
 com.jetbrains.changeReminder
-com.jetbrains.codeWithMe
 com.jetbrains.idea.refactoring.detector
 com.jetbrains.settingsSync
 com.jetbrains.space
