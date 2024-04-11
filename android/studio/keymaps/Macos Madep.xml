@@ -35,6 +35,9 @@
     <keyboard-shortcut first-keystroke="meta f11" />
   </action>
   <action id="Android.HotswapChanges" />
+  <action id="Android.RunLayoutInspector">
+    <keyboard-shortcut first-keystroke="meta k" second-keystroke="l" />
+  </action>
   <action id="Android.SyncProject">
     <keyboard-shortcut first-keystroke="ctrl meta 3" />
   </action>
