@@ -1,10 +1,8 @@
+bl:~/Documents/bandlab
+bla:~/Documents/bandlab/bandlab-android
 dot:~/dotfiles
 go:~/Documents/Go
 lib:~/Library
 oss:~/Documents/OSS
 pref:~/Library/Preferences
 pro:~/Documents/projects
-
-## Gojek Related
-goh:~/Documents/gojek/GoHost
-goj:~/Documents/gojek
