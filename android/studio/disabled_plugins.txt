@@ -1,5 +1,6 @@
 AntSupport
 Coverage
+DevKit
 Lombook Plugin
 PerforceDirectPlugin
 Subversion
@@ -10,11 +11,15 @@ com.google.appindexing
 com.google.cluestick.studioclient
 com.google.gct
 com.google.gct.core
+com.google.gct.directaccess
 com.google.gct.login
+com.google.gct.test.recorder
 com.google.gct.testing
 com.google.services.firebase
+com.google.services.git4insights
 com.google.urlassistant
 com.intellij.cidr.lang.clangdBridge
+com.intellij.copyright
 com.intellij.laf.macos
 com.intellij.marketplace
 com.intellij.plugins.eclipsekeymap
@@ -25,6 +30,7 @@ com.intellij.tasks
 com.intellij.uiDesigner
 com.jetbrains.changeReminder
 com.jetbrains.idea.refactoring.detector
+com.jetbrains.performancePlugin
 com.jetbrains.settingsSync
 com.jetbrains.space
 hg4idea
