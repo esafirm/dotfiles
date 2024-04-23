@@ -13,6 +13,8 @@
 	unwatched = !git ls-files -v | grep "^[[:lower:]]" | cut -d' ' -f2
 	watch = update-index --no-assume-unchanged
 	rdate = branch --sort=-committerdate --format='%(HEAD) %(refname:short) %(color:bold red) %(authordate:relative)'
+
+	## Add target to `git push` command
 	addpush = remote set-url --add --push
 	stat = diff HEAD^ --stat
 
@@ -20,6 +22,8 @@
 	r = recent
 	
 	del = !ruby $DOT/ruby/git_select.rb command:recent mode:multiselect action:delete
+
+	## clog -> choose log
 	clog = !ruby $DOT/ruby/git_select.rb command:recent mode:select action:log
 
 	## cr -> choose rebase
