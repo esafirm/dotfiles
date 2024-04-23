@@ -15,6 +15,7 @@
     <EXCLUDED_PACKAGE NAME="org.w3c.dom.Text" />
   </component>
   <component name="CodeVisionSettings">
+    <option name="defaultPosition" value="Right" />
     <option name="enabled" value="false" />
   </component>
   <component name="EditorSettings">
@@ -22,6 +23,7 @@
     <option name="IS_ENSURE_NEWLINE_AT_EOF" value="true" />
     <option name="REMOVE_TRAILING_BLANK_LINES" value="true" />
     <option name="SHOW_QUICK_DOC_ON_MOUSE_OVER_ELEMENT" value="false" />
+    <option name="IS_CAMEL_WORDS" value="true" />
     <option name="IS_WHEEL_FONTCHANGE_ENABLED" value="true" />
   </component>
   <component name="InlayHintsSettings">

@@ -44,6 +44,9 @@
   <action id="AndroidConnectDebuggerAction">
     <keyboard-shortcut first-keystroke="shift alt a" />
   </action>
+  <action id="Back">
+    <keyboard-shortcut first-keystroke="meta open_bracket" />
+  </action>
   <action id="ChangesView.Diff" />
   <action id="CheckinProject" />
   <action id="CleanGradleProject">
@@ -85,6 +88,9 @@
   <action id="FindUsages">
     <keyboard-shortcut first-keystroke="alt f7" />
     <keyboard-shortcut first-keystroke="meta g" />
+  </action>
+  <action id="Forward">
+    <keyboard-shortcut first-keystroke="meta close_bracket" />
   </action>
   <action id="GotoBookmark3" />
   <action id="GotoChangedFile" />
