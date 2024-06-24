@@ -62,6 +62,11 @@
     <keyboard-shortcut first-keystroke="meta escape" />
   </action>
   <action id="CompareTwoFiles" />
+  <action id="CopyAbsolutePath" />
+  <action id="CopyPaths" />
+  <action id="CopyReference">
+    <keyboard-shortcut first-keystroke="shift meta c" />
+  </action>
   <action id="Diff.PrevChange">
     <keyboard-shortcut first-keystroke="ctrl left" />
   </action>
@@ -205,4 +210,5 @@
   </action>
   <action id="copilot.enableCopilot" />
   <action id="openAssertEqualsDiff" />
+  <action id="org.intellij.plugins.markdown.ui.actions.styling.ToggleCodeSpanAction" />
 </keymap>
