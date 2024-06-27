@@ -114,5 +114,7 @@ fi
 
 # Dotfiles and other setup
 DOT=~/dotfiles
+CDOT=$DOT/chromebook
 
 source $DOT/aliases
+source $CDOT/aliases.sh

@@ -64,23 +64,8 @@ alias myip="ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-
 # Grep with insensitive case
 alias igrep="grep -i"
 
-# Nohup no output
-function runbg {
-    echo "running $1 $2 $3"
-    nohup $1 $2 $3 </dev/null >/dev/null 2>&1 &|
-}
-
 # Show file list by biggest size
 alias ducks="du -cks * | sort -rn"
-
-# AS Inspect
-alias inspect="/Applications/Android\ Studio.app/Contents/bin/inspect.sh"
-
-## Utils
-function abs { echo $(cd $(dirname "$1") && pwd -P)/$(basename "$1") }
-
-## PHP
-alias composer="php /usr/local/bin/composer.phar"
 
 ## ADB to GADB
 alias oadb="~/Library/Android/sdk/platform-tools/adb"
