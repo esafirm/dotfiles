@@ -227,5 +227,6 @@
     "kotlin.languageServer.enabled": false,
     "kotlin.debugAdapter.enabled": false,
     "inlineChat.showDiff": false,
-    "gitlens.codeLens.enabled": false
+    "gitlens.codeLens.enabled": false,
+    "github.copilot.editor.enableAutoCompletions": true
 }

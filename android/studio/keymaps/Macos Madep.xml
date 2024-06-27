@@ -150,6 +150,9 @@
   <action id="RunToCursor">
     <keyboard-shortcut first-keystroke="f9" />
   </action>
+  <action id="SelectInProjectView">
+    <keyboard-shortcut first-keystroke="meta k" second-keystroke="meta k" />
+  </action>
   <action id="SendEOF" />
   <action id="ShowNavBar">
     <keyboard-shortcut first-keystroke="alt home" />
