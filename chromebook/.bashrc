@@ -112,9 +112,8 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# Dotfiles and other setup
-DOT=~/dotfiles
-CDOT=$DOT/chromebook
+# Global variable
+source $HOME/dotfiles/variables.sh
 
 source $DOT/aliases
 source $CDOT/aliases.sh

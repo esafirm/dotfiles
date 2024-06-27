@@ -1,6 +1,5 @@
-# Dotfiles
-export DOT="$HOME/dotfiles"
-export BIN="$DOT/bin"
+# Global variables
+source $HOME/dotfiles/variables.sh
 
 # Incldue stdlib
 source $DOT/stdlib.sh
