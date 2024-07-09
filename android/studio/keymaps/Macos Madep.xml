@@ -211,7 +211,10 @@
   <action id="copilot.chat.show">
     <keyboard-shortcut first-keystroke="meta k" second-keystroke="c" />
   </action>
+  <action id="copilot.cycleNextInlays" />
+  <action id="copilot.cyclePrevInlays" />
   <action id="copilot.enableCopilot" />
+  <action id="copilot.requestCompletions" />
   <action id="openAssertEqualsDiff" />
   <action id="org.intellij.plugins.markdown.ui.actions.styling.ToggleCodeSpanAction" />
 </keymap>
