@@ -228,5 +228,6 @@
     "kotlin.debugAdapter.enabled": false,
     "inlineChat.showDiff": false,
     "gitlens.codeLens.enabled": false,
-    "github.copilot.editor.enableAutoCompletions": true
+    "github.copilot.editor.enableAutoCompletions": true,
+    "intellij-idea-keybindings.useCamelHumpsWords": true
 }
