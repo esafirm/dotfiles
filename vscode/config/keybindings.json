@@ -51,11 +51,6 @@
     "when": "editorTextFocus"
   },
   {
-    "key": "shift+cmd+k",
-    "command": "journal.note",
-    "when": "editorTextFocus"
-  },
-  {
     "key": "cmd+;",
     "command": "extension.aceJump"
   },
