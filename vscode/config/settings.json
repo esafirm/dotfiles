@@ -229,5 +229,12 @@
     "inlineChat.showDiff": false,
     "gitlens.codeLens.enabled": false,
     "github.copilot.editor.enableAutoCompletions": true,
-    "intellij-idea-keybindings.useCamelHumpsWords": true
+    "intellij-idea-keybindings.useCamelHumpsWords": true,
+    "tailwindCSS.classAttributes": [
+        "class",
+        "className",
+        "ngClass",
+        "class:list",
+        "selectedClassName"
+    ]
 }
