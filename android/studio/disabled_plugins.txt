@@ -34,6 +34,7 @@ com.jetbrains.idea.refactoring.detector
 com.jetbrains.performancePlugin
 com.jetbrains.settingsSync
 com.jetbrains.space
+detekt
 hg4idea
 org.arkivanov.mvikotlin.plugin.idea.timetravel
 org.jetbrains.debugger.streams

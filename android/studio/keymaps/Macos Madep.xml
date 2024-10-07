@@ -122,6 +122,9 @@
   <action id="NextTab">
     <keyboard-shortcut first-keystroke="shift meta close_bracket" />
   </action>
+  <action id="OpenInlineChatAction">
+    <keyboard-shortcut first-keystroke="shift ctrl g" />
+  </action>
   <action id="OptimizeImports">
     <keyboard-shortcut first-keystroke="meta k" second-keystroke="o" />
   </action>
@@ -154,6 +157,10 @@
     <keyboard-shortcut first-keystroke="meta k" second-keystroke="meta k" />
   </action>
   <action id="SendEOF" />
+  <action id="ShowErrorDescription">
+    <keyboard-shortcut first-keystroke="meta k" second-keystroke="e" />
+    <keyboard-shortcut first-keystroke="meta f1" />
+  </action>
   <action id="ShowNavBar">
     <keyboard-shortcut first-keystroke="alt home" />
   </action>
