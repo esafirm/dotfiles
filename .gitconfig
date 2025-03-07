@@ -31,6 +31,10 @@
 	## cm -> choose merge
 	cm = !ruby $DOT/ruby/git_select.rb command:recent mode:select action:merge
 
+	## com -> commit
+	com = !ruby $DOT/ruby/git_commiter.rb
+	coma = !git add -A && ruby $DOT/ruby/git_commiter.rb
+
 [color]
 	ui = auto
 [filter "lfs"]
