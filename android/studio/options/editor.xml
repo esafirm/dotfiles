@@ -18,8 +18,30 @@
     <option name="defaultPosition" value="Right" />
     <option name="enabled" value="false" />
   </component>
+  <component name="DeclarativeInlayHintsSettings">
+    <option name="providerIdToEnabled">
+      <map>
+        <entry key="compose.state.read" value="false" />
+        <entry key="groovy.implicit.null.argument" value="true" />
+        <entry key="groovy.lambda.parameter.inlay.provider" value="true" />
+        <entry key="groovy.local.variable.implicit.types" value="true" />
+        <entry key="java.implicit.types" value="false" />
+        <entry key="java.method.chains" value="true" />
+        <entry key="kotlin.lambdas.hints" value="false" />
+        <entry key="kotlin.method.chains" value="false" />
+        <entry key="kotlin.parameters.hints" value="false" />
+        <entry key="kotlin.references.types.hints" value="false" />
+        <entry key="kotlin.values.hints" value="true" />
+      </map>
+    </option>
+  </component>
   <component name="EditorSettings">
-    <option name="USE_SOFT_WRAPS" value="" />
+    <option name="languageStickyLines">
+      <map>
+        <entry key="kotlin" value="false" />
+      </map>
+    </option>
+    <option name="USE_SOFT_WRAPS" value="PREVIEW" />
     <option name="IS_ENSURE_NEWLINE_AT_EOF" value="true" />
     <option name="REMOVE_TRAILING_BLANK_LINES" value="true" />
     <option name="SHOW_QUICK_DOC_ON_MOUSE_OVER_ELEMENT" value="false" />
@@ -28,5 +50,8 @@
   </component>
   <component name="InlayHintsSettings">
     <option name="lastViewedProviderKeyId" value=".vcs.code.vision" />
+  </component>
+  <component name="JavaCodeFoldingSettings">
+    <option name="replaceVarWithInferredType" value="true" />
   </component>
 </application>

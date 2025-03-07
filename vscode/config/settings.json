@@ -21,7 +21,7 @@
     "editor.definitionLinkOpensInPeek": false,
     "editor.fontLigatures": true,
     "editor.minimap.enabled": false,
-    "editor.fontSize": 13,
+    "editor.fontSize": 14,
     "editor.inlineSuggest.enabled": true,
     // ===========================
     // TERMINAL
@@ -236,5 +236,8 @@
         "ngClass",
         "class:list",
         "selectedClassName"
-    ]
+    ],
+    "[css]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
 }
