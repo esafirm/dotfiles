@@ -17,7 +17,6 @@ com.google.gct.test.recorder
 com.google.gct.testing
 com.google.services.firebase
 com.google.services.git4insights
-com.google.tools.ij.aiplugin
 com.google.urlassistant
 com.intellij.cidr.lang.clangdBridge
 com.intellij.copyright

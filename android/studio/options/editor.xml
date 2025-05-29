@@ -38,6 +38,7 @@
   <component name="EditorSettings">
     <option name="languageStickyLines">
       <map>
+        <entry key="Jupyter" value="false" />
         <entry key="kotlin" value="false" />
       </map>
     </option>
@@ -50,6 +51,9 @@
   </component>
   <component name="InlayHintsSettings">
     <option name="lastViewedProviderKeyId" value=".vcs.code.vision" />
+  </component>
+  <component name="InlineCompletionOnboarding">
+    <option name="onboardingFinished" value="true" />
   </component>
   <component name="JavaCodeFoldingSettings">
     <option name="replaceVarWithInferredType" value="true" />
