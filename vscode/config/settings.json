@@ -239,5 +239,8 @@
     ],
     "[css]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "chat.promptFilesLocations": {
+        ".github/prompts.md": true
     }
 }
