@@ -5,51 +5,51 @@
   <option name="EDITOR_FONT_NAME" value="Menlo" />
   <option name="EDITOR_LIGATURES" value="true" />
   <colors>
-    <option name="ADDED_LINES_COLOR" value="212c32" />
-    <option name="ANNOTATIONS_COLOR" value="8b999f" />
+    <option name="ADDED_LINES_COLOR" value="212C32" />
+    <option name="ANNOTATIONS_COLOR" value="8B999F" />
     <option name="BORDER_LINES_COLOR" value="" />
-    <option name="CARET_COLOR" value="ffcc00" />
-    <option name="CARET_ROW_COLOR" value="222f35" />
+    <option name="CARET_COLOR" value="FFCC00" />
+    <option name="CARET_ROW_COLOR" value="222F35" />
     <option name="CONSOLE_BACKGROUND_KEY" value="263238" />
-    <option name="DELETED_LINES_COLOR" value="f77669" />
-    <option name="DIFF_SEPARATORS_BACKGROUND" value="1e2a30" />
-    <option name="DIFF_SEPARATORS_TOP_BORDER" value="1b262b" />
-    <option name="FILESTATUS_ADDED" value="80cbc4" />
-    <option name="FILESTATUS_COPIED" value="659d9a" />
-    <option name="FILESTATUS_DELETED" value="f77669" />
-    <option name="FILESTATUS_HIJACKED" value="ffcb6b" />
-    <option name="FILESTATUS_IDEA_FILESTATUS_DELETED_FROM_FILE_SYSTEM" value="f77669" />
-    <option name="FILESTATUS_IDEA_FILESTATUS_IGNORED" value="546e7a" />
-    <option name="FILESTATUS_IDEA_FILESTATUS_MERGED_WITH_BOTH_CONFLICTS" value="d5756c" />
-    <option name="FILESTATUS_IDEA_FILESTATUS_MERGED_WITH_CONFLICTS" value="d5756c" />
-    <option name="FILESTATUS_IDEA_FILESTATUS_MERGED_WITH_PROPERTY_CONFLICTS" value="d5756c" />
-    <option name="FILESTATUS_IDEA_SVN_FILESTATUS_EXTERNAL" value="c3e88d" />
-    <option name="FILESTATUS_IGNORE.PROJECT_VIEW.IGNORED" value="546e7a" />
-    <option name="FILESTATUS_MERGED" value="65738e" />
-    <option name="FILESTATUS_MODIFIED" value="80cbc4" />
-    <option name="FILESTATUS_NOT_CHANGED_IMMEDIATE" value="80cbc4" />
-    <option name="FILESTATUS_NOT_CHANGED_RECURSIVE" value="80cbc4" />
-    <option name="FILESTATUS_UNKNOWN" value="f77669" />
+    <option name="DELETED_LINES_COLOR" value="F77669" />
+    <option name="DIFF_SEPARATORS_BACKGROUND" value="1E2A30" />
+    <option name="DIFF_SEPARATORS_TOP_BORDER" value="1B262B" />
+    <option name="FILESTATUS_ADDED" value="80CBC4" />
+    <option name="FILESTATUS_COPIED" value="659D9A" />
+    <option name="FILESTATUS_DELETED" value="F77669" />
+    <option name="FILESTATUS_HIJACKED" value="FFCB6B" />
+    <option name="FILESTATUS_IDEA_FILESTATUS_DELETED_FROM_FILE_SYSTEM" value="F77669" />
+    <option name="FILESTATUS_IDEA_FILESTATUS_IGNORED" value="546E7A" />
+    <option name="FILESTATUS_IDEA_FILESTATUS_MERGED_WITH_BOTH_CONFLICTS" value="D5756C" />
+    <option name="FILESTATUS_IDEA_FILESTATUS_MERGED_WITH_CONFLICTS" value="D5756C" />
+    <option name="FILESTATUS_IDEA_FILESTATUS_MERGED_WITH_PROPERTY_CONFLICTS" value="D5756C" />
+    <option name="FILESTATUS_IDEA_SVN_FILESTATUS_EXTERNAL" value="C3E88D" />
+    <option name="FILESTATUS_IGNORE.PROJECT_VIEW.IGNORED" value="546E7A" />
+    <option name="FILESTATUS_MERGED" value="65738E" />
+    <option name="FILESTATUS_MODIFIED" value="80CBC4" />
+    <option name="FILESTATUS_NOT_CHANGED_IMMEDIATE" value="80CBC4" />
+    <option name="FILESTATUS_NOT_CHANGED_RECURSIVE" value="80CBC4" />
+    <option name="FILESTATUS_UNKNOWN" value="F77669" />
     <option name="FILESTATUS_addedOutside" value="629755" />
-    <option name="FILESTATUS_changelistConflict" value="d5756c" />
-    <option name="FILESTATUS_modifiedOutside" value="80cbc4" />
+    <option name="FILESTATUS_changelistConflict" value="D5756C" />
+    <option name="FILESTATUS_modifiedOutside" value="80CBC4" />
     <option name="GUTTER_BACKGROUND" value="263238" />
     <option name="INDENT_GUIDE" value="" />
-    <option name="LINE_NUMBERS_COLOR" value="475f63" />
-    <option name="METHOD_SEPARATORS_COLOR" value="2e3c43" />
-    <option name="MODIFIED_LINES_COLOR" value="99b89d" />
-    <option name="NOTIFICATION_BACKGROUND" value="3d1a11" />
+    <option name="LINE_NUMBERS_COLOR" value="475F63" />
+    <option name="METHOD_SEPARATORS_COLOR" value="2E3C43" />
+    <option name="MODIFIED_LINES_COLOR" value="99B89D" />
+    <option name="NOTIFICATION_BACKGROUND" value="3D1A11" />
     <option name="READONLY_FRAGMENT_BACKGROUND" value="" />
     <option name="RECURSIVE_CALL_ATTRIBUTES" value="574300" />
-    <option name="RIGHT_MARGIN_COLOR" value="2e3c43" />
+    <option name="RIGHT_MARGIN_COLOR" value="2E3C43" />
     <option name="SELECTED_INDENT_GUIDE" value="505050" />
-    <option name="SELECTED_TEARLINE_COLOR" value="99b89d" />
+    <option name="SELECTED_TEARLINE_COLOR" value="99B89D" />
     <option name="SELECTION_BACKGROUND" value="314549" />
     <option name="SELECTION_FOREGROUND" value="" />
-    <option name="SOFT_WRAP_SIGN_COLOR" value="4f6269" />
-    <option name="TEARLINE_COLOR" value="3b4950" />
-    <option name="WHITESPACES" value="2e3c43" />
-    <option name="WHITESPACES_MODIFIED_LINES_COLOR" value="99b89d" />
+    <option name="SOFT_WRAP_SIGN_COLOR" value="4F6269" />
+    <option name="TEARLINE_COLOR" value="3B4950" />
+    <option name="WHITESPACES" value="2E3C43" />
+    <option name="WHITESPACES_MODIFIED_LINES_COLOR" value="99B89D" />
   </colors>
   <attributes>
     <option name="ANNOTATION_ATTRIBUTE_NAME_ATTRIBUTES">
@@ -728,7 +728,7 @@
         <option name="FOREGROUND" value="9373a5" />
       </value>
     </option>
-    <option name="Instance property reference ID" baseAttributes="" />
+    <option name="Instance property reference ID" baseAttributes="INSTANCE_FIELD_ATTRIBUTES" />
     <option name="JAVA_COMMA">
       <value>
         <option name="FOREGROUND" value="a7dbd8" />

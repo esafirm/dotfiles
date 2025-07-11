@@ -7,26 +7,26 @@
   <option name="CONSOLE_FONT_NAME" value="Menlo" />
   <option name="CONSOLE_LINE_SPACING" value="1.0" />
   <colors>
-    <option name="ADDED_LINES_COLOR" value="baffba" />
-    <option name="ANNOTATIONS_COLOR" value="586e75" />
-    <option name="ANNOTATIONS_MERGED_COLOR" value="2aa198" />
-    <option name="CARET_COLOR" value="dc322f" />
-    <option name="CARET_ROW_COLOR" value="73642" />
-    <option name="CONSOLE_BACKGROUND_KEY" value="2b36" />
-    <option name="GUTTER_BACKGROUND" value="73642" />
-    <option name="INDENT_GUIDE" value="73642" />
-    <option name="LINE_NUMBERS_COLOR" value="586e75" />
-    <option name="METHOD_SEPARATORS_COLOR" value="73642" />
-    <option name="MODIFIED_LINES_COLOR" value="99ccff" />
-    <option name="NOTIFICATION_BACKGROUND" value="eee8d5" />
+    <option name="ADDED_LINES_COLOR" value="BAFFBA" />
+    <option name="ANNOTATIONS_COLOR" value="586E75" />
+    <option name="ANNOTATIONS_MERGED_COLOR" value="2AA198" />
+    <option name="CARET_COLOR" value="DC322F" />
+    <option name="CARET_ROW_COLOR" value="073642" />
+    <option name="CONSOLE_BACKGROUND_KEY" value="002B36" />
+    <option name="GUTTER_BACKGROUND" value="073642" />
+    <option name="INDENT_GUIDE" value="073642" />
+    <option name="LINE_NUMBERS_COLOR" value="586E75" />
+    <option name="METHOD_SEPARATORS_COLOR" value="073642" />
+    <option name="MODIFIED_LINES_COLOR" value="99CCFF" />
+    <option name="NOTIFICATION_BACKGROUND" value="EEE8D5" />
     <option name="READONLY_FRAGMENT_BACKGROUND" value="" />
-    <option name="RIGHT_MARGIN_COLOR" value="73642" />
-    <option name="SELECTED_INDENT_GUIDE" value="586e75" />
-    <option name="SELECTED_TEARLINE_COLOR" value="657b83" />
-    <option name="SELECTION_BACKGROUND" value="657b83" />
-    <option name="SELECTION_FOREGROUND" value="2b36" />
-    <option name="TEARLINE_COLOR" value="586e75" />
-    <option name="WHITESPACES" value="586e75" />
+    <option name="RIGHT_MARGIN_COLOR" value="073642" />
+    <option name="SELECTED_INDENT_GUIDE" value="586E75" />
+    <option name="SELECTED_TEARLINE_COLOR" value="657B83" />
+    <option name="SELECTION_BACKGROUND" value="657B83" />
+    <option name="SELECTION_FOREGROUND" value="002B36" />
+    <option name="TEARLINE_COLOR" value="586E75" />
+    <option name="WHITESPACES" value="586E75" />
   </colors>
   <attributes>
     <option name="ANNOTATION_NAME_ATTRIBUTES">
