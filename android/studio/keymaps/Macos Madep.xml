@@ -9,6 +9,7 @@
   <action id="ActivateAndroidMonitorToolWindow">
     <keyboard-shortcut first-keystroke="meta 6" />
   </action>
+  <action id="ActivateBookmarksToolWindow" />
   <action id="ActivateBuildToolWindow">
     <keyboard-shortcut first-keystroke="meta 0" />
   </action>
@@ -48,7 +49,9 @@
     <keyboard-shortcut first-keystroke="meta open_bracket" />
   </action>
   <action id="ChangesView.Diff" />
-  <action id="CheckinProject" />
+  <action id="CheckinProject">
+    <keyboard-shortcut first-keystroke="meta 2" />
+  </action>
   <action id="CleanGradleProject">
     <keyboard-shortcut first-keystroke="ctrl meta 2" />
   </action>
