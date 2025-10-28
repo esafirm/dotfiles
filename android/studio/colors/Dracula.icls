@@ -349,7 +349,7 @@
         <option name="FOREGROUND" value="f8f8f2" />
       </value>
     </option>
-    <option name="HTML_TAG_NAME" baseAttributes="DEFAULT_KEYWORD" />
+    <option name="HTML_TAG_NAME" baseAttributes="" />
     <option name="IDENTIFIER_UNDER_CARET_ATTRIBUTES">
       <value>
         <option name="BACKGROUND" value="242632" />
