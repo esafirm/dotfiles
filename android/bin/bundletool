@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+# bundletool script
+#
+# This script will download bundletool-all-1.18.2.jar if it's not present
+# and then execute it with the provided arguments.
+
+set -e
+
+JAR_DIR="$HOME/.bin"
+JAR_NAME="bundletool-all-1.18.2.jar"
+JAR_PATH="$JAR_DIR/$JAR_NAME"
+JAR_URL="https://github.com/google/bundletool/releases/download/1.18.2/bundletool-all-1.18.2.jar"
+
+if [ ! -f "${JAR_PATH}" ]; then
+
+  mkdir -p "${JAR_DIR}"
+
+  echo "Downloading ${JAR_NAME}..."
+  # Use curl or wget to download the file
+  if command -v curl >/dev/null 2>&1; then
+    curl -L -o "${JAR_PATH}" "${JAR_URL}"
+  elif command -v wget >/dev/null 2>&1; then
+    wget -O "${JAR_PATH}" "${JAR_URL}"
+  else
+    echo "Error: You need curl or wget to download the file."
+    exit 1
+  fi
+fi
+
+java -jar "${JAR_PATH}" "$@"

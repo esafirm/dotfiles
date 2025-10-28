@@ -9,6 +9,9 @@
   <action id="ActivateAndroidMonitorToolWindow">
     <keyboard-shortcut first-keystroke="meta 6" />
   </action>
+  <action id="ActivateAppInspectionToolWindow">
+    <keyboard-shortcut first-keystroke="meta k" second-keystroke="meta 1" />
+  </action>
   <action id="ActivateBookmarksToolWindow" />
   <action id="ActivateBuildToolWindow">
     <keyboard-shortcut first-keystroke="meta 0" />
@@ -66,6 +69,9 @@
   </action>
   <action id="CompareTwoFiles" />
   <action id="CopyAbsolutePath" />
+  <action id="CopyPathFromRepositoryRootProvider">
+    <keyboard-shortcut first-keystroke="meta k" second-keystroke="c" />
+  </action>
   <action id="CopyPaths" />
   <action id="CopyReference">
     <keyboard-shortcut first-keystroke="shift meta c" />
@@ -218,9 +224,7 @@
   <action id="android.deploy.CodeSwap">
     <keyboard-shortcut first-keystroke="shift ctrl meta r" />
   </action>
-  <action id="copilot.chat.show">
-    <keyboard-shortcut first-keystroke="meta k" second-keystroke="c" />
-  </action>
+  <action id="copilot.chat.show" />
   <action id="copilot.cycleNextInlays" />
   <action id="copilot.cyclePrevInlays" />
   <action id="copilot.enableCopilot" />
