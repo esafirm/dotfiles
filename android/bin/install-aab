@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+
+# install-aab helper script
+#
+# This script installs an .aab file onto a connected Android device.
+# It requires 'adb' and the './bundletool' script from the previous step.
+
+set -e
+
+# --- Styling for emphasis (ANSI escapes) ---
+# Use $'...' quoting so escapes render correctly in zsh/bash.
+# Auto-detect terminal color support and respect NO_COLOR / TERM=dumb.
+COLOR_ENABLED=0
+if [ -t 1 ] && [ "${TERM:-}" != "dumb" ] && command -v tput >/dev/null 2>&1; then
+    # tput colors returns a number (may be 0 on some minimal terminals)
+    colors=$(tput colors)
+    if [ -n "$colors" ] && [ "$colors" -ge 8 ] 2>/dev/null; then
+        COLOR_ENABLED=1
+    fi
+fi
+if [ -n "${NO_COLOR:-}" ]; then
+    COLOR_ENABLED=0
+fi
+
+if [ "$COLOR_ENABLED" -eq 1 ]; then
+    bold=$'\033[1m'
+    yellow=$'\033[33m'
+    green=$'\033[32m'
+    red=$'\033[31m'
+    reset=$'\033[0m'
+else
+    bold=''
+    yellow=''
+    green=''
+    red=''
+    reset=''
+fi
+
+# --- Prerequisite Checks ---
+
+# 1. Check for the 'bundletool' wrapper script
+BUNDLETOOL_SCRIPT="$DOT/android/bin/bundletool"
+if [ ! -x "$BUNDLETOOL_SCRIPT" ]; then
+    printf "%b\n" "${bold}${red}❌ Error:${reset} The '${BUNDLETOOL_SCRIPT}' script is not found or not executable."
+    printf "%b\n" "${yellow}Hint:${reset} Ensure it exists and is executable: ${bold}chmod +x ${BUNDLETOOL_SCRIPT}${reset}"
+    exit 1
+fi
+
+# 2. Check for 'adb' command
+if ! command -v adb >/dev/null 2>&1; then
+    printf "%b\n" "${bold}${red}❌ Error:${reset} 'adb' is not installed or not in your PATH."
+    printf "%b\n" "${yellow}Tip:${reset} Install Android SDK Platform-Tools and add 'adb' to your PATH."
+    exit 1
+fi
+
+# 3. Check for script arguments
+if [ "$#" -eq 0 ]; then
+        cat <<EOF
+${bold}${yellow}Usage:${reset} ${bold}$0 <path_to_your_app.aab> [optional_adb_flags]${reset}
+
+${bold}${yellow}Examples:${reset}
+    ${green}$0 my-app.aab${reset}
+    ${green}$0 my-app.aab --device-id=emulator-5554${reset}
+
+${yellow}Notes:${reset} You can pass additional flags that are forwarded to bundletool's "install-apks" command.
+EOF
+    exit 1
+fi
+
+AAB_FILE=$1
+if [ ! -f "$AAB_FILE" ]; then
+    printf "%b\n" "${bold}${red}❌ Error:${reset} File not found: ${bold}${AAB_FILE}${reset}"
+    exit 1
+fi
+
+# --- Main Execution ---
+
+echo "➡️  Preparing to install '${AAB_FILE}'..."
+
+# Build the APKS first
+"$BUNDLETOOL_SCRIPT" build-apks --bundle="$AAB_FILE" --output="${AAB_FILE%.aab}.apks"
+
+# Install the generated APKS file
+"$BUNDLETOOL_SCRIPT" install-apks --apks="${AAB_FILE%.aab}.apks"
+
+printf "%b\n" "${bold}${green}✅ Done:${reset} Successfully installed ${AAB_FILE} on the device."

@@ -1,0 +1,175 @@
+#!/usr/bin/env bash
+
+# ==============================================================================
+# CONFIGURATION
+# ==============================================================================
+
+# Default Constants
+readonly DEFAULT_PACKAGE="com.bandlab.bandlab.test"
+
+# Sampling Configuration
+readonly NUM_SAMPLES=5
+readonly SLEEP_BETWEEN_TESTS=3     # Seconds to wait between tests
+readonly LOG_SEARCH_PATTERN="Displayed"
+
+# ==============================================================================
+# INITIALIZATION
+# ==============================================================================
+
+TARGET_PACKAGE=${1:-$DEFAULT_PACKAGE}
+
+# Determine Activity Manager Log Tag (Android 9+ uses ActivityTaskManager)
+SDK_VERSION=$(adb shell getprop ro.build.version.sdk | tr -d '\r')
+LOG_TAG="ActivityManager"
+if [[ "$SDK_VERSION" -gt 28 ]]; then
+    LOG_TAG="ActivityTaskManager"
+fi
+
+# Determine Main Activity via Package Manager
+ACTIVITY_OUTPUT=$(adb shell cmd package resolve-activity --brief "$TARGET_PACKAGE")
+
+# The output can have multiple lines, the last one is what we want.
+TARGET_ACTIVITY=$(echo "$ACTIVITY_OUTPUT" | tail -n 1)
+
+if [ -z "$TARGET_ACTIVITY" ] || [[ "$TARGET_ACTIVITY" == *"No activity found"* ]]; then
+  echo "Error: Could not resolve main activity for $APP_ID. Is the app installed?"
+  exit 1
+fi
+
+# Array to store results
+TIMINGS=()
+
+# ==============================================================================
+# HELPER FUNCTIONS
+# ==============================================================================
+
+log() {
+    echo -e "\033[1;34m[TEST]\033[0m $1"
+}
+
+error() {
+    echo -e "\033[1;31m[ERROR]\033[0m $1"
+    exit 1
+}
+
+check_requirements() {
+    if ! adb get-state 1>/dev/null 2>&1; then
+        error "No device connected."
+    fi
+    
+    if ! adb shell pm list packages | grep -q "$TARGET_PACKAGE"; then
+        error "Package $TARGET_PACKAGE is not installed."
+    fi
+}
+
+# Parse time strings like "1s 200ms", "+500ms", "800ms" into integer Milliseconds
+parse_ms() {
+    local raw_input="$1"
+    # Remove '+', 'ms', and spaces
+    local clean_input=$(echo "$raw_input" | tr -d '+ms' | tr -d '[:space:]')
+    
+    # Check if it contains 's' (e.g., 1s500)
+    if [[ "$clean_input" == *"s"* ]]; then
+        local seconds=$(echo "$clean_input" | cut -d's' -f1)
+        local millis=$(echo "$clean_input" | cut -d's' -f2)
+        # Handle case where millis might be empty (exactly 1s)
+        [[ -z "$millis" ]] && millis=0
+        
+        echo $(( (seconds * 1000) + millis ))
+    else
+        echo "$clean_input"
+    fi
+}
+
+start_app_cold() {
+    adb shell am force-stop "$TARGET_PACKAGE"
+    # Launches via component: package/activity
+	# To log, don't redirect output to /dev/null
+    adb shell am start -n "${TARGET_ACTIVITY}"
+}
+
+calculate_stats() {
+    log "Calculating statistics for: ${TIMINGS[*]}"
+    
+    local result_str="${TIMINGS[*]}"
+    awk -v data="$result_str" '
+    BEGIN {
+        split(data, nums, " ");
+        n = asort(nums);
+        
+        sum = 0;
+        for (i=1; i<=n; i++) {
+            sum += nums[i];
+        }
+        mean = sum / n;
+        
+        if (n % 2 == 1) {
+            median = nums[int(n/2) + 1];
+        } else {
+            median = (nums[n/2] + nums[n/2+1]) / 2;
+        }
+        
+        printf "\n> Result\n";
+        printf "> Samples: %s\n", data;
+        printf "> Mean:    %.2f ms\n", mean;
+        printf "> Median:  %.2f ms\n", median;
+    }'
+}
+
+# ==============================================================================
+# MAIN EXECUTION
+# ==============================================================================
+
+check_requirements
+
+log "Package:  $TARGET_PACKAGE"
+log "Activity: $TARGET_ACTIVITY"
+log "Type:     Cold Start"
+log "Samples:  $NUM_SAMPLES"
+log "Tag:      $LOG_TAG"
+log "Searching for log pattern: '$LOG_SEARCH_PATTERN'"
+
+# Main Loop
+for (( i=1; i<=NUM_SAMPLES; i++ )); do
+    log "Running sample $i / $NUM_SAMPLES..."
+    
+    # 1. Clear logcat buffer
+    adb logcat -c
+
+    # 2. Start the App (Non-blocking)
+    start_app_cold &
+
+    # 3. Capture & Parse (Stream Processing)
+    # We read directly from adb. As soon as we find the line, we parse it and break.
+    # This prevents waiting for adb to close.
+    
+    TIME_MS=0
+    
+    while read -r line; do
+        # Check if line contains "Displayed" AND the Package Name
+        if [[ "$line" == *"$LOG_SEARCH_PATTERN"* && "$line" == *"$TARGET_PACKAGE"* ]]; then
+            
+            # Found the line! 
+            # Format: ... Displayed com.pkg/.Activity: +1s200ms
+            
+            # Extract the time part (everything after the last space)
+            RAW_TIME="${line##* }"
+            
+            # Parse it
+            TIME_MS=$(parse_ms "$RAW_TIME")
+            
+            # Break the loop immediately. 
+            # This closes the read-end of the pipe, causing adb to receive SIGPIPE and stop.
+            break
+        fi
+    # Process substitution < <(...) runs adb in a tailored subshell
+    done < <(adb logcat -s "$LOG_TAG")
+
+    log "Sample $i: ${TIME_MS}ms"
+    TIMINGS+=($TIME_MS)
+
+    # 4. Cooldown
+    sleep $SLEEP_BETWEEN_TESTS
+done
+
+calculate_stats
