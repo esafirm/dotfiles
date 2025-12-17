@@ -9,7 +9,7 @@ readonly DEFAULT_PACKAGE="com.bandlab.bandlab.test"
 
 # Sampling Configuration
 readonly NUM_SAMPLES=5
-readonly SLEEP_BETWEEN_TESTS=3     # Seconds to wait between tests
+readonly SLEEP_BETWEEN_TESTS="3s"    # Seconds to wait between tests
 readonly LOG_SEARCH_PATTERN="Displayed"
 
 # ==============================================================================
@@ -18,21 +18,22 @@ readonly LOG_SEARCH_PATTERN="Displayed"
 
 TARGET_PACKAGE=${1:-$DEFAULT_PACKAGE}
 
-# Determine Activity Manager Log Tag (Android 9+ uses ActivityTaskManager)
+# 1. Determine Activity Manager Log Tag (Android 9+ uses ActivityTaskManager)
 SDK_VERSION=$(adb shell getprop ro.build.version.sdk | tr -d '\r')
 LOG_TAG="ActivityManager"
 if [[ "$SDK_VERSION" -gt 28 ]]; then
     LOG_TAG="ActivityTaskManager"
 fi
 
-# Determine Main Activity via Package Manager
+# 2. Determine Main Activity via Package Manager
+# We use --brief to get "package/activity" format directly
 ACTIVITY_OUTPUT=$(adb shell cmd package resolve-activity --brief "$TARGET_PACKAGE")
 
-# The output can have multiple lines, the last one is what we want.
+# The output can have multiple lines (errors/warnings), the last one is usually the component.
 TARGET_ACTIVITY=$(echo "$ACTIVITY_OUTPUT" | tail -n 1)
 
 if [ -z "$TARGET_ACTIVITY" ] || [[ "$TARGET_ACTIVITY" == *"No activity found"* ]]; then
-  echo "Error: Could not resolve main activity for $APP_ID. Is the app installed?"
+  echo "Error: Could not resolve main activity for $TARGET_PACKAGE. Is the app installed?"
   exit 1
 fi
 
@@ -83,34 +84,50 @@ parse_ms() {
 
 start_app_cold() {
     adb shell am force-stop "$TARGET_PACKAGE"
-    # Launches via component: package/activity
-	# To log, don't redirect output to /dev/null
-    adb shell am start -n "${TARGET_ACTIVITY}"
+    # Launches via component resolved earlier
+    # Redirected to /dev/null to keep terminal clean during the loop
+    adb shell am start -n "${TARGET_ACTIVITY}" >/dev/null 2>&1
 }
 
 calculate_stats() {
-    log "Calculating statistics for: ${TIMINGS[*]}"
-    
-    local result_str="${TIMINGS[*]}"
-    awk -v data="$result_str" '
-    BEGIN {
-        split(data, nums, " ");
-        n = asort(nums);
-        
-        sum = 0;
-        for (i=1; i<=n; i++) {
-            sum += nums[i];
+    log "Calculating statistics..."
+
+    # 1. Sort the array using shell 'sort' (Compatible with all OS - Mac/Linux)
+    local sorted_list=$(printf "%s\n" "${TIMINGS[@]}" | sort -n)
+
+    # 2. Feed sorted list into awk for Mean/Median calc
+    echo "$sorted_list" | awk '
+    BEGIN { count=0; sum=0 }
+    {
+        # Read each line (which is a number)
+        count++;
+        data[count] = $1;
+        sum += $1;
+    }
+    END {
+        if (count == 0) {
+            print "No data collected.";
+            exit;
         }
-        mean = sum / n;
+
+        mean = sum / count;
         
-        if (n % 2 == 1) {
-            median = nums[int(n/2) + 1];
+        # Calculate Median (Data is already sorted via shell)
+        if (count % 2 == 1) {
+            # Odd number: take the middle one
+            mid = int(count/2) + 1;
+            median = data[mid];
         } else {
-            median = (nums[n/2] + nums[n/2+1]) / 2;
+            # Even number: average the two middle ones
+            mid1 = count/2;
+            mid2 = mid1 + 1;
+            median = (data[mid1] + data[mid2]) / 2.0;
         }
         
         printf "\n> Result\n";
-        printf "> Samples: %s\n", data;
+        printf "> Samples (Sorted): ";
+        for (i=1; i<=count; i++) printf "%s ", data[i];
+        printf "\n";
         printf "> Mean:    %.2f ms\n", mean;
         printf "> Median:  %.2f ms\n", median;
     }'
@@ -127,7 +144,6 @@ log "Activity: $TARGET_ACTIVITY"
 log "Type:     Cold Start"
 log "Samples:  $NUM_SAMPLES"
 log "Tag:      $LOG_TAG"
-log "Searching for log pattern: '$LOG_SEARCH_PATTERN'"
 
 # Main Loop
 for (( i=1; i<=NUM_SAMPLES; i++ )); do
@@ -140,9 +156,6 @@ for (( i=1; i<=NUM_SAMPLES; i++ )); do
     start_app_cold &
 
     # 3. Capture & Parse (Stream Processing)
-    # We read directly from adb. As soon as we find the line, we parse it and break.
-    # This prevents waiting for adb to close.
-    
     TIME_MS=0
     
     while read -r line; do

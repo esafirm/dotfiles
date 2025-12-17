@@ -20,6 +20,9 @@ source $DOT/plugins
 export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 # export MANPATH="/usr/local/man:$MANPATH"
 
+# Local bin
+export PATH="$HOME/.local/bin:$PATH"
+
 ## Init Oh My ZSH
 source $ZSH/oh-my-zsh.sh
 
