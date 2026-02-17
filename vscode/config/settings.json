@@ -242,5 +242,6 @@
     },
     "chat.promptFilesLocations": {
         ".github/prompts.md": true
-    }
+    },
+    "github.copilot.nextEditSuggestions.enabled": true
 }
