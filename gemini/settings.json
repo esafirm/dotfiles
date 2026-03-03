@@ -1,0 +1,32 @@
+{
+  "tools": {
+    "allowed": [
+      "read_file",
+      "list_directory",
+      "glob",
+      "grep_search"
+    ]
+  },
+  "security": {
+    "auth": {
+      "selectedType": "oauth-personal"
+    }
+  },
+  "ui": {
+    "theme": "Dracula",
+    "showMemoryUsage": true,
+    "showModelInfoInChat": true
+  },
+  "general": {
+    "previewFeatures": true,
+    "enablePromptCompletion": false,
+    "sessionRetention": {
+      "warningAcknowledged": true,
+      "enabled": true,
+      "maxAge": "30d"
+    }
+  },
+  "output": {
+    "format": "text"
+  }
+}
