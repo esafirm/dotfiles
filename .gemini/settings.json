@@ -1,11 +1,6 @@
 {
-  "tools": {
-    "allowed": [
-      "read_file",
-      "list_directory",
-      "glob",
-      "grep_search"
-    ]
+  "experimental": {
+    "plan": true
   },
   "security": {
     "auth": {
