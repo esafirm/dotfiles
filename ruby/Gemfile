@@ -13,6 +13,3 @@ gem 'tty-prompt'
 
 # This is used for VSCode rubocop extension
 gem 'rubocop'
-
-# This is used for VSCode solargraph extension
-gem 'solargraph'
