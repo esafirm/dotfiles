@@ -9,6 +9,12 @@ secret_dir
 ## Secret Repo
 keepsecret
 
+## Claude Code - sensitive data
+.claude/memory/
+.claude/sessions/
+.claude/settings.local.json
+.claude/*.local.json
+
 ## Temporary configuration
 temp.sh
 

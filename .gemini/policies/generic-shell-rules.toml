@@ -15,3 +15,15 @@ toolName = "run_shell_command"
 commandPrefix = "grep"
 decision = "allow"
 priority = 100
+
+[[rule]]
+toolName = "run_shell_command"
+commandPrefix = "which"
+decision = "allow"
+priority = 100
+
+[[rule]]
+toolName = "run_shell_command"
+commandPrefix = "wc"
+decision = "allow"
+priority = 100
