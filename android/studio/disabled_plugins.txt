@@ -21,7 +21,6 @@ com.google.urlassistant
 com.intellij.cidr.lang.clangdBridge
 com.intellij.copyright
 com.intellij.laf.macos
-com.intellij.marketplace
 com.intellij.plugins.eclipsekeymap
 com.intellij.plugins.netbeanskeymap
 com.intellij.plugins.visualstudiokeymap
