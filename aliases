@@ -51,6 +51,8 @@ alias adb-restart="adb kill-server && adb root"
 alias astart="adb shell am start"
 alias astop="adb shell am force-stop"
 alias astartview="adb shell am start -a android.intent.action.VIEW"
+alias afinish="adb shell settings put global always_finish_activities 1"
+alias anofinish="adb shell settings put global always_finish_activities 0"
 
 # Safe-rm
 alias rm="safe-rm"
@@ -81,3 +83,6 @@ alias ocat="cat"
 ## Suspend
 alias suspend="pkill -SIGSTOP"
 alias cont="pkill -SIGCONT"
+
+## Tmux Selector
+alias tm="$DOT/ruby/tmux_select.rb"
