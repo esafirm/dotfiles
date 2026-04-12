@@ -1,7 +1,5 @@
 {
-  "experimental": {
-    "plan": true
-  },
+  "experimental": {},
   "security": {
     "auth": {
       "selectedType": "oauth-personal"
@@ -19,9 +17,15 @@
       "warningAcknowledged": true,
       "enabled": true,
       "maxAge": "30d"
+    },
+    "plan": {
+      "enabled": true
     }
   },
   "output": {
     "format": "text"
+  },
+  "agents": {
+    "overrides": {}
   }
 }
