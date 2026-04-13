@@ -18,3 +18,7 @@ export PATH=$PATH:$ANDROID_HOME"/cmdline-tools/latest/bin"
 
 ## Pidcat
 export PATH=$PATH:$DOT"/android/bin"
+
+## IntelliJ
+export IDEA_HOME="$HOME/Applications/IntelliJ IDEA.app/Contents"
+export PATH=$PATH:$IDEA_HOME"/bin"
