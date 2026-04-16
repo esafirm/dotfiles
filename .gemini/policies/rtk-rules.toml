@@ -18,6 +18,18 @@ priority = 100
 
 [[rule]]
 toolName = "run_shell_command"
+commandPrefix = "rtk git log"
+decision = "allow"
+priority = 100
+
+[[rule]]
+toolName = "run_shell_command"
+commandPrefix = "rtk git show"
+decision = "allow"
+priority = 100
+
+[[rule]]
+toolName = "run_shell_command"
 commandPrefix = "rtk grep"
 decision = "allow"
 priority = 100
@@ -25,5 +37,11 @@ priority = 100
 [[rule]]
 toolName = "run_shell_command"
 commandPrefix = "rtk find"
+decision = "allow"
+priority = 100
+
+[[rule]]
+toolName = "run_shell_command"
+commandPrefix = "rtk read"
 decision = "allow"
 priority = 100
