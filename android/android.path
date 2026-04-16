@@ -22,3 +22,8 @@ export PATH=$PATH:$DOT"/android/bin"
 ## IntelliJ
 export IDEA_HOME="$HOME/Applications/IntelliJ IDEA.app/Contents"
 export PATH=$PATH:$IDEA_HOME"/bin"
+
+# Get latest Android Studio path
+# This is a bit hacky, but it works for now. We can improve this later if needed.
+export AS_HOME="$HOME/Applications/Android Studio.app/Contents"
+export AS_LIB_HOME="$HOME/Library/Application Support/Google/AndroidStudio2025.3.3"

@@ -27,5 +27,53 @@
   },
   "agents": {
     "overrides": {}
+  },
+  "hooks": {
+    "BeforeTool": [
+      {
+        "matcher": "run_shell_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${HOME}/.gemini/hooks/rtk-hook-gemini.sh"
+          }
+        ]
+      }
+    ]
+  },
+  "mcpServers": {
+    "android-studio": {
+      "type": "stdio",
+      "env": {
+        "IJ_MCP_SERVER_PORT": "64342"
+      },
+      "command": "${AS_HOME}/jbr/Contents/Home/bin/java",
+      "args": [
+        "-classpath",
+        "${AS_LIB_HOME}/plugins/mcpserver/lib/mcpserver.jar:${AS_LIB_HOME}/plugins/mcpserver/lib/io.modelcontextprotocol.kotlin.sdk.jar:${AS_LIB_HOME}/plugins/mcpserver/lib/io.github.oshai.kotlin.logging.jvm.jar:${AS_HOME}/lib/util-8.jar:${AS_HOME}/lib/module-intellij.libraries.ktor.client.cio.jar:${AS_HOME}/lib/module-intellij.libraries.ktor.client.jar:${AS_HOME}/lib/module-intellij.libraries.ktor.network.tls.jar:${AS_HOME}/lib/module-intellij.libraries.ktor.io.jar:${AS_HOME}/lib/module-intellij.libraries.ktor.utils.jar:${AS_HOME}/lib/module-intellij.libraries.kotlinx.io.jar:${AS_HOME}/lib/module-intellij.libraries.kotlinx.serialization.core.jar:${AS_HOME}/lib/module-intellij.libraries.kotlinx.serialization.json.jar",
+        "com.intellij.mcpserver.stdio.McpStdioRunnerKt"
+      ],
+      "true": true,
+      "includeTools": [
+        "build_project",
+        "execute_run_configuration",
+        "find_files_by_glob",
+        "find_files_by_name_keyword",
+        "get_all_open_file_paths",
+        "get_file_problems",
+        "get_file_text_by_path",
+        "get_project_dependencies",
+        "get_project_modules",
+        "get_repositories",
+        "get_run_configurations",
+        "get_symbol_info",
+        "list_directory_tree",
+        "open_file_in_editor",
+        "reformat_file",
+        "rename_refactoring",
+        "search_in_files_by_regex",
+        "search_in_files_by_text"
+      ]
+    }
   }
 }
