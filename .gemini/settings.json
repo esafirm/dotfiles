@@ -53,7 +53,7 @@
         "${AS_LIB_HOME}/plugins/mcpserver/lib/mcpserver.jar:${AS_LIB_HOME}/plugins/mcpserver/lib/io.modelcontextprotocol.kotlin.sdk.jar:${AS_LIB_HOME}/plugins/mcpserver/lib/io.github.oshai.kotlin.logging.jvm.jar:${AS_HOME}/lib/util-8.jar:${AS_HOME}/lib/module-intellij.libraries.ktor.client.cio.jar:${AS_HOME}/lib/module-intellij.libraries.ktor.client.jar:${AS_HOME}/lib/module-intellij.libraries.ktor.network.tls.jar:${AS_HOME}/lib/module-intellij.libraries.ktor.io.jar:${AS_HOME}/lib/module-intellij.libraries.ktor.utils.jar:${AS_HOME}/lib/module-intellij.libraries.kotlinx.io.jar:${AS_HOME}/lib/module-intellij.libraries.kotlinx.serialization.core.jar:${AS_HOME}/lib/module-intellij.libraries.kotlinx.serialization.json.jar",
         "com.intellij.mcpserver.stdio.McpStdioRunnerKt"
       ],
-      "true": true,
+      "trust": true,
       "includeTools": [
         "build_project",
         "execute_run_configuration",
