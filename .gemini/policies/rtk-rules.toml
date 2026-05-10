@@ -30,6 +30,18 @@ priority = 100
 
 [[rule]]
 toolName = "run_shell_command"
+commandPrefix = "rtk git rev-parse"
+decision = "allow"
+priority = 100
+
+[[rule]]
+toolName = "run_shell_command"
+commandPrefix = "rtk git rev-list"
+decision = "allow"
+priority = 100
+
+[[rule]]
+toolName = "run_shell_command"
 commandPrefix = "rtk grep"
 decision = "allow"
 priority = 100
@@ -42,6 +54,24 @@ priority = 100
 
 [[rule]]
 toolName = "run_shell_command"
+commandPrefix = "rtk tree"
+decision = "allow"
+priority = 100
+
+[[rule]]
+toolName = "run_shell_command"
 commandPrefix = "rtk read"
+decision = "allow"
+priority = 100
+
+[[rule]]
+toolName = "run_shell_command"
+commandPrefix = "rtk wc"
+decision = "allow"
+priority = 100
+
+[[rule]]
+toolName = "run_shell_command"
+commandPrefix = "rtk gain"
 decision = "allow"
 priority = 100
