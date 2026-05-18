@@ -75,9 +75,13 @@
         "search_in_files_by_text"
       ]
     },
+    "android-studio-debugger": {
+      "type": "stdio",
+      "httpUrl": "http://127.0.0.1:29191/debugger-mcp/streamable-http"
+    },
     "idea": {
       "type": "http",
-      "url": "http://127.0.0.1:64342/stream",
+      "url": "http://127.0.0.1:64343/stream",
       "headers": {},
       "trust": true,
       "includeTools": [

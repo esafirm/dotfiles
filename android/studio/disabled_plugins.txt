@@ -11,11 +11,8 @@ com.google.appindexing
 com.google.cluestick.studioclient
 com.google.gct
 com.google.gct.core
-com.google.gct.directaccess
 com.google.gct.login
-com.google.gct.test.recorder
 com.google.gct.testing
-com.google.services.firebase
 com.google.services.git4insights
 com.google.urlassistant
 com.intellij.cidr.lang.clangdBridge
