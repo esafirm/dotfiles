@@ -24,14 +24,6 @@ alias gforceforce="git push origin HEAD -f"
 alias gam="git add -A && git commit -m"
 alias pbg="git_current_branch | pbcopy"
 
-guwd() {
-    for f in $(git diff --name-only); do git unwatch $f; done
-}
-
-gwu() {
-    for f in $(git unwatched); do git watch $f; done
-}
-
 ## SpeedTest
 alias speedtest="$DOT/speedtest-cli"
 
@@ -43,16 +35,6 @@ alias npmls="npm ls --depth=0"
 
 ## Genymotion
 alias geny="open -a /Applications/Genymotion.app/Contents/MacOS/player.app --args --vm-name"
-
-## Android
-alias ains="adb install"
-alias auins="adb uninstall"
-alias adb-restart="adb kill-server && adb root"
-alias astart="adb shell am start"
-alias astop="adb shell am force-stop"
-alias astartview="adb shell am start -a android.intent.action.VIEW"
-alias afinish="adb shell settings put global always_finish_activities 1"
-alias anofinish="adb shell settings put global always_finish_activities 0"
 
 # Safe-rm
 alias rm="safe-rm"

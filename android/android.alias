@@ -1,0 +1,12 @@
+## Android
+alias ains="adb install"
+alias auins="adb uninstall"
+alias adb-restart="adb kill-server && adb root"
+alias astart="adb shell am start"
+alias astop="adb shell am force-stop"
+alias astartview="adb shell am start -a android.intent.action.VIEW"
+alias afinish="adb shell settings put global always_finish_activities 1"
+alias anofinish="adb shell settings put global always_finish_activities 0"
+
+## Android - List all aliases
+alias android-aliases="echo 'ains, auins, adb-restart, astart, astop, astartview, afinish, anofinish'"
