@@ -44,6 +44,7 @@ source $DOT/ruby/ruby.path
 
 ## Android
 source $DOT/android/android.path
+source $DOT/android/android.alias
 source $DOT/android/func.sh
 
 ## Aliases
