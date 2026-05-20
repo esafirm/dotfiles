@@ -7,6 +7,7 @@ alias astop="adb shell am force-stop"
 alias astartview="adb shell am start -a android.intent.action.VIEW"
 alias afinish="adb shell settings put global always_finish_activities 1"
 alias anofinish="adb shell settings put global always_finish_activities 0"
+alias android-uidump="$DOT/android/bin/ui-dump.main.kts"
 
 ## Android - List all aliases
-alias android-aliases="echo 'ains, auins, adb-restart, astart, astop, astartview, afinish, anofinish'"
+alias android-aliases="echo 'ains, auins, adb-restart, astart, astop, astartview, afinish, anofinish, android-uidump'"
