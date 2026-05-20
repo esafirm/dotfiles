@@ -20,3 +20,6 @@ temp.sh
 
 ## Mac relatad
 .DS_store
+
+## Antigravity CLI - sensitive data/sessions
+.antigravitycli/
