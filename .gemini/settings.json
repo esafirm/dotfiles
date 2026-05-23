@@ -42,17 +42,9 @@
     ]
   },
   "mcpServers": {
-    "android-studio": {
-      "type": "stdio",
-      "env": {
-        "IJ_MCP_SERVER_PORT": "64342"
-      },
-      "command": "${AS_HOME}/jbr/Contents/Home/bin/java",
-      "args": [
-        "-classpath",
-        "${AS_LIB_HOME}/plugins/mcpserver/lib/mcpserver.jar:${AS_LIB_HOME}/plugins/mcpserver/lib/io.modelcontextprotocol.kotlin.sdk.jar:${AS_LIB_HOME}/plugins/mcpserver/lib/io.github.oshai.kotlin.logging.jvm.jar:${AS_HOME}/lib/util-8.jar:${AS_HOME}/lib/module-intellij.libraries.ktor.client.cio.jar:${AS_HOME}/lib/module-intellij.libraries.ktor.client.jar:${AS_HOME}/lib/module-intellij.libraries.ktor.network.tls.jar:${AS_HOME}/lib/module-intellij.libraries.ktor.io.jar:${AS_HOME}/lib/module-intellij.libraries.ktor.utils.jar:${AS_HOME}/lib/module-intellij.libraries.kotlinx.io.jar:${AS_HOME}/lib/module-intellij.libraries.kotlinx.serialization.core.jar:${AS_HOME}/lib/module-intellij.libraries.kotlinx.serialization.json.jar",
-        "com.intellij.mcpserver.stdio.McpStdioRunnerKt"
-      ],
+    "android-studio-sse": {
+      "type": "sse",
+      "url": "http://localhost:64342/sse",
       "trust": true,
       "includeTools": [
         "build_project",
