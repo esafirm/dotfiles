@@ -30,6 +30,7 @@ com.jetbrains.idea.refactoring.detector
 com.jetbrains.performancePlugin
 com.jetbrains.settingsSync
 com.jetbrains.space
+com.skydoves.compose.hotswan
 detekt
 hg4idea
 org.arkivanov.mvikotlin.plugin.idea.timetravel
