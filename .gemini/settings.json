@@ -43,8 +43,8 @@
   },
   "mcpServers": {
     "android-studio-sse": {
-      "type": "sse",
-      "url": "http://localhost:64342/sse",
+      "type": "http",
+      "url": "http://127.0.0.1:64342/stream",
       "trust": true,
       "includeTools": [
         "build_project",
@@ -105,6 +105,12 @@
         "mcp",
         "--only",
         "crashlytics"
+      ],
+      "trust": true,
+      "includeTools": [
+        "firebase_get_environment",
+        "get_crashlytics_issues",
+        "crashlytics_list_events"
       ]
     }
   }

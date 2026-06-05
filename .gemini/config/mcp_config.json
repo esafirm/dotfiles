@@ -1,0 +1,69 @@
+{
+  "mcpServers": {
+    "android-studio-sse": {
+      "type": "sse",
+      "url": "http://localhost:64342/sse",
+      "trust": true,
+      "includeTools": [
+        "build_project",
+        "execute_run_configuration",
+        "find_files_by_glob",
+        "find_files_by_name_keyword",
+        "get_all_open_file_paths",
+        "get_file_problems",
+        "get_file_text_by_path",
+        "get_project_dependencies",
+        "get_project_modules",
+        "get_repositories",
+        "get_run_configurations",
+        "get_symbol_info",
+        "list_directory_tree",
+        "open_file_in_editor",
+        "reformat_file",
+        "rename_refactoring",
+        "search_in_files_by_regex",
+        "search_in_files_by_text"
+      ]
+    },
+    "android-studio-debugger": {
+      "type": "stdio",
+      "httpUrl": "http://127.0.0.1:29191/debugger-mcp/streamable-http"
+    },
+    "idea": {
+      "type": "http",
+      "url": "http://127.0.0.1:64343/stream",
+      "headers": {},
+      "trust": true,
+      "includeTools": [
+        "build_project",
+        "execute_run_configuration",
+        "find_files_by_glob",
+        "find_files_by_name_keyword",
+        "get_all_open_file_paths",
+        "get_file_problems",
+        "get_file_text_by_path",
+        "get_project_dependencies",
+        "get_project_modules",
+        "get_repositories",
+        "get_run_configurations",
+        "get_symbol_info",
+        "list_directory_tree",
+        "open_file_in_editor",
+        "reformat_file",
+        "rename_refactoring",
+        "search_in_files_by_regex",
+        "search_in_files_by_text"
+      ]
+    },
+    "firebase": {
+      "command": "npx",
+      "args": ["-y", "firebase-tools@latest", "mcp", "--only", "crashlytics"],
+      "trust": true,
+      "includeTools": [
+        "firebase_get_environment",
+        "get_crashlytics_issues",
+        "crashlytics_list_events"
+      ]
+    }
+  }
+}

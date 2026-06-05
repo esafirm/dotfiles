@@ -68,3 +68,5 @@ alias cont="pkill -SIGCONT"
 
 ## Tmux Selector
 alias tm="$DOT/ruby/tmux_select.rb"
+alias pbc="git rev-parse HEAD | tr -d '\n' | pbcopy"
+alias pbcs="git rev-parse --short HEAD | tr -d '\n' | pbcopy"
