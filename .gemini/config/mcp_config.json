@@ -1,50 +1,8 @@
 {
-  "experimental": {},
-  "security": {
-    "auth": {
-      "selectedType": "oauth-personal"
-    }
-  },
-  "ui": {
-    "theme": "Dracula",
-    "showMemoryUsage": true,
-    "showModelInfoInChat": true
-  },
-  "general": {
-    "previewFeatures": true,
-    "enablePromptCompletion": false,
-    "sessionRetention": {
-      "warningAcknowledged": true,
-      "enabled": true,
-      "maxAge": "30d"
-    },
-    "plan": {
-      "enabled": true
-    }
-  },
-  "output": {
-    "format": "text"
-  },
-  "agents": {
-    "overrides": {}
-  },
-  "hooks": {
-    "BeforeTool": [
-      {
-        "matcher": "run_shell_command",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "${HOME}/.gemini/hooks/rtk-hook-gemini.sh"
-          }
-        ]
-      }
-    ]
-  },
   "mcpServers": {
     "android-studio-sse": {
-      "type": "http",
-      "url": "http://127.0.0.1:64342/stream",
+      "type": "sse",
+      "url": "http://localhost:64342/sse",
       "trust": true,
       "includeTools": [
         "build_project",
@@ -99,13 +57,7 @@
     },
     "firebase": {
       "command": "npx",
-      "args": [
-        "-y",
-        "firebase-tools@latest",
-        "mcp",
-        "--only",
-        "crashlytics"
-      ],
+      "args": ["-y", "firebase-tools@latest", "mcp", "--only", "crashlytics"],
       "trust": true,
       "includeTools": [
         "firebase_get_environment",

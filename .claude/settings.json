@@ -1,8 +1,14 @@
 {
   "env": {
     "API_TIMEOUT_MS": "3000000",
-    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
+    "ANTHROPIC_BASE_URL": "http://127.0.0.1:20128/v1",
+    "ANTHROPIC_AUTH_TOKEN": "sk_9router",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "oc/minimax-m3-free",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "cc/claude-sonnet-4-6",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "cc/claude-haiku-4-5-20251001"
   },
+  "hasCompletedOnboarding": true,
   "ui": {
     "theme": "Dracula",
     "showMemoryUsage": true,
@@ -14,26 +20,14 @@
       "maxAge": "30d"
     }
   },
-  "security": {
-    "auth": {
-      "selectedType": "oauth-personal"
-    }
-  },
   "output": {
     "format": "text"
   },
   "mcpServers": {
     "android-studio": {
       "type": "stdio",
-      "env": {
-        "IJ_MCP_SERVER_PORT": "64342"
-      },
-      "command": "${AS_HOME}/jbr/Contents/Home/bin/java",
-      "args": [
-        "-classpath",
-        "${AS_LIB_HOME}/plugins/mcpserver/lib/mcpserver.jar:${AS_LIB_HOME}/plugins/mcpserver/lib/io.modelcontextprotocol.kotlin.sdk.jar:${AS_LIB_HOME}/plugins/mcpserver/lib/io.github.oshai.kotlin.logging.jvm.jar:${AS_HOME}/lib/util-8.jar:${AS_HOME}/lib/module-intellij.libraries.ktor.client.cio.jar:${AS_HOME}/lib/module-intellij.libraries.ktor.client.jar:${AS_HOME}/lib/module-intellij.libraries.ktor.network.tls.jar:${AS_HOME}/lib/module-intellij.libraries.ktor.io.jar:${AS_HOME}/lib/module-intellij.libraries.ktor.utils.jar:${AS_HOME}/lib/module-intellij.libraries.kotlinx.io.jar:${AS_HOME}/lib/module-intellij.libraries.kotlinx.serialization.core.jar:${AS_HOME}/lib/module-intellij.libraries.kotlinx.serialization.json.jar",
-        "com.intellij.mcpserver.stdio.McpStdioRunnerKt"
-      ],
+      "url": "http://127.0.0.1:64342/stream",
+      "headers": {},
       "trust": true,
       "includeTools": [
         "build_project",
@@ -55,10 +49,7 @@
         "search_in_files_by_regex",
         "search_in_files_by_text"
       ]
-    },
-    "android-studio-debugger": {
-      "type": "stdio",
-      "httpUrl": "http://127.0.0.1:29191/debugger-mcp/streamable-http"
     }
-  }
+  },
+  "model": "opus"
 }
