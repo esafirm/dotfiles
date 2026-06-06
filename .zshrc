@@ -129,6 +129,5 @@ source $DOT/flutter/config.sh
 ## JetBrains Toolbox Shell Shortcut
 export PATH="$PATH:$DOT/toolbox"
 
-
 # Added by Antigravity CLI installer
 export PATH="/Users/esafirm/.local/bin:$PATH"
