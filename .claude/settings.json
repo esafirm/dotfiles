@@ -4,9 +4,9 @@
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
     "ANTHROPIC_BASE_URL": "http://127.0.0.1:20128/v1",
     "ANTHROPIC_AUTH_TOKEN": "sk_9router",
-    "ANTHROPIC_DEFAULT_OPUS_MODEL": "oc/minimax-m3-free",
-    "ANTHROPIC_DEFAULT_SONNET_MODEL": "cc/claude-sonnet-4-6",
-    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "cc/claude-haiku-4-5-20251001"
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "gemini/gemini-3.5-flash",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "oc/minimax-m3-free",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "openrouter/google/gemma-4-31b-it:free"
   },
   "hasCompletedOnboarding": true,
   "ui": {
@@ -22,34 +22,6 @@
   },
   "output": {
     "format": "text"
-  },
-  "mcpServers": {
-    "android-studio": {
-      "type": "stdio",
-      "url": "http://127.0.0.1:64342/stream",
-      "headers": {},
-      "trust": true,
-      "includeTools": [
-        "build_project",
-        "execute_run_configuration",
-        "find_files_by_glob",
-        "find_files_by_name_keyword",
-        "get_all_open_file_paths",
-        "get_file_problems",
-        "get_file_text_by_path",
-        "get_project_dependencies",
-        "get_project_modules",
-        "get_repositories",
-        "get_run_configurations",
-        "get_symbol_info",
-        "list_directory_tree",
-        "open_file_in_editor",
-        "reformat_file",
-        "rename_refactoring",
-        "search_in_files_by_regex",
-        "search_in_files_by_text"
-      ]
-    }
   },
   "model": "opus"
 }
