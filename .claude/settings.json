@@ -9,6 +9,18 @@
     "ANTHROPIC_DEFAULT_HAIKU_MODEL": "openrouter/google/gemma-4-31b-it:free"
   },
   "hasCompletedOnboarding": true,
+  "enabledPlugins": {
+    "vercel@claude-plugins-official": true
+  },
+  "extraKnownMarketplaces": {
+    "claude-plugins-official": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-plugins-official"
+      }
+    }
+  },
+  "effortLevel": "high",
   "ui": {
     "theme": "Dracula",
     "showMemoryUsage": true,

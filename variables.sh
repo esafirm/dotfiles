@@ -9,3 +9,5 @@ export CDOT="$DOT/chromebook"
 # global bin directories
 export BIN="$DOT/bin"
 
+# bat theme
+export BAT_THEME="Dracula"
