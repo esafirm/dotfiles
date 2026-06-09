@@ -9,9 +9,41 @@
     "paths": [".claude/skills"]
   },
 
+  "mcp": {
+    "android-studio": {
+      "type": "remote",
+      "url": "http://127.0.0.1:64342/stream"
+    },
+    "firebase": {
+      "type": "local",
+      "command": ["npx", "-y", "firebase-tools@latest", "mcp", "--only", "crashlytics"]
+    }
+  },
+
   "permission": {
+    "read": "allow",
     "edit": "allow",
-    "bash": { "rm *": "deny", "*": "ask" },
+    "grep": "allow",
+    "glob": "allow",
+    "bash": {
+      "*": "ask",
+      "git status*": "allow",
+      "git log*": "allow",
+      "git show*": "allow",
+      "git diff*": "allow",
+      "git diff-tree*": "allow",
+      "cat *": "allow",
+      "ls": "allow",
+      "ls *": "allow",
+      "pwd": "allow",
+      "head *": "allow",
+      "tail *": "allow",
+      "grep *": "allow",
+      "which *": "allow",
+      "wc *": "allow",
+      "rm *": "deny"
+    },
+    "android-studio_*": "allow",
     "external_directory": {
       "~/secrets/**": "deny",
       "~/secret_dir/**": "deny",
