@@ -16,4 +16,4 @@ for o in "$@"; do
   fi
 done
 
-open -na "/Users/esafirm/Applications/IntelliJ IDEA.app/Contents/MacOS/idea" $wait --args "${intellij_args[@]}"
+open -na "$HOME/Applications/IntelliJ IDEA.app/Contents/MacOS/idea" $wait --args "${intellij_args[@]}"

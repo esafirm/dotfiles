@@ -25,5 +25,5 @@ setupStrace() {
 }
 
 openTrace() {
-    open file:///Users/esafirm/Library/Android/sdk/platform-tools/systrace/trace.html
+    open file://$HOME/Library/Android/sdk/platform-tools/systrace/trace.html
 }

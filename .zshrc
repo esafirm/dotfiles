@@ -130,4 +130,7 @@ source $DOT/flutter/config.sh
 export PATH="$PATH:$DOT/toolbox"
 
 # Added by Antigravity CLI installer
-export PATH="/Users/esafirm/.local/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
+
+# opencode
+export PATH=$HOME/.opencode/bin:$PATH
