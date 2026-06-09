@@ -57,4 +57,4 @@ fi
 ###-end-flutter-completion-###
 
 ## Generated 2023-11-28 07:47:31.551788Z
-## By /Users/esafirm/Library/flutter/bin/cache/flutter_tools.snapshot
+## By $HOME/Library/flutter/bin/cache/flutter_tools.snapshot

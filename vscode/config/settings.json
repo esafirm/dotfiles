@@ -214,7 +214,7 @@
     "dart.lineLength": 120,
     "dart.debugExternalPackageLibraries": true,
     "dart.debugSdkLibraries": false,
-    "dart.flutterSdkPath": "/Users/esafirm/Library/flutter",
+    "dart.flutterSdkPath": "$HOME/Library/flutter",
     "[dart]": {
         "editor.rulers": [
             120

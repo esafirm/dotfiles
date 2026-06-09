@@ -21,3 +21,7 @@ ln -sf ~/dotfiles/.claude/settings.json ~/.claude/settings.json
 ln -sf ~/dotfiles/.claude/projects.json ~/.claude/projects.json
 ln -sf ~/dotfiles/.claude/CLAUDE.md ~/.claude/CLAUDE.md
 ln -sf ~/dotfiles/.claude/skills ~/.claude/skills
+
+## opencode
+mkdir -p ~/.config/opencode
+ln -sf ~/dotfiles/opencode.jsonc ~/.config/opencode/opencode.jsonc

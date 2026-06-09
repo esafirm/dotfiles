@@ -23,3 +23,7 @@ temp.sh
 
 ## Antigravity CLI - sensitive data/sessions
 .antigravitycli/
+
+## opencode - transient data
+.opencode/memory/
+.opencode/sessions/
