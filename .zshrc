@@ -83,6 +83,7 @@ export PATH="$FLUTTER_HOME/bin/cache/dart-sdk/bin:$PATH"
 
 # Local bin
 export PATH="$HOME/Applications/local/bin:$PATH"
+export PATH="$DOT/bin:$PATH"
 
 # Go Path
 export GOPATH="$HOME/Documents/Go"

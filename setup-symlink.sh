@@ -25,3 +25,14 @@ ln -sf ~/dotfiles/.claude/skills ~/.claude/skills
 ## opencode
 mkdir -p ~/.config/opencode
 ln -sf ~/dotfiles/opencode.jsonc ~/.config/opencode/opencode.jsonc
+mkdir -p ~/.config/opencode/plugins
+ln -sf ~/dotfiles/.config/opencode/plugins/rtk.ts ~/.config/opencode/plugins/rtk.ts
+ln -sf ~/dotfiles/.config/opencode/package.json ~/.config/opencode/package.json
+
+## Consolidate opencode skill dir to dotfiles-managed .claude/skills
+rm -rf ~/.config/opencode/skill ~/.config/opencode/skills
+ln -sf ~/.claude/skills ~/.config/opencode/skills
+
+## herdr
+mkdir -p ~/.config/herdr
+ln -sf ~/dotfiles/.config/herdr/config.toml ~/.config/herdr/config.toml

@@ -1,14 +1,9 @@
 {
   "$schema": "https://opencode.ai/config.json",
-
   "instructions": [
     ".claude/CLAUDE.md"
   ],
-
-  "skills": {
-    "paths": [".claude/skills"]
-  },
-
+  "enabled_providers": ["opencode", "opencode-go"],
   "mcp": {
     "android-studio": {
       "type": "remote",
@@ -16,10 +11,19 @@
     },
     "firebase": {
       "type": "local",
-      "command": ["npx", "-y", "firebase-tools@latest", "mcp", "--only", "crashlytics"]
+      "command": [
+        "npx",
+        "-y",
+        "firebase-tools@latest",
+        "mcp",
+        "--only",
+        "crashlytics"
+      ]
     }
   },
-
+  "skills": {
+    "paths": [".claude/skills"]
+  },
   "permission": {
     "read": "allow",
     "edit": "allow",
@@ -28,10 +32,14 @@
     "bash": {
       "*": "ask",
       "git status*": "allow",
-      "git log*": "allow",
-      "git show*": "allow",
-      "git diff*": "allow",
-      "git diff-tree*": "allow",
+      "git log": "allow",
+      "git log *": "allow",
+      "git show": "allow",
+      "git show *": "allow",
+      "git diff": "allow",
+      "git diff *": "allow",
+      "git diff-tree": "allow",
+      "git diff-tree *": "allow",
       "cat *": "allow",
       "ls": "allow",
       "ls *": "allow",
@@ -41,7 +49,19 @@
       "grep *": "allow",
       "which *": "allow",
       "wc *": "allow",
-      "rm *": "deny"
+      "rm *": "deny",
+      "echo": "allow",
+      "rtk git log *": "allow",
+      "rtk git show *": "allow",
+      "rtk git diff *": "allow",
+      "rtk git diff-tree *": "allow",
+      "rtk git status": "allow",
+      "rtk git status *": "allow",
+      "rtk cat *": "allow",
+      "rtk ls": "allow",
+      "rtk ls *": "allow",
+      "sort *": "allow",
+      "uniq *": "allow"
     },
     "android-studio_*": "allow",
     "external_directory": {
