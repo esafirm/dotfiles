@@ -56,7 +56,8 @@
       "rtk git diff *": "allow",
       "rtk git diff-tree *": "allow",
       "rtk git status": "allow",
-      "rtk git status *": "allow",
+      "rtk git status *": "allow",'
+      "rtk git ls-tree *": "allow",
       "rtk cat *": "allow",
       "rtk ls": "allow",
       "rtk ls *": "allow",
@@ -64,6 +65,7 @@
       "uniq *": "allow"
     },
     "android-studio_*": "allow",
+    "android-studio_execute_terminal_command": "deny",
     "external_directory": {
       "~/secrets/**": "deny",
       "~/secret_dir/**": "deny",

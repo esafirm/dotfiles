@@ -1,3 +1,4 @@
+onboarding = false
 [keys]
 previous_tab = "alt+p"
 next_tab = "alt+n"
