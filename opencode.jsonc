@@ -50,7 +50,7 @@
       "which *": "allow",
       "wc *": "allow",
       "rm *": "deny",
-      "echo": "allow",
+      "echo *": "allow",
       "rtk git log *": "allow",
       "rtk git show *": "allow",
       "rtk git diff *": "allow",
