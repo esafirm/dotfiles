@@ -220,13 +220,15 @@ echo ""
 # ── 7. Prompt Intent Distribution ──
 echo "─── Prompt Intent Distribution ───"
 sqlite3 "$DB" "
-SELECT json_extract(p.data, '\$.text')
+SELECT replace(json_extract(p.data, '\$.text'), char(10), ' ')
 FROM part p
 JOIN message m ON m.id = p.message_id
 JOIN session s ON s.id = p.session_id
 WHERE json_extract(p.data, '\$.type') = 'text'
   AND json_extract(m.data, '\$.role') = 'user'
   AND length(trim(json_extract(p.data, '\$.text'))) > 0
+  AND json_extract(p.data, '\$.text') NOT LIKE 'Called the%'
+  AND json_extract(p.data, '\$.text') NOT LIKE '<path>%'
   $PF
   $TIME_FILTER_PART
 " | awk '
@@ -259,13 +261,15 @@ echo ""
 
 echo "─── Top Keywords ───"
 sqlite3 "$DB" "
-SELECT json_extract(p.data, '\$.text')
+SELECT replace(json_extract(p.data, '\$.text'), char(10), ' ')
 FROM part p
 JOIN message m ON m.id = p.message_id
 JOIN session s ON s.id = p.session_id
 WHERE json_extract(p.data, '\$.type') = 'text'
   AND json_extract(m.data, '\$.role') = 'user'
   AND length(trim(json_extract(p.data, '\$.text'))) > 0
+  AND json_extract(p.data, '\$.text') NOT LIKE 'Called the%'
+  AND json_extract(p.data, '\$.text') NOT LIKE '<path>%'
   $PF
   $TIME_FILTER_PART
 " | awk '
@@ -295,23 +299,24 @@ END {
 ' | sort -rn | head -20 | awk '{ printf "  %-12s %s\n", $1, $2 }'
 echo ""
 
-# ── 7c. Recent Prompts ──
-echo "─── Recent Prompts (last 15) ───"
+# ── 7c. Recent Prompts (grouped by session, written to temp file) ──
+rm -f /tmp/opencode-recent-prompts.txt
+PROMPTS_TMP=/tmp/opencode-recent-prompts.txt
 sqlite3 "$DB" "
-SELECT p.time_created, replace(json_extract(p.data, '\$.text'), char(10), ' ')
+SELECT s.id, datetime(s.time_created / 1000, 'unixepoch'), p.time_created, replace(json_extract(p.data, '\$.text'), char(10), ' ')
 FROM part p
 JOIN message m ON m.id = p.message_id
 JOIN session s ON s.id = p.session_id
 WHERE json_extract(p.data, '\$.type') = 'text'
   AND json_extract(m.data, '\$.role') = 'user'
   AND length(trim(json_extract(p.data, '\$.text'))) > 0
+  AND json_extract(p.data, '\$.text') NOT LIKE 'Called the%'
+  AND json_extract(p.data, '\$.text') NOT LIKE '<path>%'
   $PF
   $TIME_FILTER_PART
-ORDER BY p.time_created DESC
-LIMIT 15;
-" | awk '
+ORDER BY s.time_created DESC, p.time_created DESC;
+" | awk -v FS="|" '
 BEGIN {
-  FS = "|"
   split("config|git|debug|refactor|explain|audit|test|deploy", cats, "|")
   pats["config"] = "zshrc|gitconfig|opencode|dotfiles|setup|brew|symlink|tmux|vimrc"
   pats["git"] = "commit|branch|diff|push|rebase|merge|stash|pull request|pr"
@@ -323,21 +328,27 @@ BEGIN {
   pats["deploy"] = "deploy|release|publish|build|ci|cd|pipeline"
 }
 {
-  ts = $1
-  text = $2
-  prompt = tolower(text)
+  sid = $1
+  sts = $2
+  text = $4
 
+  if (sid != last_sid) {
+    if (last_sid != "") printf "\n"
+    printf "Session %s (%s)\n", sid, sts
+    last_sid = sid
+  }
+
+  prompt = tolower(text)
   c = "other"
   for (i in cats) {
     if (prompt ~ pats[cats[i]]) { c = cats[i]; break }
   }
 
-  truncated = (length(text) > 80) ? substr(text, 1, 80) "..." : text
-  gsub(/[[:space:]]+/, " ", truncated)
-  printf "  [%-8s] %s\n", c, truncated
+  gsub(/[[:space:]]+/, " ", text)
+  printf "  [%-8s] %s\n", c, text
 }
-'
-echo ""
+' > "$PROMPTS_TMP"
+echo "    Recent prompts written to: $PROMPTS_TMP"
 
 # ── 8. Sessions per Project (only for --all) ──
 if [ "$MODE" = "--all" ]; then

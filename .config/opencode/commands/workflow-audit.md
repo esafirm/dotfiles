@@ -26,6 +26,6 @@ Provide:
    - How many times it was loaded
    - Whether to keep, archive, or remove
 
-5. **Prompt intent insights** — if "Prompt Intent Distribution" and "Top Keywords" are present, identify recurring user intents and suggest commands/skills/agents to address them. Pay special attention to the "Recent Prompts" section — each prompt is a potential candidate for automation.
+5. **Prompt intent insights** — if "Prompt Intent Distribution" and "Top Keywords" are present, identify recurring user intents and suggest commands/skills/agents to address them. Pay special attention to the recent prompts file (printed above) — each prompt is a potential candidate for automation. Read the file to analyze the full recent prompts grouped by session.
 
 6. **Optional improvements** — any other workflow optimizations worth considering (e.g. permission tweaks, MCP server additions, time range defaults, etc.)
