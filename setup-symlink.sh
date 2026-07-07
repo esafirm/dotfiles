@@ -27,7 +27,14 @@ mkdir -p ~/.config/opencode
 ln -sf ~/dotfiles/opencode.jsonc ~/.config/opencode/opencode.jsonc
 mkdir -p ~/.config/opencode/plugins
 ln -sf ~/dotfiles/.config/opencode/plugins/rtk.ts ~/.config/opencode/plugins/rtk.ts
+ln -sf ~/dotfiles/.config/opencode/plugins/audit-prompts.ts.disabled ~/.config/opencode/plugins/audit-prompts.ts.disabled
 ln -sf ~/dotfiles/.config/opencode/package.json ~/.config/opencode/package.json
+ln -sf ~/dotfiles/.config/opencode/package-lock.json ~/.config/opencode/package-lock.json
+ln -sf ~/dotfiles/.config/opencode/.gitignore ~/.config/opencode/.gitignore
+mkdir -p ~/.config/opencode/commands
+ln -sf ~/dotfiles/.config/opencode/commands/workflow-audit.md ~/.config/opencode/commands/workflow-audit.md
+mkdir -p ~/.config/opencode/scripts
+ln -sf ~/dotfiles/.config/opencode/scripts/workflow-audit.sh ~/.config/opencode/scripts/workflow-audit.sh
 
 ## Consolidate opencode skill dir to dotfiles-managed .claude/skills
 rm -rf ~/.config/opencode/skill ~/.config/opencode/skills
