@@ -1,0 +1,242 @@
+import type { Plugin } from "@opencode-ai/plugin"
+import * as fs from "node:fs"
+import * as path from "node:path"
+import * as os from "node:os"
+
+// Prompt audit plugin for opencode.
+// Captures user prompt text, classifies intent via a simple keyword map,
+// and writes to a JSONL log with 30-day rotation.
+
+const LOG_DIR = path.join(os.homedir(), ".config", "opencode")
+const LOG_FILE = path.join(LOG_DIR, "audit-prompts.jsonl")
+const MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000 // 30 days
+const MAX_TEXT_LENGTH = 500
+
+// Simple keyword-based intent map. Kept flat on purpose — easy to edit.
+const KEYWORD_CATEGORIES: Array<{ category: string; keywords: string[] }> = [
+  {
+    category: "config",
+    keywords: [
+      "zshrc",
+      "gitconfig",
+      "opencode",
+      "opencode.json",
+      "dotfiles",
+      "setup",
+      "brew",
+      "symlink",
+      "tmux",
+      "vimrc",
+    ],
+  },
+  {
+    category: "git",
+    keywords: [
+      "commit",
+      "branch",
+      "diff",
+      "push",
+      "rebase",
+      "merge",
+      "stash",
+      "pull request",
+      "pr",
+      "git log",
+    ],
+  },
+  {
+    category: "debug",
+    keywords: [
+      "error",
+      "fail",
+      "crash",
+      "fix",
+      "bug",
+      "broken",
+      "exception",
+      "stack trace",
+      "trace",
+    ],
+  },
+  {
+    category: "refactor",
+    keywords: [
+      "rename",
+      "move",
+      "extract",
+      "clean up",
+      "simplify",
+      "refactor",
+      "restructure",
+      "organize",
+    ],
+  },
+  {
+    category: "explain",
+    keywords: [
+      "how",
+      "why",
+      "what does",
+      "explain",
+      "understand",
+      "describe",
+      "clarify",
+    ],
+  },
+  {
+    category: "audit",
+    keywords: [
+      "report",
+      "workflow",
+      "usage",
+      "stats",
+      "analyze",
+      "audit",
+      "metrics",
+    ],
+  },
+  {
+    category: "test",
+    keywords: [
+      "test",
+      "pytest",
+      "junit",
+      "unit test",
+      "integration test",
+      "coverage",
+    ],
+  },
+  {
+    category: "deploy",
+    keywords: [
+      "deploy",
+      "release",
+      "publish",
+      "build",
+      "ci",
+      "cd",
+      "pipeline",
+    ],
+  },
+]
+
+function truncateText(text: string): string {
+  if (text.length <= MAX_TEXT_LENGTH) return text
+  return text.slice(0, MAX_TEXT_LENGTH) + " ... [truncated]"
+}
+
+function classifyPrompt(text: string): { category: string; keywords: string[] } {
+  const lower = text.toLowerCase()
+  let bestCategory = "other"
+  const matchedKeywords = new Set<string>()
+
+  for (const rule of KEYWORD_CATEGORIES) {
+    for (const kw of rule.keywords) {
+      if (lower.includes(kw.toLowerCase())) {
+        matchedKeywords.add(kw)
+        // First match wins; later rules can add more keywords but won't override category.
+        if (bestCategory === "other") {
+          bestCategory = rule.category
+        }
+      }
+    }
+  }
+
+  return {
+    category: bestCategory,
+    keywords: Array.from(matchedKeywords).slice(0, 5),
+  }
+}
+
+function ensureLogDir(): void {
+  if (!fs.existsSync(LOG_DIR)) {
+    fs.mkdirSync(LOG_DIR, { recursive: true })
+  }
+}
+
+function rotateLog(): void {
+  if (!fs.existsSync(LOG_FILE)) return
+
+  const cutoff = Date.now() - MAX_AGE_MS
+  const content = fs.readFileSync(LOG_FILE, "utf8")
+  const lines = content.split("\n")
+  const kept: string[] = []
+  let dropped = 0
+
+  for (const line of lines) {
+    if (!line.trim()) continue
+    try {
+      const entry = JSON.parse(line)
+      if (entry.timestamp && entry.timestamp >= cutoff) {
+        kept.push(line)
+      } else {
+        dropped++
+      }
+    } catch {
+      dropped++
+    }
+  }
+
+  fs.writeFileSync(LOG_FILE, kept.join("\n") + (kept.length > 0 ? "\n" : ""), "utf8")
+  if (dropped > 0) {
+    console.log(`[audit-prompts] rotated log: kept ${kept.length}, dropped ${dropped}`)
+  }
+}
+
+function appendEntry(entry: Record<string, unknown>): void {
+  ensureLogDir()
+  const line = JSON.stringify(entry) + "\n"
+  try {
+    fs.appendFileSync(LOG_FILE, line, { encoding: "utf8" })
+  } catch (err) {
+    console.error("[audit-prompts] failed to append entry:", err)
+  }
+}
+
+const AuditPromptsPlugin: Plugin = async () => {
+  // Rotate on startup so the log never grows unbounded.
+  try {
+    rotateLog()
+  } catch (err) {
+    console.error("[audit-prompts] rotation failed:", err)
+  }
+
+  return {
+    "chat.message": async (_input, output) => {
+      try {
+        const message = output?.message
+        if (!message || message.role !== "user") return
+
+        const parts = output?.parts ?? []
+        const textParts: string[] = []
+        for (const part of parts) {
+          if (typeof part === "object" && part !== null && "type" in part) {
+            const p = part as { type?: string; text?: string }
+            if (p.type === "text" && typeof p.text === "string") {
+              textParts.push(p.text)
+            }
+          }
+        }
+
+        const text = textParts.join(" ").trim()
+        if (!text) return
+
+        const { category, keywords } = classifyPrompt(text)
+
+        appendEntry({
+          type: "prompt",
+          sessionId: message.sessionID,
+          messageId: message.id,
+          timestamp: message.time?.created ?? Date.now(),
+          text: truncateText(text),
+          category,
+          keywords,
+        })
+      } catch (err) {
+        console.error("[audit-prompts] chat.message hook failed:", err)
+      }
+    },
+  }
+}
+
+export default AuditPromptsPlugin
