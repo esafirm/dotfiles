@@ -40,6 +40,14 @@ For plugin we use [vim-plug](https://github.com/junegunn/vim-plug) and the setup
 Currently, we still need to manually setup this because we haven't found a way to automate it.
 
 - Initliazation of [Cleanshot](https://cleanshot.com/)
+## Directory Structure
+
+- `scripts/` — zsh function scripts ONLY (sourced at shell startup via `for file in $DOT/scripts/*; do source $file`). All files here must be valid zsh.
+- `kotlin/kscripts/` — Kotlin `.kts` scripts (NOT zsh source-able). Invoked via aliases like `jk='kotlin $DOT/kotlin/kscripts/...'`.
+- `bin/` — standalone executables placed on `$PATH`.
+
+> **Rule:** Never put a `.kts`, `.py`, or other non-zsh file in `scripts/` — it will be `source`d by zsh on every terminal start and break shell init.
+
 ## Author
 
 esafirm 
