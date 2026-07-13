@@ -40,6 +40,10 @@ ln -sf ~/dotfiles/.config/opencode/scripts/workflow-audit.sh ~/.config/opencode/
 rm -rf ~/.config/opencode/skill ~/.config/opencode/skills
 ln -sf ~/.claude/skills ~/.config/opencode/skills
 
+## Jenkins CLI
+mkdir -p ~/scripts
+ln -sf ~/dotfiles/scripts/jenkins-cli.main.kts ~/scripts/jenkins-cli.main.kts
+
 ## herdr
 mkdir -p ~/.config/herdr
 ln -sf ~/dotfiles/.config/herdr/config.toml ~/.config/herdr/config.toml
