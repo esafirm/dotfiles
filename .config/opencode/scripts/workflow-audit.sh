@@ -233,8 +233,8 @@ WHERE json_extract(p.data, '\$.type') = 'text'
   $TIME_FILTER_PART
 " | awk '
 BEGIN {
-  split("config|git|debug|refactor|explain|audit|test|deploy", cats, "|")
-  pats["config"] = "zshrc|gitconfig|opencode|dotfiles|setup|brew|symlink|tmux|vimrc"
+  split("config|git|debug|refactor|explain|audit|test|deploy|continue|research", cats, "|")
+  pats["config"] = "zshrc|gitconfig|opencode|dotfiles|setup|brew|symlink|tmux|vimrc|disable|enable|permission|memory|rule|alias|token"
   pats["git"] = "commit|branch|diff|push|rebase|merge|stash|pull request|pr"
   pats["debug"] = "error|fail|crash|fix|bug|broken|exception|stack trace"
   pats["refactor"] = "rename|move|extract|clean up|simplify|refactor|restructure|organize"
@@ -242,6 +242,8 @@ BEGIN {
   pats["audit"] = "report|workflow|usage|stats|analyze|audit|metrics"
   pats["test"] = "test|pytest|junit|unit test|integration test|coverage"
   pats["deploy"] = "deploy|release|publish|build|ci|cd|pipeline"
+  pats["continue"] = "continue|summarize the task|proceed|next step"
+  pats["research"] = "what about|can we|how (to|do|can)|when (does|is|was|do)|where (is|are|does)|is there"
 }
 {
   prompt = tolower($0)
@@ -274,8 +276,8 @@ WHERE json_extract(p.data, '\$.type') = 'text'
   $TIME_FILTER_PART
 " | awk '
 BEGIN {
-  split("config|git|debug|refactor|explain|audit|test|deploy", cats, "|")
-  pats["config"] = "zshrc|gitconfig|opencode|dotfiles|setup|brew|symlink|tmux|vimrc"
+  split("config|git|debug|refactor|explain|audit|test|deploy|continue|research", cats, "|")
+  pats["config"] = "zshrc|gitconfig|opencode|dotfiles|setup|brew|symlink|tmux|vimrc|disable|enable|permission|memory|rule|alias|token"
   pats["git"] = "commit|branch|diff|push|rebase|merge|stash|pull request|pr"
   pats["debug"] = "error|fail|crash|fix|bug|broken|exception|stack trace"
   pats["refactor"] = "rename|move|extract|clean up|simplify|refactor|restructure|organize"
@@ -317,8 +319,8 @@ WHERE json_extract(p.data, '\$.type') = 'text'
 ORDER BY s.time_created DESC, p.time_created DESC;
 " | awk -v FS="|" '
 BEGIN {
-  split("config|git|debug|refactor|explain|audit|test|deploy", cats, "|")
-  pats["config"] = "zshrc|gitconfig|opencode|dotfiles|setup|brew|symlink|tmux|vimrc"
+  split("config|git|debug|refactor|explain|audit|test|deploy|continue|research", cats, "|")
+  pats["config"] = "zshrc|gitconfig|opencode|dotfiles|setup|brew|symlink|tmux|vimrc|disable|enable|permission|memory|rule|alias|token"
   pats["git"] = "commit|branch|diff|push|rebase|merge|stash|pull request|pr"
   pats["debug"] = "error|fail|crash|fix|bug|broken|exception|stack trace"
   pats["refactor"] = "rename|move|extract|clean up|simplify|refactor|restructure|organize"
@@ -326,6 +328,8 @@ BEGIN {
   pats["audit"] = "report|workflow|usage|stats|analyze|audit|metrics"
   pats["test"] = "test|pytest|junit|unit test|integration test|coverage"
   pats["deploy"] = "deploy|release|publish|build|ci|cd|pipeline"
+  pats["continue"] = "continue|summarize the task|proceed|next step"
+  pats["research"] = "what about|can we|how (to|do|can)|when (does|is|was|do)|where (is|are|does)|is there"
 }
 {
   sid = $1
