@@ -14,7 +14,7 @@ val auth = "Basic " + Base64.getEncoder().encodeToString("$user:$token".toByteAr
 
 val jobs = mapOf(
     "run_ui_tests" to JobDef(
-        url = "https://android-ci.bandlab.io/job/run_ui_tests",
+        url = "https://jenkins.example.com/job/run_ui_tests",
         params = listOf(
             ParamDef("branch", "branch to test"),
             ParamDef("testClass", "FQCN of test class or method", required = false),
@@ -37,14 +37,17 @@ fun printUsage() {
           run-job <jobName> [key=value...]     Trigger a build non-interactively
           run [<jobName>]                      Interactive mode — pick or enter params
           jobs                                 List configured jobs and their parameters
+          warnings <build-or-origin-url>       Show static analysis warnings
 
         Environment:
           JENKINS_USER    Jenkins username (LDAP)
           JENKINS_TOKEN   Jenkins API token
 
         Examples:
-          jenkins-cli.main.kts test-report https://android-ci.bandlab.io/job/run_ui_tests/9299
+          jenkins-cli.main.kts test-report https://jenkins.example.com/job/run_ui_tests/9299
           jenkins-cli.main.kts run-job run_ui_tests branch=feature/test-test testClass=com.example.FooTest
+          jenkins-cli.main.kts warnings https://jenkins.example.com/job/build_android_pull_requests/87431/
+          jenkins-cli.main.kts warnings https://jenkins.example.com/job/build_android_pull_requests/87431/analysis/origin.-1125574399/
         """.trimIndent()
     )
 }
@@ -241,6 +244,66 @@ fun testReport(url: String) {
     if (failures == 0) println("✓ No failures found in test report")
 }
 
+// ── warnings ──────────────────────────────────────────────────────────────
+fun showWarnings(url: String) {
+    val cleanUrl = url.trimEnd('/')
+    val isOriginUrl = cleanUrl.contains("/analysis/origin.")
+
+    val (summaryUrl, issuesUrl) = if (isOriginUrl) {
+        Pair(cleanUrl + "/api/json", cleanUrl + "/api/json")
+    } else {
+        Pair(cleanUrl + "/analysis/api/json", cleanUrl + "/analysis/all/api/json")
+    }
+
+    // Fetch issues
+    val issuesJson = fetchJson(issuesUrl).jsonObject
+    val issues = issuesJson["issues"]?.jsonArray ?: emptyList()
+
+    // Summary
+    val total = issues.size
+    val bySeverity = issues.groupBy { it.jsonObject.str("severity") ?: "UNKNOWN" }
+    val byOrigin = issues.groupBy { it.jsonObject.str("originName") ?: it.jsonObject.str("origin") ?: "Unknown" }
+
+    println("─── Static Analysis Warnings ───────────────")
+    println("  Total: $total")
+    for ((sev, list) in bySeverity.toSortedMap()) {
+        println("    $sev: ${list.size}")
+    }
+    println()
+
+    if (!isOriginUrl) {
+        try {
+            val summaryJson = fetchJson(summaryUrl).jsonObject
+            val qg = summaryJson["qualityGates"]?.jsonObject
+            if (qg != null) {
+                println("  Quality Gate: ${qg.str("overallResult") ?: "N/A"}")
+                for (item in qg["resultItems"]?.jsonArray ?: emptyList()) {
+                    val gate = item.jsonObject
+                    println("    ${gate.str("qualityGate") ?: "?"}: ${gate.str("result") ?: "?"} (${gate.str("value") ?: "?"} / threshold ${gate.str("threshold") ?: "?"})")
+                }
+                println()
+            }
+        } catch (_: Exception) { /* summary may not be available */ }
+    }
+
+    // Group by origin/tool
+    for ((origin, originIssues) in byOrigin) {
+        println("─── $origin (${originIssues.size}) ─────────────────────")
+        for (issue in originIssues) {
+            val obj = issue.jsonObject
+            val file = obj.str("baseName") ?: obj.str("fileName")?.substringAfterLast("/") ?: "?"
+            val line = obj.int("lineStart")?.toString() ?: "?"
+            val sev = obj.str("severity") ?: "?"
+            val msg = obj.str("message") ?: "?"
+
+            println("  $file:$line [$sev] $msg")
+        }
+        println()
+    }
+
+    if (issues.isEmpty()) println("  ✓ No warnings found")
+}
+
 // ── Main ──────────────────────────────────────────────────────────────────
 fun main(args: Array<String>) {
     if (args.isEmpty()) {
@@ -252,6 +315,10 @@ fun main(args: Array<String>) {
         "test-report" -> {
             val url = args.getOrNull(1) ?: error("Usage: jenkins-cli.main.kts test-report <testReportUrl>")
             testReport(url)
+        }
+        "warnings" -> {
+            val url = args.getOrNull(1) ?: error("Usage: jenkins-cli.main.kts warnings <build-url-or-origin-url>")
+            showWarnings(url)
         }
         "run-job", "build" -> {
             val name = args.getOrNull(1) ?: error("Usage: jenkins-cli.main.kts run-job <jobName> [key=value...]")
