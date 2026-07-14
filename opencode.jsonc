@@ -73,7 +73,9 @@
       "gh pr diff *": "allow",
       "gh pr view": "allow",
       "gh pr diff": "allow",
-      "*review-pr.sh*": "allow"
+      "*review-pr.sh*": "allow",
+      "adb devices": "allow",
+      "adb shell pm list*": "allow"
     },
     "android-studio_*": "allow",
     "android-studio_execute_terminal_command": "deny",
