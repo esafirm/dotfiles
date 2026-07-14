@@ -31,8 +31,11 @@ ln -sf ~/dotfiles/.config/opencode/plugins/audit-prompts.ts.disabled ~/.config/o
 ln -sf ~/dotfiles/.config/opencode/package.json ~/.config/opencode/package.json
 ln -sf ~/dotfiles/.config/opencode/package-lock.json ~/.config/opencode/package-lock.json
 ln -sf ~/dotfiles/.config/opencode/.gitignore ~/.config/opencode/.gitignore
+mkdir -p ~/.config/opencode/agents
+ln -sf ~/dotfiles/.config/opencode/agents/advice.md ~/.config/opencode/agents/advice.md
 mkdir -p ~/.config/opencode/commands
 ln -sf ~/dotfiles/.config/opencode/commands/workflow-audit.md ~/.config/opencode/commands/workflow-audit.md
+ln -sf ~/dotfiles/.config/opencode/commands/advice.md ~/.config/opencode/commands/advice.md
 mkdir -p ~/.config/opencode/scripts
 ln -sf ~/dotfiles/.config/opencode/scripts/workflow-audit.sh ~/.config/opencode/scripts/workflow-audit.sh
 
