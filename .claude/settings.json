@@ -18,6 +18,12 @@
         "repo": "anthropics/claude-plugins-official",
         "source": "github"
       }
+    },
+    "i-have-adhd": {
+      "source": {
+        "path": "$DOT/i-have-adhd",
+        "source": "directory"
+      }
     }
   },
   "general": {
@@ -32,7 +38,7 @@
       {
         "hooks": [
           {
-            "command": "bash '/Users/esafirm/.claude/hooks/herdr-agent-state.sh' session",
+            "command": "bash '$HOME/.claude/hooks/herdr-agent-state.sh' session",
             "timeout": 10,
             "type": "command"
           }

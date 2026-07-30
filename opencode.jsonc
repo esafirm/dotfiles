@@ -49,6 +49,8 @@
       "grep *": "allow",
       "which *": "allow",
       "wc *": "allow",
+      "sed *": "allow",
+      "awk *": "allow",
       "rm *": "deny",
       "echo *": "allow",
       "rtk git log *": "allow",
