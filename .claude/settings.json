@@ -51,6 +51,12 @@
   "output": {
     "format": "text"
   },
+  "permissions": {
+    "allow": [
+      "Bash(pwd:*)",
+      "Bash(git rev-parse:*)"
+    ]
+  },
   "ui": {
     "showMemoryUsage": true,
     "showModelInfoInChat": true,
