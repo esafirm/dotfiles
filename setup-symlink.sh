@@ -12,6 +12,8 @@ ln -sf ~/dotfiles/.gemini/policies ~/.gemini/policies
 ln -sf ~/dotfiles/.gemini/settings.json ~/.gemini/settings.json
 ln -sf ~/dotfiles/.gemini/projects.json ~/.gemini/projects.json
 ln -sf ~/dotfiles/.gemini/GEMINI.md ~/.gemini/GEMINI.md
+mkdir -p ~/.gemini/antigravity-cli
+ln -sf ~/dotfiles/.gemini/antigravity-cli/settings.json ~/.gemini/antigravity-cli/settings.json
 ln -sf ~/dotfiles/.gemini/extensions/extension-enablement.json ~/.gemini/extensions/extension-enablement.json
 ln -sf ~/dotfiles/.gemini/skills ~/.gemini/skills
 

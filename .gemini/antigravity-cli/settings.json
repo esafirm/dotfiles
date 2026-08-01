@@ -1,0 +1,39 @@
+{
+  "allowNonWorkspaceAccess": true,
+  "artifactReviewPolicy": "agent-decides",
+  "colorScheme": "dark",
+  "enableTelemetry": false,
+  "model": "Gemini 3.6 Flash (Medium)",
+  "notifications": true,
+  "permissions": {
+    "allow": [
+      "command(git status)",
+      "command(git log)",
+      "command(git show)",
+      "command(git diff)",
+      "command(git diff-tree)",
+      "command(git rev-parse)",
+      "command(cat)",
+      "command(ls)",
+      "command(pwd)",
+      "command(head)",
+      "command(tail)",
+      "command(grep)",
+      "command(which)",
+      "command(wc)",
+      "mcp(android-studio/*)",
+      "mcp(firebase/*)"
+    ]
+  },
+  "runningLightSpeed": "fast",
+  "statusLine": {
+    "type": "",
+    "command": "",
+    "enabled": true
+  },
+  "trustedWorkspaces": [
+    "/Users/esafirm/Documents/bandlab/bandlab-android",
+    "/Users/esafirm/.herdr/worktrees/bandlab-android/secondhand",
+    "/Users/esafirm/Documents/OSS/figma-extractor"
+  ]
+}
