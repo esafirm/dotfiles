@@ -5,10 +5,6 @@
   },
   "env": {
     "ANTHROPIC_AUTH_TOKEN": "sk_9router",
-    "ANTHROPIC_BASE_URL": "http://127.0.0.1:20128/v1",
-    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "openrouter/google/gemma-4-31b-it:free",
-    "ANTHROPIC_DEFAULT_OPUS_MODEL": "gemini/gemini-3.5-flash",
-    "ANTHROPIC_DEFAULT_SONNET_MODEL": "oc/minimax-m3-free",
     "API_TIMEOUT_MS": "3000000",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
   },

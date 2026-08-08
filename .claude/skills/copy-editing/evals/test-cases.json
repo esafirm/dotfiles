@@ -1,0 +1,14 @@
+{
+  "test_cases": [
+    {
+      "input": "The report was written by the team and it was very long and had many errors.",
+      "expected_output": "The team wrote a long, error-filled report.",
+      "category": "Clarity & Conciseness"
+    },
+    {
+      "input": "We need to leverage our core competencies to achieve a win-win situation.",
+      "expected_output": "We should use our strengths to reach a mutually beneficial outcome.",
+      "category": "Tone & Voice"
+    }
+  ]
+}
