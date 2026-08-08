@@ -1,27 +1,57 @@
 {
-  "effortLevel": "high",
-  "enabledPlugins": {
-    "vercel@claude-plugins-official": true
-  },
   "env": {
-    "ANTHROPIC_AUTH_TOKEN": "sk_9router",
     "API_TIMEOUT_MS": "3000000",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(pwd:*)",
+      "Bash(git rev-parse:*)"
+    ]
+  },
+  "model": "sonnet",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash '$HOME/.claude/hooks/herdr-agent-state.sh' session",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash '/Users/esafirm/.claude/hooks/herdr-agent-state.sh' session",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  },
+  "enabledPlugins": {
+    "vercel@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "claude-plugins-official": {
       "source": {
-        "repo": "anthropics/claude-plugins-official",
-        "source": "github"
+        "source": "github",
+        "repo": "anthropics/claude-plugins-official"
       }
     },
     "i-have-adhd": {
       "source": {
-        "path": "$DOT/i-have-adhd",
-        "source": "directory"
+        "source": "directory",
+        "path": "$DOT/i-have-adhd"
       }
     }
   },
+  "effortLevel": "high",
   "general": {
     "sessionRetention": {
       "enabled": true,
@@ -29,29 +59,8 @@
     }
   },
   "hasCompletedOnboarding": true,
-  "hooks": {
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "command": "bash '$HOME/.claude/hooks/herdr-agent-state.sh' session",
-            "timeout": 10,
-            "type": "command"
-          }
-        ],
-        "matcher": "*"
-      }
-    ]
-  },
-  "model": "opus",
   "output": {
     "format": "text"
-  },
-  "permissions": {
-    "allow": [
-      "Bash(pwd:*)",
-      "Bash(git rev-parse:*)"
-    ]
   },
   "ui": {
     "showMemoryUsage": true,
