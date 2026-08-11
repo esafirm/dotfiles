@@ -45,6 +45,10 @@ ln -sf ~/dotfiles/.config/opencode/scripts/workflow-audit.sh ~/.config/opencode/
 rm -rf ~/.config/opencode/skill ~/.config/opencode/skills
 ln -sf ~/.claude/skills ~/.config/opencode/skills
 
+## Agent skills (~/.agents)
+ln -sf ~/dotfiles/.agents/skills ~/.agents/skills
+ln -sf ~/dotfiles/.agents/.skill-lock.json ~/.agents/.skill-lock.json
+
 ## Jenkins CLI
 mkdir -p ~/scripts
 ln -sf ~/dotfiles/scripts/jenkins-cli.main.kts ~/scripts/jenkins-cli.main.kts
