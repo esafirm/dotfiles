@@ -49,6 +49,8 @@
       "head *": "allow",
       "tail *": "allow",
       "grep *": "allow",
+      "rg": "allow",
+      "rg *": "allow",
       "which *": "allow",
       "wc *": "allow",
       "sed *": "allow",
@@ -126,6 +128,9 @@
     },
     "android-studio_*": "allow",
     "android-studio_execute_terminal_command": "deny",
+    "android-studio_replace_text_in_file": "deny",
+    "android-studio_apply_patch": "deny",
+    "android-studio_create_new_file": "deny",
     "external_directory": {
       "~/secrets/**": "deny",
       "~/secret_dir/**": "deny",
