@@ -15,6 +15,7 @@ NONCASK=(
     gifsicle
     cdiff
     tree
+    ripgrep
     safe-rm
     tldr
     wd
