@@ -5,23 +5,64 @@
   },
   "permissions": {
     "allow": [
+      "Read",
+      "Edit",
+      "Grep",
+      "Glob",
       "Bash(pwd:*)",
-      "Bash(git rev-parse:*)"
+      "Bash(git status:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git diff:*)",
+      "Bash(git diff-tree:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(cat:*)",
+      "Bash(ls:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(grep:*)",
+      "Bash(which:*)",
+      "Bash(wc:*)",
+      "Bash(sed:*)",
+      "Bash(awk:*)",
+      "Bash(echo:*)",
+      "Bash(sort:*)",
+      "Bash(uniq:*)",
+      "Bash(rtk git log:*)",
+      "Bash(rtk git show:*)",
+      "Bash(rtk git diff:*)",
+      "Bash(rtk git diff-tree:*)",
+      "Bash(rtk git status:*)",
+      "Bash(rtk git ls-tree:*)",
+      "Bash(rtk git rev-parse:*)",
+      "Bash(rtk rg:*)",
+      "Bash(rtk grep:*)",
+      "Bash(rtk find:*)",
+      "Bash(rtk cat:*)",
+      "Bash(rtk ls:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh pr diff:*)",
+      "Bash(adb devices)",
+      "Bash(adb shell pm list:*)",
+      "Bash(adb shell pm path:*)",
+      "Bash(adb shell dumpsys:*)",
+      "Bash(adb shell getprop:*)",
+      "Bash(adb shell settings:*)",
+      "Bash(adb shell content query:*)",
+      "Bash(adb shell cmd:*)",
+      "Bash(adb shell wm:*)",
+      "Bash(adb shell ps:*)",
+      "Bash(adb shell service:*)",
+      "Bash(adb shell screencap:*)",
+      "Bash(adb logcat:*)"
+    ],
+    "deny": [
+      "Bash(rm:*)"
     ]
   },
   "model": "sonnet",
   "hooks": {
     "SessionStart": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash '$HOME/.claude/hooks/herdr-agent-state.sh' session",
-            "timeout": 10
-          }
-        ]
-      },
       {
         "matcher": "*",
         "hooks": [
@@ -51,7 +92,7 @@
       }
     }
   },
-  "effortLevel": "high",
+  "effortLevel": "medium",
   "general": {
     "sessionRetention": {
       "enabled": true,
