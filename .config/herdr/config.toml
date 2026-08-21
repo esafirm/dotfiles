@@ -4,6 +4,7 @@ previous_tab = "alt+p"
 next_tab = "alt+n"
 previous_workspace = "alt+up"
 next_workspace = "alt+down"
+open_worktree = "alt+o"
 
 [ui.toast]
 delivery = "terminal"
@@ -14,4 +15,4 @@ name = "one-dark"
 [ui]
 show_agent_labels_on_pane_borders = true
 prompt_new_tab_name = false
-agent_panel_sort = "spaces"
+agent_panel_sort = "priority"
