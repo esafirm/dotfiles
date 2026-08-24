@@ -579,6 +579,79 @@ fun showConfigHistory(ref: String, downloadDate: String?) {
     }
 }
 
+// ── skill ─────────────────────────────────────────────────────────────────
+// Agent-facing guide: how to use this CLI effectively on a Jenkins job.
+fun showSkill() {
+    println(
+        """
+        # Jenkins CLI — Agent Skill Guide
+
+        Auth (required):
+          export JENKINS_USER=<ldap-user>
+          export JENKINS_TOKEN=<api-token>
+          (the tool errors at startup if either is missing)
+
+        Job references: every command accepts either a job NAME from the
+        `jobs` map below or a full https:// URL. Use the URL when the job is
+        not in the map — name-only lookup fails with "Unknown job".
+
+        Discover:
+          jobs                     List known jobs + their params (use to find names)
+          build-info <job-url>     Latest build: number, result, duration, params
+          build-info <job-url>/<N> A specific build's result + params
+          artifacts <build-url>    Files archived by a build (with sizes)
+          console <build-url> [head|tail|range:start:len] [bytes] [--refresh]
+                                   Read a build's log. First call downloads the full
+                                   log to a disk cache under the JVM tmp dir (jenkins-console-cache);
+                                   later calls slice the cached copy instantly.
+                                   - head: CopyArtifact/SCM steps (the start of a build)
+                                   - tail (default): failure messages near the end
+                                   - range:start:len: arbitrary byte slice
+                                   - --refresh: re-fetch (use for in-progress builds)
+          warnings <build-url>     Static analysis results for a build
+          test-report <url>        Build cause, summary, failed tests
+
+        Config management:
+          get-job-config <ref>          Print a job's config.xml (stdout, headers to stderr)
+          config-history <ref> [ts]     List Job Config History versions (who/when/what).
+                                        Pass a timestamp to also download that config.xml.
+                                        Endpoint is /jobConfigHistory (NOT /configHistory).
+          update-job-config <ref> <file>  POST a full replacement config.xml
+
+        Triggering:
+          trigger <job-url> [key=value...]   POST buildWithParameters; prints the queue URL
+          run-job <jobName> [key=value...]   Same, but resolves params from the jobs map
+          run [<jobName>]                    Interactive param prompt
+
+        Download:
+          download <artifact-url> [outPath]                Direct artifact download
+          download <job-url> <relativePath> [outPath]      Resolves the latest successful
+                                                           build, then downloads its artifact
+
+        Plugins:
+          plugins [substring]    Installed plugin list (e.g. `plugins config` finds
+                                 jobConfigHistory, `plugins copyartifact` finds CopyArtifact)
+
+        Common flows:
+          1. Inspect latest build:  build-info <job-url>/<N>
+          2. Read its log:          console <build-url> tail / head
+          3. See what it shipped:   artifacts <build-url>
+          4. Find why a job failed: console <build-url> tail 3000, then grep the output
+          5. Change a job config:   get-job-config <ref> > c.xml, edit, update-job-config <ref> c.xml
+          6. Verify config history: config-history <ref>   (proves what actually changed, by whom)
+          7. Re-trigger with params: trigger <job-url> tag=X channel=beta
+
+        Notes:
+          - consoleText is gzipped on the wire but transparently decompressed;
+            the disk cache is plain text.
+          - Config writes go through the same API the UI uses; check
+            config-history after an update to confirm it landed.
+          - Build numbers are NOT stable references for a job's current state —
+            re-resolve before acting.
+        """.trimIndent()
+    )
+}
+
 fun main(args: Array<String>) {
     if (args.isEmpty()) {
         printUsage()
@@ -655,6 +728,7 @@ fun main(args: Array<String>) {
             downloadArtifact(ref, args.getOrNull(2), args.getOrNull(3))
         }
         "help", "--help", "-h" -> printUsage()
+        "skill" -> showSkill()
         else -> {
             System.err.println("Unknown command: ${args[0]}")
             printUsage()
