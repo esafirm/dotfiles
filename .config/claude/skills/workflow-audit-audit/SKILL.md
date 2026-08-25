@@ -92,7 +92,7 @@ Configure skill paths in `opencode.jsonc`:
 
 ```json
 "skills": {
-  "paths": [".claude/skills"]
+  "paths": [".config/claude/skills"]
 }
 ```
 
