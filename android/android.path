@@ -9,7 +9,6 @@ fi
 
 export PATH=$PATH:$ANDROID_HOME"/platform-tools"
 export PATH=$PATH:$ANDROID_HOME"/emulator"
-export PATH=$PATH:$DOT"/android/jetifier/jetifier-standalone/bin"
 
 ## This path only works if you donwload the component from SDK manager
 LATEST_BUILD_TOOLS=$(ls -1 "$ANDROID_HOME/build-tools" | sort -V | tail -n 1)

@@ -7,7 +7,7 @@ cd $DOT
 ./themes/setup.sh
 
 ## Install softwares
-./brew
+./setup-brew.sh
 
 ## Symlink all
 ./setup-symlink.sh

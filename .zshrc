@@ -64,8 +64,6 @@ for file in $DOT/scripts/*; do
     source $file
 done
 
-## Kotlin
-source $DOT/kotlin/kscripts/aliases
 
 ## Python
 source $DOT/python/aliases

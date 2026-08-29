@@ -1,1 +1,1 @@
-../../.claude/skills/code-review-and-quality/SKILL.md
+../../../.config/claude/skills/code-review-and-quality/SKILL.md
