@@ -28,19 +28,23 @@ mkdir -p ~/.config/opencode
 ln -sfn ~/dotfiles/opencode.jsonc ~/.config/opencode/opencode.jsonc
 mkdir -p ~/.config/opencode/plugins
 ln -sfn ~/dotfiles/.config/opencode/plugins/rtk.ts ~/.config/opencode/plugins/rtk.ts
-ln -sfn ~/dotfiles/.config/opencode/plugins/audit-prompts.ts.disabled ~/.config/opencode/plugins/audit-prompts.ts.disabled
 ln -sfn ~/dotfiles/.config/opencode/package.json ~/.config/opencode/package.json
 ln -sfn ~/dotfiles/.config/opencode/package-lock.json ~/.config/opencode/package-lock.json
 ln -sfn ~/dotfiles/.config/opencode/.gitignore ~/.config/opencode/.gitignore
 mkdir -p ~/.config/opencode/agents
 ln -sfn ~/dotfiles/.config/opencode/agents/advice.md ~/.config/opencode/agents/advice.md
+ln -sfn ~/dotfiles/.config/opencode/agents/pr-reviewer.md ~/.config/opencode/agents/pr-reviewer.md
+ln -sfn ~/dotfiles/.config/opencode/agents/verify-finding.md ~/.config/opencode/agents/verify-finding.md
 mkdir -p ~/.config/opencode/commands
 ln -sfn ~/dotfiles/.config/opencode/commands/workflow-audit.md ~/.config/opencode/commands/workflow-audit.md
 ln -sfn ~/dotfiles/.config/opencode/commands/advice.md ~/.config/opencode/commands/advice.md
+ln -sfn ~/dotfiles/.config/opencode/commands/review-pr.md ~/.config/opencode/commands/review-pr.md
+ln -sfn ~/dotfiles/.config/opencode/commands/verify.md ~/.config/opencode/commands/verify.md
 mkdir -p ~/.config/opencode/scripts
 ln -sfn ~/dotfiles/.config/opencode/scripts/workflow-audit.sh ~/.config/opencode/scripts/workflow-audit.sh
+ln -sfn ~/dotfiles/.config/opencode/scripts/review-pr.sh ~/.config/opencode/scripts/review-pr.sh
 
-## Consolidate opencode skill dir to dotfiles-managed .claude/skills
+## Consolidate opencode skill dir to dotfiles-managed .config/claude/skills
 rm -rf ~/.config/opencode/skill ~/.config/opencode/skills
 ln -sfn ~/.claude/skills ~/.config/opencode/skills
 

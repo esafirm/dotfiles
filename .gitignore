@@ -27,3 +27,7 @@ temp.sh
 ## opencode - transient data
 .opencode/memory/
 .opencode/sessions/
+
+## Vim swap files
+*.swp
+*.swo

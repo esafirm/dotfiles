@@ -3,7 +3,6 @@
 plugins=(
 	git
 	yarn
-	lein
 	react-native
 	docker
 	wd

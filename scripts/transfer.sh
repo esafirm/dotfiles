@@ -1,11 +1,8 @@
-
-curl --version 2>&1 > /dev/null
-if [ $? -ne 0 ]; then
-  echo "Could not find curl."
-  return 1
-fi
-
 transfer() { 
+    if ! command -v curl &>/dev/null; then
+        echo "Could not find curl."
+        return 1
+    fi
     # check arguments
     if [ $# -eq 0 ]; 
     then 
