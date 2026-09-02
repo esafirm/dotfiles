@@ -22,6 +22,8 @@ NONCASK=(
     git-secret
     go
     tokei
+    neovim
+    ripgrep
 )
 
 for item in ${NONCASK[*]}; do
