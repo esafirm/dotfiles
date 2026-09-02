@@ -6,6 +6,10 @@ ln -sfn ~/dotfiles/.zshrc ~/.zshrc
 ln -sfn ~/dotfiles/.warprc ~/.warprc
 ln -sfn ~/dotfiles/.gitconfig ~/.gitconfig
 
+## Neovim
+mkdir -p ~/.config
+ln -sfn ~/dotfiles/.config/nvim ~/.config/nvim
+
 ## Gemini
 mkdir -p ~/.gemini/extensions
 ln -sfn ~/dotfiles/.gemini/policies ~/.gemini/policies
