@@ -41,24 +41,39 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 
 " File Tree
-Plug 'scrooloose/nerdtree'
+Plug 'preservim/nerdtree'
 let NERDTreeIgnore=['\.pyc$', '\~$'] "ignore files in NERDTree
 
-" Python Specific 
+" Python Specific
 Plug 'vim-scripts/indentpython.vim' " Python Indentation
 set encoding=utf-8 " set encoding
 
-let g:ycm_autoclose_preview_window_after_completion=1
-map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
-
-Plug 'scrooloose/syntastic' " syntax higlight
-Plug 'nvie/vim-flake8' " PEP8 idk what that is
+" Async linting/fixing (replaces syntastic + vim-flake8)
+Plug 'dense-analysis/ale'
 
 " Catppuccin theme
 Plug 'catppuccin/vim', { 'as': 'catppuccin', 'branch': 'main' }
 
 " Initialize plugin system
 call plug#end()
+
+" Restore filetype detection (must come after plug#end)
+filetype plugin indent on
+
+" --- Search ---
+set incsearch
+set hlsearch
+set ignorecase
+set smartcase
+
+" --- Undo ---
+set undofile
+set undodir=~/.vim/undo//
+
+" --- UI ---
+set relativenumber
+set wildmenu
+set wildmode=longest:full,full
 
 " Theme
 set termguicolors
