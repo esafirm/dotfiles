@@ -54,5 +54,13 @@ map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
 Plug 'scrooloose/syntastic' " syntax higlight
 Plug 'nvie/vim-flake8' " PEP8 idk what that is
 
+" Catppuccin theme
+Plug 'catppuccin/vim', { 'as': 'catppuccin', 'branch': 'main' }
+
 " Initialize plugin system
 call plug#end()
+
+" Theme
+set termguicolors
+colorscheme catppuccin_mocha
+let g:airline_theme = 'catppuccin_mocha'
