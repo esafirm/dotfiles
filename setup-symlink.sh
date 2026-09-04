@@ -59,6 +59,9 @@ ln -sfn ~/dotfiles/.agents/.skill-lock.json ~/.agents/.skill-lock.json
 ## Jenkins CLI
 mkdir -p ~/scripts
 ln -sfn ~/dotfiles/kotlin/kscripts/jenkins-cli.main.kts ~/scripts/jenkins-cli.main.kts
+# Expose Jenkins CLI on PATH as `jenkins` (wrapper in kotlin/kscripts,
+# since a bare symlink without the .kts extension is not treated as a script)
+ln -sfn ~/dotfiles/kotlin/kscripts/jenkins ~/dotfiles/bin/jenkins
 
 ## herdr
 mkdir -p ~/.config/herdr
