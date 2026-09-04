@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+# `jenkins` — thin wrapper exposing jenkins-cli.main.kts on PATH.
+# A bare symlink named `jenkins` does not work because the `kotlin`
+# runner only treats files ending in `.kts` as scripts.
+KTS="${DOT:-$HOME/dotfiles}/kotlin/kscripts/jenkins-cli.main.kts"
+exec kotlin "$KTS" "$@"
