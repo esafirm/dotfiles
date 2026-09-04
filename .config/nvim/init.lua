@@ -359,6 +359,11 @@ do
       topdelete = { text = '‾' }, ---@diagnostic disable-line: missing-fields
       changedelete = { text = '~' }, ---@diagnostic disable-line: missing-fields
     },
+    signcolumn = true, -- set to false for highlight *instead* of gutter
+    numhl = false,
+    linehl = true, -- full line background highlight for git changes
+    culhl = false,
+    word_diff = false,
   }
 
   -- Useful plugin to show you pending keybinds.

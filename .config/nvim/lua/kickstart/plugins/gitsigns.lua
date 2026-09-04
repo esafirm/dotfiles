@@ -5,6 +5,11 @@
 vim.pack.add { 'https://github.com/lewis6991/gitsigns.nvim' }
 
 require('gitsigns').setup {
+  signcolumn = true, -- set to false for highlight *instead* of gutter
+  numhl = false,
+  linehl = true, -- full line background highlight for git changes
+  culhl = false,
+  word_diff = false,
   on_attach = function(bufnr)
     local gitsigns = require 'gitsigns'
 
