@@ -1,0 +1,291 @@
+#!/usr/bin/env bash
+#
+# sync-skills.sh - find skills installed outside the dotfiles and adopt them.
+#
+# Scans the live skill dirs:
+#   ~/.agents/skills   (agent-agnostic, canonical)
+#   ~/.claude/skills   (Claude Code, also reused by opencode via symlink)
+#   ~/.gemini/skills   (Gemini CLI)
+#
+# and reports skills that are NOT managed in the dotfiles repo:
+#   ~/dotfiles/.agents/skills
+#   ~/dotfiles/.config/claude/skills
+#   ~/dotfiles/.gemini/skills
+#
+# This normally happens when a skill installer replaces one of the top-level
+# symlinks (see setup-symlink.sh) with a real directory, so new installs land
+# outside version control. The script lets you pick which skills to "move":
+# move them into the dotfiles and symlink them back.
+#
+# Usage:
+#   sync-skills.sh [--list-only] [--dest DIR] [--link-all] [--help]
+#
+#   --list-only   just list unmanaged skills, don't prompt
+#   --dest DIR    move targets into DIR (default: ~/dotfiles/.agents/skills,
+#               i.e. universal). Also accepts: agents | claude | gemini
+#   --link-all    after adopting, also symlink each skill into the other
+#               dotfiles skill dirs (claude + gemini) without asking
+#   --plain       skip the interactive picker (git-del style) and use
+#               plain numbered input instead
+#   --help      show this help
+#
+# Env overrides (mainly for testing):
+#   DOTFILES, LIVE_AGENTS, LIVE_CLAUDE, LIVE_GEMINI,
+#   DOT_AGENTS, DOT_CLAUDE, DOT_GEMINI
+#
+# Note: plain bash 3.x compatible (macOS default bash), no fzf/gum needed.
+
+set -u
+set -o pipefail 2>/dev/null || true
+
+DOTFILES="${DOTFILES:-$HOME/dotfiles}"
+
+LIVE_AGENTS="${LIVE_AGENTS:-$HOME/.agents/skills}"
+LIVE_CLAUDE="${LIVE_CLAUDE:-$HOME/.claude/skills}"
+LIVE_GEMINI="${LIVE_GEMINI:-$HOME/.gemini/skills}"
+
+DOT_AGENTS="${DOT_AGENTS:-$DOTFILES/.agents/skills}"
+DOT_CLAUDE="${DOT_CLAUDE:-$DOTFILES/.config/claude/skills}"
+DOT_GEMINI="${DOT_GEMINI:-$DOTFILES/.gemini/skills}"
+
+LIST_ONLY=0
+LINK_ALL=0
+PLAIN=0
+DEST="$DOT_AGENTS"
+DEST_GIVEN=0
+
+usage() {
+  sed -n '2,/^$/p' "$0" | sed 's/^# \{0,1\}//'
+  echo "Example:"
+  echo "  $(basename "$0")                 # interactive scan + adopt"
+  echo "  $(basename "$0") --list-only     # just show what is unmanaged"
+}
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --list-only) LIST_ONLY=1; shift ;;
+    --link-all) LINK_ALL=1; shift ;;
+    --plain) PLAIN=1; shift ;;
+    --dest)
+      DEST="$2"; DEST_GIVEN=1; shift 2 ;;
+    --dest=*) DEST="${1#--dest=}"; DEST_GIVEN=1; shift ;;
+    -h|--help) usage; exit 0 ;;
+    *) echo "Unknown option: $1 (try --help)" >&2; exit 1 ;;
+  esac
+done
+
+# Resolve --dest shorthands.
+case "$DEST" in
+  agents) DEST="$DOT_AGENTS" ;;
+  claude) DEST="$DOT_CLAUDE" ;;
+  gemini) DEST="$DOT_GEMINI" ;;
+esac
+
+# --- helpers ---------------------------------------------------------------
+
+# List immediate child entries (dirs or symlinks) of $1, one basename per line.
+list_skills() {
+  [ -d "$1" ] || return 0
+  for p in "$1"/*; do
+    if [ -L "$p" ] || [ -d "$p" ]; then
+      basename "$p"
+    fi
+  done 2>/dev/null
+}
+
+# True if $2 (skill name) exists in dir $1 (as dir or symlink, even dangling).
+has_skill() {
+  [ -L "$1/$2" ] || [ -d "$1/$2" ]
+}
+
+is_top_symlink() {
+  [ -L "$1" ]
+}
+
+link_target() {
+  readlink "$1" 2>/dev/null || echo "?"
+}
+
+# --- scan ------------------------------------------------------------------
+
+MANAGED_TMP="$(mktemp -t sync-skills-managed)"
+UNMANAGED_TMP="$(mktemp -t sync-skills-unmanaged)"
+trap 'rm -f "$MANAGED_TMP" "$UNMANAGED_TMP"' EXIT INT TERM
+
+for d in "$DOT_AGENTS" "$DOT_CLAUDE" "$DOT_GEMINI"; do
+  list_skills "$d"
+done | sort -u > "$MANAGED_TMP"
+
+: > "$UNMANAGED_TMP"
+for live in "$LIVE_AGENTS" "$LIVE_CLAUDE" "$LIVE_GEMINI"; do
+  # A dangling top-level symlink has no scannable content; flag it later.
+  [ -d "$live" ] || continue
+  list_skills "$live" | while IFS= read -r s; do
+    [ -n "$s" ] || continue
+    if ! grep -qx "$s" "$MANAGED_TMP" 2>/dev/null; then
+      # record "skill|live_dir" pairs, deduplicated
+      grep -qx "$s|$live" "$UNMANAGED_TMP" 2>/dev/null || echo "$s|$live" >> "$UNMANAGED_TMP"
+    fi
+  done
+done
+
+echo "== skill dirs =="
+for live in "$LIVE_AGENTS" "$LIVE_CLAUDE" "$LIVE_GEMINI"; do
+  if is_top_symlink "$live"; then
+    echo "  $live -> $(link_target "$live")"
+  elif [ -d "$live" ]; then
+    echo "  $live (REAL DIR - symlink broken/diverged!)"
+  else
+    echo "  $live (missing)"
+  fi
+done
+echo
+echo "== dotfiles dirs =="
+for d in "$DOT_AGENTS" "$DOT_CLAUDE" "$DOT_GEMINI"; do
+  count=$(list_skills "$d" | wc -l | tr -d ' ')
+  echo "  $d ($count skills)"
+done
+echo
+
+if [ ! -s "$UNMANAGED_TMP" ]; then
+  echo "All live skills are already managed in the dotfiles. Nothing to do."
+  # Still warn about broken top-level symlinks pointing at the wrong place.
+  for live in "$LIVE_AGENTS" "$LIVE_CLAUDE" "$LIVE_GEMINI"; do
+    if [ -d "$live" ] && ! is_top_symlink "$live"; then
+      echo "NOTE: $live is a real directory, expected a symlink (see setup-symlink.sh)."
+    fi
+  done
+  exit 0
+fi
+
+count=$(wc -l < "$UNMANAGED_TMP" | tr -d ' ')
+echo "== unmanaged skills ($count) - in live dirs but NOT in dotfiles =="
+i=0
+while IFS='|' read -r name livedir; do
+  i=$((i + 1))
+  size=$(du -sh "$livedir/$name" 2>/dev/null | cut -f1)
+  printf "  [%d] %-30s from %s (%s)\n" "$i" "$name" "$livedir" "$size"
+done < "$UNMANAGED_TMP"
+echo
+
+if [ "$LIST_ONLY" -eq 1 ]; then
+  exit 0
+fi
+
+# --- select ----------------------------------------------------------------
+# git-del style picker (TTY::Prompt multi_select with filter), same UX as the
+# `git del` alias. Falls back to plain numbered input when ruby/tty-prompt is
+# missing, stdin is not a terminal, or --plain is given.
+EXPANDED=""
+if [ "$PLAIN" -eq 0 ] && [ -t 0 ] && ruby -e "require 'tty-prompt'" 2>/dev/null; then
+  choice_args=()
+  i=0
+  while IFS='|' read -r name livedir; do
+    i=$((i + 1))
+    choice_args+=("$i"$'\t'"$name (from $livedir)")
+  done < "$UNMANAGED_TMP"
+  if ! SELECTED=$(ruby -e '
+require "tty-prompt"
+choices = {}
+ARGV.each do |arg|
+  idx, label = arg.split("\t", 2)
+  choices[label] = idx
+end
+prompt = TTY::Prompt.new(output: $stderr)
+puts prompt.multi_select("Select skills to move (Space to toggle, Enter to confirm):", choices, filter: true)
+' "${choice_args[@]}"); then
+    echo "Aborted."
+    exit 1
+  fi
+  EXPANDED="$SELECTED"
+else
+  printf "Select skills to move into %s\n" "$DEST"
+  printf "Enter numbers separated by space (e.g. '1 3'), 'a' for all, 'q' to quit: "
+  read -r choice || exit 1
+
+  case "$choice" in
+    q|Q|"") echo "Aborted."; exit 0 ;;
+    a|A) SELECTED=$(seq 1 "$count") ;;
+    *) SELECTED="$choice" ;;
+  esac
+
+  # Expand ranges like 1-3 into a plain number list.
+  EXPANDED=""
+  for tok in $SELECTED; do
+    case "$tok" in
+      *-*)
+        lo=${tok%%-*}; hi=${tok##*-}
+        n=$lo
+        while [ "$n" -le "$hi" ] 2>/dev/null; do EXPANDED="$EXPANDED $n"; n=$((n + 1)); done
+        ;;
+      *) EXPANDED="$EXPANDED $tok" ;;
+    esac
+  done
+fi
+
+mkdir -p "$DEST"
+
+adopted=0
+for n in $EXPANDED; do
+  case "$n" in ''|*[!0-9]*) echo "  skip invalid selection: $n"; continue ;; esac
+  if [ "$n" -lt 1 ] || [ "$n" -gt "$count" ]; then echo "  skip out-of-range: $n"; continue; fi
+  line=$(sed -n "${n}p" "$UNMANAGED_TMP")
+  name=${line%%|*}
+  livedir=${line#*|}
+  src="$livedir/$name"
+  echo "-- [$n] $name"
+
+  if has_skill "$DEST" "$name"; then
+    echo "   already exists in $DEST, linking back instead of moving."
+  else
+    if [ -L "$src" ]; then
+      # Source itself is a symlink: copy its target content, keep backup of link.
+      target=$(link_target "$src")
+      echo "   source is a symlink -> $target; copying content to $DEST/$name"
+      mkdir -p "$DEST/$name"
+      cp -R "$src/" "$DEST/$name/" 2>/dev/null || cp -R "$src" "$DEST/$name"
+    else
+      echo "   moving $src -> $DEST/$name"
+      mv "$src" "$DEST/$name"
+    fi
+  fi
+
+  # Symlink back from the live location (absolute path: live dirs are per-machine).
+  if [ -L "$src" ] || [ -e "$src" ]; then
+    echo "   live path already exists, leaving it in place: $src"
+  else
+    ln -s "$DEST/$name" "$src"
+    echo "   symlinked: $src -> $DEST/$name"
+  fi
+  adopted=$((adopted + 1))
+
+  # Offer/link into the other dotfiles skill dirs (relative links: repo must
+  # stay portable across machines, matching existing ../../../ style links).
+  for dotdir in "$DOT_AGENTS" "$DOT_CLAUDE" "$DOT_GEMINI"; do
+    [ "$dotdir" = "$DEST" ] && continue
+    has_skill "$dotdir" "$name" && continue
+    do_link=0
+    if [ "$LINK_ALL" -eq 1 ]; then
+      do_link=1
+    else
+      printf "   also link into %s? [y/N] " "$dotdir"
+      read -r ans || ans="n"
+      case "$ans" in y|Y|yes|YES) do_link=1 ;; esac
+    fi
+    if [ "$do_link" -eq 1 ]; then
+      case "$dotdir" in
+        "$DOT_CLAUDE") rel="../../../.agents/skills/$name" ;;
+        "$DOT_GEMINI") rel="../../.agents/skills/$name" ;;
+        *) rel="$DEST/$name" ;;  # non-standard layout: absolute fallback
+      esac
+      # Only the canonical-agents relative links are valid; otherwise absolute.
+      if [ "$DEST" != "$DOT_AGENTS" ]; then rel="$DEST/$name"; fi
+      ln -s "$rel" "$dotdir/$name"
+      echo "   symlinked: $dotdir/$name -> $rel"
+    fi
+  done
+done
+
+echo
+echo "Adopted $adopted skill(s) into $DEST."
+echo "Reminder: review with 'git -C \"$DOTFILES\" status' and re-run setup-symlink.sh if a top-level symlink was broken."
