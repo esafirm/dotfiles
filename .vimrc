@@ -23,7 +23,6 @@ set noshowmode
 if empty(glob('~/.vim/autoload/plug.vim'))
   silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
 " --- PLUGIN ----
@@ -57,6 +56,11 @@ Plug 'catppuccin/vim', { 'as': 'catppuccin', 'branch': 'main' }
 " Initialize plugin system
 call plug#end()
 
+" Auto-install missing plugins on VimEnter
+autocmd VimEnter * if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
+  \| PlugInstall --sync | source $MYVIMRC
+\| endif
+
 " Restore filetype detection (must come after plug#end)
 filetype plugin indent on
 
@@ -69,13 +73,20 @@ set smartcase
 " --- Undo ---
 set undofile
 set undodir=~/.vim/undo//
+if !isdirectory(expand('~/.vim/undo'))
+  call mkdir(expand('~/.vim/undo'), 'p')
+endif
 
 " --- UI ---
 set relativenumber
 set wildmenu
 set wildmode=longest:full,full
 
-" Theme
+" Theme (guarded so vim still starts when plugin not yet installed)
 set termguicolors
-colorscheme catppuccin_mocha
+try
+  colorscheme catppuccin_mocha
+catch /^Vim\%((\a\+)\)\=:E185/
+  colorscheme default
+endtry
 let g:airline_theme = 'catppuccin_mocha'
