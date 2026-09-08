@@ -44,6 +44,19 @@ fun printUsage() {
                                                Update a job's config.xml (full replace)
           build-info <job>/<buildNumber>       Show a build's result and parameters
                      or <build-url>
+          builds <name-or-url> [limit]          List recent builds (default 10) with results
+          trigger <job-url> [key=value...]     Trigger a build by URL (for jobs not in `jobs` map)
+          rebuild <name-or-url>                Rebuild last failed build with its same parameters
+          queue <queue-url-or-id> [timeout]    Wait until a queued item starts; prints build URL (default 300s)
+          console <build-url> [head|tail|range:start:len] [bytes] [--refresh]
+                                               Read a build's console log (tail by default, 12k bytes)
+          artifacts <build-url>                List files archived by a build (with sizes)
+          download <artifact-url> [outPath]    Download an artifact, or resolve from latest
+                   <job-url> <relativePath> [outPath]
+          config-history <name-or-url> [timestamp]
+                                               List config versions (who/when); pass timestamp to download it
+          plugins [substring]                  List installed plugins, optionally filtered
+          skill                                Agent-facing usage guide for this CLI
 
         Environment:
           JENKINS_USER    Jenkins username (LDAP)
@@ -386,6 +399,31 @@ fun showBuildInfo(ref: String) {
     if (desc != null) println("\n  Description: $desc")
 }
 
+// ── builds ────────────────────────────────────────────────────────────────
+fun showBuilds(ref: String, limit: Int) {
+    val jobUrl = resolveJobUrl(ref)
+    val apiUrl = "$jobUrl/api/json?tree=builds[number,result,building,timestamp,duration]"
+    println("─── Recent Builds ─────────────────────────")
+    println("  Job: $jobUrl")
+    println()
+    val root = fetchJson(apiUrl).jsonObject
+    val builds = root["builds"]?.jsonArray ?: emptyList()
+    if (builds.isEmpty()) {
+        println("  (no builds)")
+        return
+    }
+    for (b in builds.take(limit)) {
+        val obj = b.jsonObject
+        val num = obj.int("number")
+        val result = obj.str("result") ?: (if (obj["building"]?.jsonPrimitive?.content == "true") "BUILDING" else "?")
+        val ts = obj.long("timestamp")
+        val durMs = obj.long("duration")
+        val started = ts?.let { java.time.Instant.ofEpochMilli(it).toString() } ?: "?"
+        val dur = durMs?.let { "${it / 1000}s" } ?: "?"
+        println("  #$num  $result  started=$started  duration=$dur")
+    }
+}
+
 // ── trigger (URL-based) ───────────────────────────────────────────────────
 fun triggerBuild(ref: String, args: List<String>) {
     val jobUrl = if (ref.startsWith("http")) ref.trimEnd('/')
@@ -412,6 +450,75 @@ fun triggerBuild(ref: String, args: List<String>) {
     val location = conn.getHeaderField("Location")
     println("  Status: $status")
     if (location != null) println("  Queue: $location")
+}
+
+// ── rebuild (URL-based) ───────────────────────────────────────────────────
+fun rebuildLastFailed(ref: String) {
+    val jobUrl = resolveJobUrl(ref)
+    val failedApiUrl = "$jobUrl/lastFailedBuild/api/json?tree=number,actions[parameters[name,value]]"
+    val failed = try {
+        fetchJson(failedApiUrl).jsonObject
+    } catch (e: java.io.FileNotFoundException) {
+        error("No failed builds for $jobUrl")
+    }
+    val num = failed.int("number")
+    val params = failed["actions"]?.jsonArray
+        ?.flatMap { it.jsonObject["parameters"]?.jsonArray ?: emptyList() }
+        ?.mapNotNull { p ->
+            val obj = p.jsonObject
+            val name = obj.str("name") ?: return@mapNotNull null
+            name to (obj.str("value") ?: "")
+        } ?: emptyList()
+    val query = params.joinToString("&") { "${it.first}=${URI(it.second).toASCIIString()}" }
+
+    println("─── Rebuilding ────────────────────────────")
+    println("  Job: $jobUrl")
+    println("  Rebuilding failed build #$num with same parameters:")
+    if (params.isEmpty()) println("    (none)") else params.forEach { println("    ${it.first} = ${it.second}") }
+    println("  Sending request...")
+
+    val conn = fetchUrl("$jobUrl/buildWithParameters?$query", method = "POST", followRedirects = false)
+    val status = conn.responseCode
+    if (status !in 200..302) {
+        System.err.println("Error: HTTP $status — ${conn.responseMessage}")
+        kotlin.system.exitProcess(1)
+    }
+    val location = conn.getHeaderField("Location")
+    println("  Status: $status")
+    if (location != null) println("  Queue: $location")
+}
+
+// ── queue ───────────────────────────────────────────────────────────────────
+fun waitForQueuedBuild(queueRef: String, timeoutSec: Int) {
+    val queueUrl = if (queueRef.startsWith("http")) queueRef.trimEnd('/')
+        else "https://android-ci.bandlab.io/queue/item/$queueRef".trimEnd('/')
+    val apiUrl = "$queueUrl/api/json?tree=executable[number,url],why,cancelled"
+    println("─── Waiting for queued build ──────────────")
+    println("  Queue: $queueUrl")
+    val deadline = System.currentTimeMillis() + timeoutSec * 1000L
+    var reason: String? = null
+    while (true) {
+        val item = try {
+            fetchJson(apiUrl).jsonObject
+        } catch (e: java.io.FileNotFoundException) {
+            error("Queue item is gone — cancelled or already started. Check `jenkins builds <job>`.")
+        }
+        val exe = item["executable"]?.jsonObject
+        val num = exe?.int("number")
+        val url = exe?.str("url")
+        if (num != null && url != null) {
+            println("  Build #$num started: $url")
+            return
+        }
+        if (item.str("cancelled") == "true") error("Queued build was cancelled.")
+        if (System.currentTimeMillis() >= deadline) error("Timed out after ${timeoutSec}s. Still queued: ${item.str("why") ?: "?"}")
+        val why = item.str("why")
+        if (why != null && why != reason) {
+            reason = why
+            println("  Queued: $why")
+        }
+        Thread.sleep(4000)
+    }
 }
 
 // ── artifacts ─────────────────────────────────────────────────────────────
@@ -599,6 +706,7 @@ fun showSkill() {
           jobs                     List known jobs + their params (use to find names)
           build-info <job-url>     Latest build: number, result, duration, params
           build-info <job-url>/<N> A specific build's result + params
+          builds <job-url> [limit] Recent builds with results (default 10)
           artifacts <build-url>    Files archived by a build (with sizes)
           console <build-url> [head|tail|range:start:len] [bytes] [--refresh]
                                    Read a build's log. First call downloads the full
@@ -620,6 +728,8 @@ fun showSkill() {
 
         Triggering:
           trigger <job-url> [key=value...]   POST buildWithParameters; prints the queue URL
+          rebuild <job-url>                  Rebuild the last failed build with its same parameters
+          queue <queue-url-or-id> [timeout]  Poll a queue item until the build starts (default 300s)
           run-job <jobName> [key=value...]   Same, but resolves params from the jobs map
           run [<jobName>]                    Interactive param prompt
 
@@ -702,9 +812,21 @@ fun main(args: Array<String>) {
             val ref = args.getOrNull(1) ?: error("Usage: jenkins-cli.main.kts build-info <job>/<buildNumber> or <build-url>")
             showBuildInfo(ref)
         }
+        "builds" -> {
+            val ref = args.getOrNull(1) ?: error("Usage: jenkins-cli.main.kts builds <jobName-or-url> [limit]")
+            showBuilds(ref, args.getOrNull(2)?.toIntOrNull() ?: 10)
+        }
         "trigger" -> {
             val ref = args.getOrNull(1) ?: error("Usage: jenkins-cli.main.kts trigger <job-url> [key=value...]")
             triggerBuild(ref, args.drop(2))
+        }
+        "rebuild" -> {
+            val ref = args.getOrNull(1) ?: error("Usage: jenkins-cli.main.kts rebuild <jobName-or-url>")
+            rebuildLastFailed(ref)
+        }
+        "queue" -> {
+            val ref = args.getOrNull(1) ?: error("Usage: jenkins-cli.main.kts queue <queue-url-or-id> [timeoutSec]")
+            waitForQueuedBuild(ref, args.getOrNull(2)?.toIntOrNull() ?: 300)
         }
         "console" -> {
             val ref = args.getOrNull(1) ?: error("Usage: jenkins-cli.main.kts console <build-url> [head|tail|range:start:len] [bytes] [--refresh]")

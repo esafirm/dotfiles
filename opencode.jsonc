@@ -3,7 +3,7 @@
   "instructions": [
     ".config/claude/CLAUDE.md"
   ],
-  "enabled_providers": ["opencode", "opencode-go"],
+  "enabled_providers": ["opencode", "opencode-go", "openai"],
   "mcp": {
     "android-studio": {
       "type": "remote",
@@ -112,6 +112,7 @@
       "gh auth status *": "allow",
       "gh auth status": "allow",
       "*review-pr.sh*": "allow",
+      "android layout*": "allow",
       "adb devices": "allow",
       "adb shell pm list*": "allow",
       "adb shell pm path*": "allow",
