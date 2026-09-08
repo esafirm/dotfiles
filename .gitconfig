@@ -12,6 +12,8 @@
 	unwatch = update-index --assume-unchanged
 	unwatched = !git ls-files -v | grep "^[[:lower:]]" | cut -d' ' -f2
 	watch = update-index --no-assume-unchanged
+	## add path to repo-local exclude file (.git/info/exclude)
+	exclude = "!f(){ f=\"$GIT_PREFIX$1\"; printf '%s\\n' \"$f\" >> \"$(git rev-parse --git-dir)/info/exclude\"; echo \"excluded: $f\"; }; f"
 	rdate = branch --sort=-committerdate --format='%(HEAD) %(refname:short) %(color:bold red) %(authordate:relative)'
 
 	## Add target to `git push` command

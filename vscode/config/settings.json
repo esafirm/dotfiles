@@ -244,5 +244,10 @@
         ".github/prompts.md": true
     },
     "github.copilot.nextEditSuggestions.enabled": true,
-    "git.blame.editorDecoration.enabled": false
+    "git.blame.editorDecoration.enabled": false,
+    "intellij.region": "apac",
+    "intellij.dataSharing": "none",
+    "intellij.additionalJvmArgs": [
+        
+    ]
 }
