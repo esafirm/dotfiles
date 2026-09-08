@@ -136,3 +136,13 @@ export PATH=$HOME/.opencode/bin:$PATH
 
 # Jenkins CLI
 alias jk='kotlin $DOT/kotlin/kscripts/jenkins-cli.main.kts'
+
+# bun completions
+[ -s "/Users/esafirm/.bun/_bun" ] && source "/Users/esafirm/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# maestro-runner
+export PATH="$HOME/.maestro-runner/bin:$PATH"

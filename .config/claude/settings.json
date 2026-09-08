@@ -43,6 +43,7 @@
       "Bash(gh pr view:*)",
       "Bash(gh pr diff:*)",
       "Bash(adb devices)",
+      "Bash(android layout:*)",
       "Bash(adb shell pm list:*)",
       "Bash(adb shell pm path:*)",
       "Bash(adb shell dumpsys:*)",
@@ -60,7 +61,7 @@
       "Bash(rm:*)"
     ]
   },
-  "model": "sonnet",
+  "model": "opus",
   "hooks": {
     "SessionStart": [
       {
@@ -76,7 +77,8 @@
     ]
   },
   "enabledPlugins": {
-    "vercel@claude-plugins-official": true
+    "vercel@claude-plugins-official": true,
+    "i-have-adhd@i-have-adhd": true
   },
   "extraKnownMarketplaces": {
     "claude-plugins-official": {
@@ -92,7 +94,8 @@
       }
     }
   },
-  "effortLevel": "medium",
+  "effortLevel": "xhigh",
+  "theme": "auto",
   "general": {
     "sessionRetention": {
       "enabled": true,
