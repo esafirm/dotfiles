@@ -55,7 +55,8 @@
       "Bash(adb shell ps:*)",
       "Bash(adb shell service:*)",
       "Bash(adb shell screencap:*)",
-      "Bash(adb logcat:*)"
+      "Bash(adb logcat:*)",
+      "Bash(*ai-trash.sh:*)"
     ],
     "deny": [
       "Bash(rm:*)"
