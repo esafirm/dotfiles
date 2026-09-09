@@ -1,0 +1,83 @@
+# Ghostty config — managed by dotfiles (~/.config/ghostty/config)
+# See: https://ghostty.org/docs/config
+
+shell-integration = zsh
+term = xterm-256color
+
+# Window
+window-decoration = false
+window-height = 80
+window-width = 180
+window-padding-x = 0
+window-padding-y = 0
+quick-terminal-animation-duration = 0.1
+resize-overlay-duration = 2500ms
+
+# Appearance (Cyberdream-inspired)
+background = #16181a
+foreground = #ffffff
+background-opacity = 1
+background-blur-radius = 10
+unfocused-split-opacity = 0.46
+minimum-contrast = 1
+mouse-hide-while-typing = true
+
+# Font (Fira Code installed in ~/Library/Fonts)
+font-family = "Fira Code"
+font-size = 12
+font-style-bold = Bold
+
+# Line spacing: Ghostty defaults to tight cells vs Terminal.app.
+# Terminal.app has visibly more leading. 10-20% is the usual match range.
+# Tune to taste, then reload with cmd+shift+, .
+adjust-cell-height = 15%
+
+# macOS-only: draw glyphs with a thicker stroke, closer to Terminal.app weight.
+# NOTE: 255 is max and clips glyph tops/bottoms (makes lines look cramped).
+# Keep modest (75-125) or set to false if you use adjust-cell-height above.
+font-thicken = true
+font-thicken-strength = 100
+
+# Palette
+# 3/11 = yellow — muted amber for readability on dark bg
+# (old #f1ff5e neon lime bloomed and was hard to read at 12pt)
+palette = 0=#16181a
+palette = 1=#ff6e5e
+palette = 2=#5eff6c
+palette = 3=#e5c07b
+palette = 4=#3b6fd4
+palette = 5=#bd5eff
+palette = 6=#5ef1ff
+palette = 7=#ffffff
+palette = 8=#3c4048
+palette = 9=#ff6e5e
+palette = 10=#5eff6c
+palette = 11=#ffcb6b
+palette = 12=#7aa2f7
+palette = 13=#bd5eff
+palette = 14=#5ef1ff
+palette = 15=#ffffff
+
+# Cursor & selection
+cursor-color = #ffffff
+cursor-text = #16181a
+selection-background = #3c4048
+selection-foreground = #ffffff
+
+# macOS Option key handling
+# Default (false) makes Opt+P type π and Opt+N type ˜, so Alt-based apps
+# (zsh readline, herdr) never see Alt+P / Alt+N / Opt+Backspace.
+# `left` = left Opt acts as Alt, right Opt still types special chars.
+# Use `true` if you have no need for Opt-typed unicode chars.
+macos-option-as-alt = left
+
+# Word delete (macOS Opt+Backspace / Opt+Fn+Backspace).
+# Ghostty >=1.2 removed the builtin, so restore it explicitly:
+# \x1b\x7f = ESC DEL = backward-kill-word in zsh emacs mode.
+keybind = opt+backspace=text:\x1b\x7f
+keybind = opt+delete=text:\x1bd
+
+# herdr owns Alt-bindings (alt+p / alt+n / alt+o etc. per ~/.config/herdr/config.toml),
+# so no tmux-style alt keybinds here. Ghostty keybinds would swallow them
+# before herdr ever sees them.
+confirm-close-surface = false
