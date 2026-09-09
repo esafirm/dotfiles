@@ -8,8 +8,14 @@ vim.pack.add {
 }
 
 vim.keymap.set('n', '\\', '<Cmd>Neotree reveal<CR>', { desc = 'NeoTree reveal', silent = true })
+vim.keymap.set('n', '<leader>gs', '<Cmd>Neotree git_status reveal<CR>', { desc = 'NeoTree [G]it [S]tatus', silent = true })
+vim.keymap.set('n', '<D-S-g>', '<Cmd>Neotree git_status reveal<CR>', { desc = 'NeoTree [G]it [S]tatus', silent = true })
+vim.keymap.set('n', '<D-G>', '<Cmd>Neotree git_status reveal<CR>', { desc = 'NeoTree [G]it [S]tatus', silent = true })
 
 require('neo-tree').setup {
+  window = {
+    width = 32, -- default 40, slimmed ~20%
+  },
   filesystem = {
     window = {
       mappings = {
