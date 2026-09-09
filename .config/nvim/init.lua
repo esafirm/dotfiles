@@ -393,11 +393,44 @@ do
     styles = {
       comments = {}, -- Disable italics in comments
     },
+    dim_inactive = {
+      enabled = true,
+      shade = 'dark',
+      percentage = 0.10,
+    },
   }
 
   -- Load the colorscheme here.
   -- Catppuccin flavours: 'latte', 'frappe', 'macchiato', 'mocha', or 'catppuccin-mocha'
   vim.cmd.colorscheme 'catppuccin'
+
+  -- Active-pane visibility: Neovim's WinSeparator is global (same color for
+  -- every split), so a bright WinSeparator alone can't mark the active pane.
+  -- Instead: keep inactive separators dim and let colorful-winsep draw a
+  -- bright border around the ACTIVE window only (like tmux pane borders).
+  vim.o.winborder = 'rounded'
+  vim.o.fillchars = 'eob: ,vert:┃,horiz:━,horizdown:┳,horizup:┻,verthoriz:╋,vertleft:┫,vertright:┣'
+  vim.api.nvim_create_autocmd('ColorScheme', {
+    group = vim.api.nvim_create_augroup('custom-active-pane', { clear = true }),
+    callback = function()
+      local ok, palettes = pcall(require, 'catppuccin.palettes')
+      if not ok then return end
+      local palette = palettes.get_palette 'mocha'
+      vim.api.nvim_set_hl(0, 'WinSeparator', { fg = palette.surface2 })
+      vim.api.nvim_set_hl(0, 'FloatBorder', { fg = palette.blue })
+    end,
+  })
+  vim.api.nvim_exec_autocmds('ColorScheme', {})
+
+  vim.pack.add { gh 'nvim-zh/colorful-winsep.nvim' }
+  require('colorful-winsep').setup {
+    highlight = function()
+      local ok, palettes = pcall(require, 'catppuccin.palettes')
+      if ok then return palettes.get_palette('mocha').blue end
+      return '#89b4fa'
+    end,
+    animate = { enabled = false },
+  }
 
   -- Highlight todo, notes, etc in comments
   vim.pack.add { gh 'folke/todo-comments.nvim' }
