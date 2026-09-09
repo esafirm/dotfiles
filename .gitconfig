@@ -28,9 +28,9 @@
 	## clog -> choose log
 	clog = !ruby $DOT/ruby/git_select.rb command:recent mode:select action:log
 	
-	## cc -> chose commit
-	cc = !ruby $DOT/ruby/git_log_selector.rb
-	ccb = !ruby $DOT/ruby/git_log_selector.rb select_branch:true
+	## cc -> chose commit (fzf picker, falls back to ruby/tty-prompt)
+	cc = !$DOT/toolbox/git-pick-commit
+	ccb = !$DOT/toolbox/git-pick-commit --branch
 
 	## cr -> choose rebase
 	cr = !ruby $DOT/ruby/git_select.rb command:recent mode:select action:rebase
