@@ -24,6 +24,7 @@ NONCASK=(
     tokei
     neovim
     ripgrep
+    fzf
 )
 
 for item in ${NONCASK[*]}; do

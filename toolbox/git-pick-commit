@@ -1,0 +1,125 @@
+#!/usr/bin/env bash
+#
+# git-pick-commit - fuzzy commit picker with colors + preview (fzf).
+#
+# Replaces ruby/git_log_selector.rb (the `git cc` / `git ccb` aliases) which
+# uses tty-prompt. Falls back to the ruby version when fzf is not installed.
+#
+# Usage:
+#   git-pick-commit [--branch] [--limit N] [--no-copy] [branch]
+#   git-pick-commit --help
+#
+#   --branch, -b    pick a branch first (like `git ccb`)
+#   --limit, -n N   number of commits to list (default: 100)
+#   --no-copy       don't copy the hash to the clipboard
+#   [branch]        limit the log to this branch/rev
+#
+# Output: prints "Selected commit hash: <short>" and copies it to the
+# clipboard (pbcopy on macOS, wl-copy/xclip/xsel on Linux).
+#
+# Note: plain bash 3.x compatible (macOS default bash).
+
+set -u
+set -o pipefail 2>/dev/null || true
+
+LIMIT=100
+PICK_BRANCH=0
+COPY=1
+BRANCH=""
+
+usage() {
+  sed -n '2,/^$/p' "$0" | sed 's/^# \{0,1\}//'
+}
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -h|--help) usage; exit 0 ;;
+    -b|--branch) PICK_BRANCH=1; shift ;;
+    -n|--limit)
+      [ $# -lt 2 ] && { echo "--limit needs a value" >&2; exit 1; }
+      LIMIT="$2"; shift 2 ;;
+    --limit=*) LIMIT="${1#--limit=}"; shift ;;
+    --no-copy) COPY=0; shift ;;
+    --copy) COPY=1; shift ;;
+    -*) echo "Unknown option: $1" >&2; exit 1 ;;
+    *) BRANCH="$1"; shift ;;
+  esac
+done
+
+DOT="${DOT:-$HOME/dotfiles}"
+
+# --- fallback when fzf is missing -------------------------------------------
+if ! command -v fzf >/dev/null 2>&1; then
+  echo "fzf not found, falling back to tty-prompt version." >&2
+  if [ "$PICK_BRANCH" -eq 1 ]; then
+    exec ruby "$DOT/ruby/git_log_selector.rb" select_branch:true "limit:$LIMIT"
+  else
+    exec ruby "$DOT/ruby/git_log_selector.rb" "limit:$LIMIT"
+  fi
+fi
+
+git rev-parse --git-dir >/dev/null 2>&1 || {
+  echo "Error: Not a git repository or git command failed" >&2
+  exit 1
+}
+
+# --- branch step (like `git ccb`) --------------------------------------------
+if [ "$PICK_BRANCH" -eq 1 ] && [ -z "$BRANCH" ]; then
+  branches=$(git branch -a --format='%(refname:short)' 2>/dev/null \
+    | sed -e '/origin\/HEAD/d' -e '/^[[:space:]]*$/d' \
+    | awk '!seen[$0]++')
+  picked=$( { echo "(current branch)"; printf '%s\n' "$branches"; } \
+    | fzf --no-sort --height=40% --reverse --border --inline-info \
+      --prompt='branch> ' \
+      --preview='git log --oneline --graph --color=always --decorate -20 {} 2>/dev/null | head -40' \
+      --preview-window='right:50%:wrap') || exit 0
+  [ -z "$picked" ] && exit 0
+  [ "$picked" = "(current branch)" ] || BRANCH="$picked"
+fi
+
+if [ -n "$BRANCH" ]; then REV="$BRANCH"; else REV="HEAD"; fi
+
+# --- commit step ---------------------------------------------------------------
+# Subject first and bright so the message is the focus when scanning;
+# refs stay green, hash/author/date dimmed after it. The short hash is
+# always last, so extraction (last field) is safe even when the subject
+# contains '|' or spaces (the old ruby version split on '|' and broke).
+selection=$(git log "$REV" -n "$LIMIT" --color=always \
+  --pretty=format:'%C(bold)%s%Creset%C(green)%d%Creset %C(dim)%an · %ar · %h%Creset' \
+  --date=relative 2>/dev/null \
+  | fzf --ansi --no-sort --height=80% --reverse --border --inline-info \
+    --prompt='commit> ' \
+    --preview='git show --color=always --stat --patch {-1} 2>/dev/null | head -200' \
+    --preview-window='right:60%:wrap') || exit 0
+[ -z "$selection" ] && exit 0
+
+# Last whitespace-separated field, with ANSI color codes stripped first
+# (tr-only filtering would leak digits from the escape sequences, e.g. the
+# '2' in the dim attribute, producing a bogus hash).
+esc=$(printf '\033')
+hash=$(printf '%s' "$selection" | sed "s/${esc}\[[0-9;]*[a-zA-Z]//g" | awk '{print $NF}')
+short=$(git rev-parse --short "$hash" 2>/dev/null || printf '%s' "$hash")
+
+echo "Selected commit hash: $short"
+
+copy_to_clipboard() {
+  if command -v pbcopy >/dev/null 2>&1; then
+    printf '%s' "$1" | pbcopy
+  elif command -v wl-copy >/dev/null 2>&1; then
+    printf '%s' "$1" | wl-copy
+  elif command -v xclip >/dev/null 2>&1; then
+    printf '%s' "$1" | xclip -selection clipboard
+  elif command -v xsel >/dev/null 2>&1; then
+    printf '%s' "$1" | xsel --clipboard --input
+  else
+    return 1
+  fi
+}
+
+if [ "$COPY" -eq 1 ]; then
+  if copy_to_clipboard "$short"; then
+    echo "Commit hash copied to clipboard!"
+  else
+    echo "No clipboard tool found, hash printed above." >&2
+  fi
+fi
