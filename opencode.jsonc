@@ -112,6 +112,7 @@
       "gh auth status *": "allow",
       "gh auth status": "allow",
       "*review-pr.sh*": "allow",
+      "*ai-trash.sh*": "allow",
       "android layout*": "allow",
       "adb devices": "allow",
       "adb shell pm list*": "allow",

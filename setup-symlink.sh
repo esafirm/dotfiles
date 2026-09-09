@@ -44,9 +44,11 @@ ln -sfn ~/dotfiles/.config/opencode/commands/workflow-audit.md ~/.config/opencod
 ln -sfn ~/dotfiles/.config/opencode/commands/advice.md ~/.config/opencode/commands/advice.md
 ln -sfn ~/dotfiles/.config/opencode/commands/review-pr.md ~/.config/opencode/commands/review-pr.md
 ln -sfn ~/dotfiles/.config/opencode/commands/verify.md ~/.config/opencode/commands/verify.md
+ln -sfn ~/dotfiles/.config/opencode/commands/trash.md ~/.config/opencode/commands/trash.md
 mkdir -p ~/.config/opencode/scripts
 ln -sfn ~/dotfiles/.config/opencode/scripts/workflow-audit.sh ~/.config/opencode/scripts/workflow-audit.sh
 ln -sfn ~/dotfiles/.config/opencode/scripts/review-pr.sh ~/.config/opencode/scripts/review-pr.sh
+ln -sfn ~/dotfiles/.config/opencode/scripts/ai-trash.sh ~/.config/opencode/scripts/ai-trash.sh
 
 ## Consolidate opencode skill dir to dotfiles-managed .config/claude/skills
 rm -rf ~/.config/opencode/skill ~/.config/opencode/skills
