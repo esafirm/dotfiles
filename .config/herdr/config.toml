@@ -2,8 +2,8 @@ onboarding = false
 [keys]
 previous_tab = "alt+p"
 next_tab = "alt+n"
-previous_workspace = "alt+up"
-next_workspace = "alt+down"
+previous_workspace = "alt+k"
+next_workspace = "alt+j"
 open_worktree = "alt+o"
 
 [ui.toast]
