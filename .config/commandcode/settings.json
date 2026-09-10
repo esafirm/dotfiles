@@ -1,0 +1,17 @@
+{
+  "skills": ["~/.claude/skills"],
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "read|write|edit|shell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.commandcode/hooks/guard-secrets.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}
