@@ -45,6 +45,7 @@ ln -sfn ~/dotfiles/.config/opencode/commands/advice.md ~/.config/opencode/comman
 ln -sfn ~/dotfiles/.config/opencode/commands/review-pr.md ~/.config/opencode/commands/review-pr.md
 ln -sfn ~/dotfiles/.config/opencode/commands/verify.md ~/.config/opencode/commands/verify.md
 ln -sfn ~/dotfiles/.config/opencode/commands/trash.md ~/.config/opencode/commands/trash.md
+ln -sfn ~/dotfiles/.config/opencode/tui.jsonc ~/.config/opencode/tui.jsonc
 mkdir -p ~/.config/opencode/scripts
 ln -sfn ~/dotfiles/.config/opencode/scripts/workflow-audit.sh ~/.config/opencode/scripts/workflow-audit.sh
 ln -sfn ~/dotfiles/.config/opencode/scripts/review-pr.sh ~/.config/opencode/scripts/review-pr.sh
@@ -53,6 +54,14 @@ ln -sfn ~/dotfiles/.config/opencode/scripts/ai-trash.sh ~/.config/opencode/scrip
 ## Consolidate opencode skill dir to dotfiles-managed .config/claude/skills
 rm -rf ~/.config/opencode/skill ~/.config/opencode/skills
 ln -sfn ~/.claude/skills ~/.config/opencode/skills
+
+## Command Code
+mkdir -p ~/.commandcode
+ln -sfn ~/dotfiles/.config/commandcode/AGENTS.md ~/.commandcode/AGENTS.md
+ln -sfn ~/dotfiles/.config/commandcode/settings.json ~/.commandcode/settings.json
+ln -sfn ~/dotfiles/.config/commandcode/mcp.json ~/.commandcode/mcp.json
+ln -sfn ~/dotfiles/.config/commandcode/commands ~/.commandcode/commands
+ln -sfn ~/dotfiles/.config/commandcode/hooks ~/.commandcode/hooks
 
 ## Agent skills (~/.agents)
 ln -sfn ~/dotfiles/.agents/skills ~/.agents/skills
@@ -68,3 +77,9 @@ ln -sfn ~/dotfiles/kotlin/kscripts/jenkins ~/dotfiles/bin/jenkins
 ## herdr
 mkdir -p ~/.config/herdr
 ln -sfn ~/dotfiles/.config/herdr/config.toml ~/.config/herdr/config.toml
+
+## Ghostty
+mkdir -p ~/.config/ghostty
+ln -sfn ~/dotfiles/.config/ghostty/config ~/.config/ghostty/config
+mkdir -p ~/Library/Application\ Support/com.mitchellh.ghostty
+ln -sfn ~/dotfiles/.config/ghostty/config ~/Library/Application\ Support/com.mitchellh.ghostty/config

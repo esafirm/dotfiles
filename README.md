@@ -35,6 +35,19 @@ Please read the script first when you want to run it.
 
 For plugin we use [vim-plug](https://github.com/junegunn/vim-plug) and the setup is already included in `setup.sh`
 
+## Command Code
+
+User-scope config lives in `.config/commandcode/` and is symlinked into `~/.commandcode/` by `setup-symlink.sh`:
+
+- `AGENTS.md` — user memory, loaded in every project (imports `~/.claude/CLAUDE.md`)
+- `mcp.json` — user-scope MCP servers (android-studio, idea, android-studio-debugger, firebase)
+- `settings.json` — extra skill paths (`~/.claude/skills`) and the `PreToolUse` secrets guard
+- `commands/` — user slash commands (e.g. `/trash`)
+- `hooks/` — hook scripts referenced from `settings.json`
+
+Skills under `~/.agents/skills` are auto-discovered by Command Code and need no extra wiring.
+Never version `~/.commandcode/auth.json`, `history.jsonl`, `projects/`, or `file-history/`.
+
 ## Manual Setup
 
 Currently, we still need to manually setup this because we haven't found a way to automate it.
