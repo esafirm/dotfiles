@@ -71,6 +71,11 @@ selection-foreground = #ffffff
 # Use `true` if you have no need for Opt-typed unicode chars.
 macos-option-as-alt = left
 
+# Remove the default "write scrollback to file" bindings: cmd+shift+j dumps the
+# whole scrollback to a temp file and pastes its path into the terminal.
+keybind = cmd+shift+j=unbind
+keybind = cmd+shift+option+j=unbind
+
 # Word delete (macOS Opt+Backspace / Opt+Fn+Backspace).
 # Ghostty >=1.2 removed the builtin, so restore it explicitly:
 # \x1b\x7f = ESC DEL = backward-kill-word in zsh emacs mode.
