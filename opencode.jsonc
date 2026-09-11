@@ -12,9 +12,7 @@
     "firebase": {
       "type": "local",
       "command": [
-        "npx",
-        "-y",
-        "firebase-tools@latest",
+        "firebase",
         "mcp",
         "--only",
         "crashlytics"

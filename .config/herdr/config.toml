@@ -10,8 +10,9 @@ open_worktree = "alt+o"
 delivery = "terminal"
 
 [theme]
-name = "one-dark"
+name = "catppuccin"
 
+auto_switch = false
 [ui]
 show_agent_labels_on_pane_borders = true
 prompt_new_tab_name = false

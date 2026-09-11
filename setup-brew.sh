@@ -41,6 +41,7 @@ CASKS=(
     transmission
     jetbrains-toolbox
     shiftit
+    ghostty
 )
 
 for item in ${CASKS[*]}; do
