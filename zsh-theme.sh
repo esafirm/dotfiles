@@ -2,9 +2,9 @@
 
 BULLETTRAIN_DIR_BG="blue"
 BULLETTRAIN_DIR_FG="white"
+BULLETTRAIN_DIR_EXTENDED=0
 BULLETTRAIN_CONTEXT_DEFAULT_USER=$(whoami)
 BULLETTRAIN_PROMPT_ORDER=(
-    time
     status
     custom
     context
