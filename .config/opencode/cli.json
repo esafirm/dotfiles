@@ -10,13 +10,14 @@
     "sidebar": "hide",
     "scrollbar": false,
     "thinking": "hide",
-    "permissions": "autoaccept"
+    "permissions": "prompt"
   },
   "animations": true,
   "debug": {
     "devtools": false
   },
   "keybinds": {
+    "permission.mode": "<leader>p",
     "session.half.page.up": "ctrl+u",
     "session.half.page.down": "ctrl+d"
   }
