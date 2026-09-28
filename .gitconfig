@@ -40,6 +40,7 @@
 	## com -> commit
 	com = !ruby $DOT/ruby/git_commiter.rb
 	coma = !git add -A && ruby $DOT/ruby/git_commiter.rb
+	excluded = !git ls-files --others --ignored --exclude-standard --directory
 
 [color]
 	ui = auto
