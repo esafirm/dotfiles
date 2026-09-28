@@ -90,7 +90,8 @@ fun fetchUrl(
     method: String = "GET",
     followRedirects: Boolean = true
 ): HttpURLConnection {
-    val conn = URI(url).toURL().openConnection() as HttpURLConnection
+    val sanitized = url.replace("{", "%7B").replace("}", "%7D")
+    val conn = URI(sanitized).toURL().openConnection() as HttpURLConnection
     conn.requestMethod = method
     conn.setRequestProperty("Authorization", auth)
     conn.instanceFollowRedirects = followRedirects
@@ -402,7 +403,7 @@ fun showBuildInfo(ref: String) {
 // ── builds ────────────────────────────────────────────────────────────────
 fun showBuilds(ref: String, limit: Int) {
     val jobUrl = resolveJobUrl(ref)
-    val apiUrl = "$jobUrl/api/json?tree=builds[number,result,building,timestamp,duration]"
+    val apiUrl = "$jobUrl/api/json?tree=builds[number,result,building,timestamp,duration,actions[parameters[name,value]]]"
     println("─── Recent Builds ─────────────────────────")
     println("  Job: $jobUrl")
     println()
@@ -420,7 +421,16 @@ fun showBuilds(ref: String, limit: Int) {
         val durMs = obj.long("duration")
         val started = ts?.let { java.time.Instant.ofEpochMilli(it).toString() } ?: "?"
         val dur = durMs?.let { "${it / 1000}s" } ?: "?"
-        println("  #$num  $result  started=$started  duration=$dur")
+        val params = obj["actions"]?.jsonArray
+            ?.flatMap { it.jsonObject["parameters"]?.jsonArray ?: emptyList() }
+            ?.mapNotNull {
+                val p = it.jsonObject
+                val name = p.str("name")
+                val value = p.str("value")
+                if (name != null && value != null && value.isNotBlank() && value != "null") "$name=$value" else null
+            }?.take(4)?.joinToString(", ") ?: ""
+        val paramStr = if (params.isNotBlank()) "  ($params)" else ""
+        println("  #$num  $result  started=$started  duration=$dur$paramStr")
     }
 }
 
@@ -619,41 +629,53 @@ fun showConsole(ref: String, mode: String, maxBytes: Int, refresh: Boolean) {
 
 // ── download ──────────────────────────────────────────────────────────────
 fun downloadArtifact(ref: String, relPath: String?, outPath: String?) {
-    // Two forms:
-    //   download <artifact-url> [outPath]
-    //   download <job-url> <relativePath> [outPath]   (resolves latest successful build)
     val url: String
     val out: String
-    if (relPath != null) {
-        val jobUrl = ref.trimEnd('/')
-        // Resolve the latest successful build's number, fall back to the latest build.
-        val apiUrl = "$jobUrl/api/json?tree=lastSuccessfulBuild[number],lastBuild[number]"
-        val root = fetchJson(apiUrl).jsonObject
-        val num = root["lastSuccessfulBuild"]?.jsonObject?.int("number")
-            ?: root["lastBuild"]?.jsonObject?.int("number")
-            ?: error("No builds found for $jobUrl")
-        url = "$jobUrl/$num/artifact/${relPath.trimStart('/')}"
-        out = outPath ?: relPath.substringAfterLast('/').ifBlank { "download.bin" }
-        println("─── Download (job latest successful build #$num) ─")
+    val trimmed = ref.trimEnd('/')
+
+    if (trimmed.contains("/artifact/")) {
+        // Direct artifact URL: download <artifact-url> [outPath]
+        url = trimmed
+        out = relPath ?: outPath ?: trimmed.substringAfterLast('/').ifBlank { "download.bin" }
+        println("─── Download (artifact) ─────────────────────")
+    } else if (relPath != null) {
+        val lastSegment = trimmed.substringAfterLast('/')
+        val isBuildUrl = lastSegment.toIntOrNull() != null
+        if (isBuildUrl) {
+            url = "$trimmed/artifact/${relPath.trimStart('/')}"
+            out = outPath ?: relPath.substringAfterLast('/').ifBlank { "download.bin" }
+            println("─── Download (build #$lastSegment) ───────────────")
+        } else {
+            val jobUrl = resolveJobUrl(trimmed)
+            val apiUrl = "$jobUrl/api/json?tree=lastSuccessfulBuild[number],lastBuild[number]"
+            val root = fetchJson(apiUrl).jsonObject
+            val num = root["lastSuccessfulBuild"]?.jsonObject?.int("number")
+                ?: root["lastBuild"]?.jsonObject?.int("number")
+                ?: error("No builds found for $jobUrl")
+            url = "$jobUrl/$num/artifact/${relPath.trimStart('/')}"
+            out = outPath ?: relPath.substringAfterLast('/').ifBlank { "download.bin" }
+            println("─── Download (job latest successful build #$num) ─")
+        }
     } else {
-        url = ref.trimEnd('/')
-        out = outPath ?: url.substringAfterLast('/').let { if (it.isBlank()) "download.bin" else it }
+        url = trimmed
+        out = outPath ?: trimmed.substringAfterLast('/').let { if (it.isBlank()) "download.bin" else it }
         println("─── Download ───────────────────────────────")
     }
     println("  URL: $url")
     println("  -> $out")
-    val conn = fetchUrl(url, method = "GET", followRedirects = false)
+    val conn = fetchUrl(url, method = "GET", followRedirects = true)
     if (conn.responseCode !in 200..302) {
         System.err.println("Error: HTTP ${conn.responseCode} — ${conn.responseMessage}")
         kotlin.system.exitProcess(1)
     }
+    val outFile = File(out)
+    outFile.parentFile?.mkdirs()
     conn.inputStream.use { input ->
-        java.io.File(out).outputStream().use { output -> input.copyTo(output) }
+        outFile.outputStream().use { output -> input.copyTo(output) }
     }
-    println("  OK: ${java.io.File(out).length()} bytes")
+    println("  OK: ${outFile.length()} bytes")
 }
 
-// ── Main ──────────────────────────────────────────────────────────────────
 // ── config-history ────────────────────────────────────────────────────────
 fun showConfigHistory(ref: String, downloadDate: String?) {
     val jobUrl = resolveJobUrl(ref)

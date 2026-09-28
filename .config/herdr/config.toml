@@ -5,6 +5,19 @@ next_tab = "alt+n"
 previous_workspace = "alt+k"
 next_workspace = "alt+j"
 open_worktree = "alt+o"
+toggle_sidebar = "prefix+shift+b"
+
+[[keys.command]]
+key = "prefix+b"
+type = "plugin_action"
+command = "ramarivera.palette.open"
+description = "Open palette"
+
+[[keys.command]]
+key = "prefix+f"
+type = "plugin_action"
+command = "hotchpotch.herdr-tiny-fingers.open"
+description = "Open fingers mode"
 
 [ui.toast]
 delivery = "terminal"

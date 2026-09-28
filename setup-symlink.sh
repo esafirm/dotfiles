@@ -12,6 +12,7 @@ ln -sfn ~/dotfiles/.config/nvim ~/.config/nvim
 
 ## Gemini
 mkdir -p ~/.gemini/extensions
+mkdir -p ~/.gemini/config
 ln -sfn ~/dotfiles/.gemini/policies ~/.gemini/policies
 ln -sfn ~/dotfiles/.gemini/settings.json ~/.gemini/settings.json
 ln -sfn ~/dotfiles/.gemini/projects.json ~/.gemini/projects.json
@@ -20,6 +21,7 @@ mkdir -p ~/.gemini/antigravity-cli
 ln -sfn ~/dotfiles/.gemini/antigravity-cli/settings.json ~/.gemini/antigravity-cli/settings.json
 ln -sfn ~/dotfiles/.gemini/extensions/extension-enablement.json ~/.gemini/extensions/extension-enablement.json
 ln -sfn ~/dotfiles/.gemini/skills ~/.gemini/skills
+ln -sfn ~/dotfiles/.gemini/config/mcp_config.json ~/.gemini/config/mcp_config.json
 
 ## Claude Code
 mkdir -p ~/.claude

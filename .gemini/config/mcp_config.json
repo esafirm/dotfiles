@@ -56,12 +56,15 @@
       ]
     },
     "firebase": {
-      "command": "npx",
-      "args": ["-y", "firebase-tools@latest", "mcp", "--only", "crashlytics"],
-      "trust": true,
+      "command": "firebase",
+      "args": [
+        "mcp",
+        "--only",
+        "crashlytics"
+      ],
       "includeTools": [
         "firebase_get_environment",
-        "get_crashlytics_issues",
+        "crashlytics_get_issue",
         "crashlytics_list_events"
       ]
     }

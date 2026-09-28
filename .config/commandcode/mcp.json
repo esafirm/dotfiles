@@ -18,8 +18,12 @@
     "firebase": {
       "transport": "stdio",
       "enabled": true,
-      "command": "npx",
-      "args": ["-y", "firebase-tools@latest", "mcp", "--only", "crashlytics"]
+      "command": "firebase",
+      "args": [
+        "mcp",
+        "--only",
+        "crashlytics"
+      ]
     }
   }
 }
