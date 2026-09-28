@@ -30,8 +30,9 @@ ln -sfn ~/dotfiles/.config/claude/skills ~/.claude/skills
 ## opencode
 mkdir -p ~/.config/opencode
 ln -sfn ~/dotfiles/opencode.jsonc ~/.config/opencode/opencode.jsonc
+ln -sfn ~/dotfiles/.config/claude/CLAUDE.md ~/.config/opencode/AGENTS.md
+ln -sfn ~/dotfiles/.config/opencode/cli.json ~/.config/opencode/cli.json
 mkdir -p ~/.config/opencode/plugins
-ln -sfn ~/dotfiles/.config/opencode/plugins/rtk.ts ~/.config/opencode/plugins/rtk.ts
 ln -sfn ~/dotfiles/.config/opencode/package.json ~/.config/opencode/package.json
 ln -sfn ~/dotfiles/.config/opencode/package-lock.json ~/.config/opencode/package-lock.json
 ln -sfn ~/dotfiles/.config/opencode/.gitignore ~/.config/opencode/.gitignore
@@ -45,7 +46,6 @@ ln -sfn ~/dotfiles/.config/opencode/commands/advice.md ~/.config/opencode/comman
 ln -sfn ~/dotfiles/.config/opencode/commands/review-pr.md ~/.config/opencode/commands/review-pr.md
 ln -sfn ~/dotfiles/.config/opencode/commands/verify.md ~/.config/opencode/commands/verify.md
 ln -sfn ~/dotfiles/.config/opencode/commands/trash.md ~/.config/opencode/commands/trash.md
-ln -sfn ~/dotfiles/.config/opencode/tui.jsonc ~/.config/opencode/tui.jsonc
 mkdir -p ~/.config/opencode/scripts
 ln -sfn ~/dotfiles/.config/opencode/scripts/workflow-audit.sh ~/.config/opencode/scripts/workflow-audit.sh
 ln -sfn ~/dotfiles/.config/opencode/scripts/review-pr.sh ~/.config/opencode/scripts/review-pr.sh
