@@ -3,9 +3,9 @@
 ## $ brew install rustup
 ## $ rustup-init
 ## ```
-CARGO_ENV=$HOME/.cargo/env
-if [ -f $CARGO_ENV ]; then
-    source $HOME/.cargo/env
-else
-    vecho "> Rust is not installed"
+export PATH="$HOME/.cargo/bin:$PATH"
+
+CARGO_ENV="$HOME/.cargo/env"
+if [ -f "$CARGO_ENV" ]; then
+    source "$CARGO_ENV"
 fi

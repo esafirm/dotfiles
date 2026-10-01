@@ -58,6 +58,25 @@
       "skillFolderHash": "a0dfdc3562686d920900973b50289b36e2f7eafe",
       "installedAt": "2026-08-19T12:36:24.246Z",
       "updatedAt": "2026-08-19T12:36:24.246Z"
+    },
+    "llm-wiki": {
+      "source": "nashsu/llm_wiki_skill",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/nashsu/llm_wiki_skill.git",
+      "skillPath": "SKILL.md",
+      "skillFolderHash": "642b43822ed44f6797082a24483850a4a2c2a010",
+      "installedAt": "2026-09-30T10:19:33.010Z",
+      "updatedAt": "2026-09-30T10:19:33.010Z"
+    },
+    "frontend-design": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/anthropics/skills.git",
+      "skillPath": "skills/frontend-design/SKILL.md",
+      "skillFolderHash": "d79e2a5bb4df4a386c2adcdd9ab8709bba28c3f6",
+      "pluginName": "example-skills",
+      "installedAt": "2026-10-01T14:42:16.135Z",
+      "updatedAt": "2026-10-01T14:42:16.135Z"
     }
   },
   "dismissed": {
