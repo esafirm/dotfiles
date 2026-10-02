@@ -22,7 +22,7 @@ alias gammen="git add -A && git commit --amend --no-edit"
 alias gforce="git push origin HEAD --force-with-lease"
 alias gforceforce="git push origin HEAD -f"
 alias gam="git add -A && git commit -m"
-alias pbg="git_current_branch | pbcopy"
+alias pbg="git_current_branch | tr -d '\n' | pbcopy"
 
 ## SpeedTest
 alias speedtest="$DOT/speedtest-cli"
