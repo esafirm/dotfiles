@@ -41,8 +41,8 @@
 	com = !ruby $DOT/ruby/git_commiter.rb
 	coma = !git add -A && ruby $DOT/ruby/git_commiter.rb
 	excluded = !git ls-files --others --ignored --exclude-standard --directory
-	label = !$DOT/scripts/git-branch-label.sh
-	labels = !$DOT/scripts/git-branch-label.sh list
+	label = !$DOT/bin/git-branch-label
+	labels = !$DOT/bin/git-branch-label list
 
 [color]
 	ui = auto
