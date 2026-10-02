@@ -1,6 +1,6 @@
 ---
 name: atlassian-cli
-description: Use when working with Jira or Confluence from command line, including authentication, searching issues with JQL, bulk operations, sprint reports, or creating/updating work items using acli
+description: Work with Jira or Confluence via the Atlassian CLI (acli), including creating well-formatted work items with Atlassian Document Format (ADF) and clickable PR links, searching with JQL, bulk operations, and sprint management. Use when creating or managing Jira issues or Confluence pages.
 ---
 
 # Atlassian CLI (acli)
@@ -137,10 +137,69 @@ acli jira workitem search --jql "..." --fields "key,summary,assignee,priority"
 - `--count` - Show count only
 - `--paginate` - Fetch all results
 
-## Bulk Creation
+## Creating Work Items (ADF & Rich Formatting)
 
-**For creating multiple similar issues:**
+### Why ADF Format Matters
+Jira Cloud uses **Atlassian Document Format (ADF)** for descriptions.
+**DO NOT dump raw Markdown text directly into a single ADF `text` node.**
+If you put `## Header` or `https://...` inside a single `text` node, Jira renders literal `## Header` and plain, unclickable text instead of headings, lists, and links.
 
+### ADF Structure & Nodes
+- **Headings**: `{"type": "heading", "attrs": {"level": 2}, "content": [{"type": "text", "text": "Title"}]}`
+- **Paragraphs**: `{"type": "paragraph", "content": [...]}`
+- **Text with Marks (bold, code, links)**:
+  - Bold: `{"type": "text", "text": "foo", "marks": [{"type": "strong"}]}`
+  - Code: `{"type": "text", "text": "bar()", "marks": [{"type": "code"}]}`
+  - Hyperlink: `{"type": "text", "text": "PR #23382", "marks": [{"type": "link", "attrs": {"href": "https://..."}}]}`
+- **Smart Links (inlineCard)**: Standalone URLs for PRs, Figma, or docs should use `inlineCard` to render as rich Atlassian Smart Links:
+  ```json
+  {"type": "paragraph", "content": [{"type": "inlineCard", "attrs": {"url": "https://github.com/bandlab/bandlab-android/pull/23382"}}]}
+  ```
+- **Bullet Lists**: `{"type": "bulletList", "content": [{"type": "listItem", "content": [{"type": "paragraph", "content": [...]}]}]}`
+- **Code Blocks**: `{"type": "codeBlock", "attrs": {"language": "kotlin"}, "content": [{"type": "text", "text": "..."}]}`
+
+### Helper Script: `scripts/md_to_adf.py`
+This skill bundles a Python converter in `scripts/md_to_adf.py` that parses Markdown into valid ADF JSON, turning headings, lists, code blocks, bold/code marks, markdown links, and standalone URLs into their proper ADF representations:
+
+```bash
+# Convert a markdown description file into a full Jira work item JSON:
+python3 "$(dirname "$(which acli)")/../.agents/skills/atlassian-cli/scripts/md_to_adf.py" \
+  -i description.md \
+  -s "Navigation: Rework GlobalPageIntents.intentFor()" \
+  -p "BLAN" \
+  -t "Task" \
+  -a "@me" \
+  --stream "Other" \
+  -o workitem.json
+
+# Create the work item:
+acli jira workitem create --from-json workitem.json
+```
+
+### Creating a Jira Ticket from a GitHub PR or Review Comment
+When asked to create a Jira ticket from a GitHub PR, discussion, or issue:
+
+1. **Fetch context**: Use `gh` CLI to inspect the PR and discussion thread:
+   ```bash
+   gh api repos/<owner>/<repo>/pulls/comments/<comment_id>
+   gh pr view <pr_number> --comments
+   ```
+2. **Draft structured Markdown**: Include Context, Problem, Proposed Scope, and References.
+   - Reference PRs and comments with markdown links (`[PR #123](url)`) or standalone URLs on their own lines (for `inlineCard` Smart Links).
+3. **Handle required project custom fields**: Some projects (e.g. BandLab `BLAN`) require custom fields like `Stream` (`customfield_12385`). Pass them via `--stream <value>` or `additionalAttributes` in `--from-json`:
+   ```json
+   "additionalAttributes": {
+     "customfield_12385": { "value": "Other" }
+   }
+   ```
+4. **Convert and create**: Use `scripts/md_to_adf.py` to produce `workitem.json` with ADF, then run `acli jira workitem create --from-json workitem.json`.
+5. **Link related Jira work items**:
+   ```bash
+   acli jira workitem link create --out <NEW_KEY> --in <RELATED_KEY> --type Relates --yes
+   ```
+
+### Bulk Creation
+For creating multiple similar issues:
 ```bash
 # Generate JSON template
 acli jira workitem create --generate-json
@@ -150,14 +209,7 @@ acli jira workitem create --from-json workitem.json
 
 # Bulk create multiple issues
 acli jira workitem create-bulk
-
-# Use file for description
-acli jira workitem create --summary "Bug title" --project API --type Bug --from-file description.txt
-
-# Use editor for interactive creation
-acli jira workitem create --editor
 ```
-
 **Don't create bash loops with 10 individual create commands when `create-bulk` or `--from-json` exists.**
 
 ## Common JQL Patterns
@@ -190,6 +242,8 @@ acli jira workitem create --editor
 | Bash loops for creation | Inefficient, built-in features exist | Use `create-bulk`, `--from-json` |
 | One-by-one edits | Slow for bulk operations | Use `--jql` or `--filter` with edit/transition |
 | Making up commands | Wastes time | Run `acli <product> <entity> --help` to verify |
+| Dumping raw markdown into ADF text node | Unformatted text and unclickable links | Use structured ADF nodes (headings, lists, link marks, inlineCard) |
+| Omitting mandatory custom fields | Jira rejects creation (e.g. Stream is required) | Supply custom fields via `additionalAttributes` in `--from-json` |
 
 ## Red Flags - STOP and Check Skill
 
@@ -200,6 +254,8 @@ These indicate you're about to make a mistake:
 - Writing bash loops for bulk operations
 - Suggesting `--outputFormat` instead of `--csv`
 - Using `--columns` instead of `--fields`
+- Dumping raw markdown into an ADF text node without ADF structure
+- Leaving PR links as raw text instead of clickable link marks or `inlineCard` Smart Links
 - Making up command names without checking --help
 - "The old syntax probably still works"
 - "They're probably already authenticated"
