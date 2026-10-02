@@ -1,5 +1,6 @@
 onboarding = false
 [keys]
+prefix = ["ctrl+b", "ctrl+space"]
 previous_tab = "alt+p"
 next_tab = "alt+n"
 previous_workspace = "alt+k"
