@@ -1,6 +1,8 @@
 ## Hold installation files
 .bin/
-bin/
+bin/*
+!bin/git-branch-label
+!bin/llm-wiki-mcp
 
 ## Hold secret
 secrets

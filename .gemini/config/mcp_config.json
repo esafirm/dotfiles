@@ -67,6 +67,9 @@
         "crashlytics_get_issue",
         "crashlytics_list_events"
       ]
+    },
+    "llm-wiki": {
+      "command": "llm-wiki-mcp"
     }
   }
 }

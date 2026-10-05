@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Ensure standard bin paths are in PATH (for node, etc.)
+for p in /opt/homebrew/bin /usr/local/bin "$HOME/.local/bin"; do
+  if [[ -d "$p" && ":$PATH:" != *":$p:"* ]]; then
+    PATH="$p:$PATH"
+  fi
+done
+
+# Resolve node binary
+NODE_BIN="$(command -v node || true)"
+if [[ -z "$NODE_BIN" ]]; then
+  if [[ -x "/opt/homebrew/bin/node" ]]; then
+    NODE_BIN="/opt/homebrew/bin/node"
+  elif [[ -x "/usr/local/bin/node" ]]; then
+    NODE_BIN="/usr/local/bin/node"
+  else
+    echo "Error: node not found in PATH or standard locations." >&2
+    exit 1
+  fi
+fi
+
+# Load token from dotfiles secrets if not already in environment
+if [[ -z "${LLM_WIKI_API_TOKEN:-}" ]]; then
+  SECRETS_FILE="${DOTFILES_SECRETS:-$HOME/dotfiles/secrets}"
+  if [[ -f "$SECRETS_FILE" ]]; then
+    TOKEN_LINE=$(grep -E '^[[:space:]]*(export[[:space:]]+)?LLM_WIKI_API_TOKEN=' "$SECRETS_FILE" | tail -n 1 || true)
+    if [[ -n "$TOKEN_LINE" ]]; then
+      eval "$TOKEN_LINE"
+    fi
+  fi
+fi
+
+# Locate LLM Wiki MCP server entry point
+SERVER_SCRIPT="${LLM_WIKI_MCP_PATH:-/Applications/LLM Wiki.app/Contents/Resources/mcp-server/dist/src/index.js}"
+
+if [[ ! -f "$SERVER_SCRIPT" ]]; then
+  echo "Error: LLM Wiki MCP server script not found at: $SERVER_SCRIPT" >&2
+  echo "Set LLM_WIKI_MCP_PATH if LLM Wiki is installed in a non-standard location." >&2
+  exit 1
+fi
+
+exec "$NODE_BIN" "$SERVER_SCRIPT" "$@"

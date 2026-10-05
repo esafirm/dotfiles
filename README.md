@@ -55,11 +55,22 @@ Currently, we still need to manually setup this because we haven't found a way t
 - Initliazation of [Cleanshot](https://cleanshot.com/)
 ## Directory Structure
 
-- `scripts/` — zsh function scripts ONLY (sourced at shell startup via `for file in $DOT/scripts/*; do source $file`). All files here must be valid zsh.
+- `scripts/` — zsh function scripts ONLY (sourced at shell startup via `for file in $DOT/scripts/*; do source $file`). All files here must define shell functions or aliases only, and must never execute commands or call `exec` at top-level. Note: this loop runs *before* Homebrew is in `$PATH`.
+- `bin/` — standalone executables and CLI wrappers placed on `$PATH`.
 - `kotlin/kscripts/` — Kotlin `.kts` scripts (NOT zsh source-able). Invoked via aliases like `jk='kotlin $DOT/kotlin/kscripts/...'`.
-- `bin/` — standalone executables placed on `$PATH`.
 
-> **Rule:** Never put a `.kts`, `.py`, or other non-zsh file in `scripts/` — it will be `source`d by zsh on every terminal start and break shell init.
+> **Critical Rule:** Never put executable CLI scripts, top-level runner scripts, `.kts`, `.py`, or other non-function files in `scripts/`. They will be `source`d on every shell startup, fail if dependencies like `node` are not in the early `$PATH`, and terminate the login shell (e.g. crashing Ghostty on launch). Executable scripts always belong in `bin/`.
+
+## MCP & Secrets Conventions
+
+1. **No Tokens in Tracked Files**: Sensitive API tokens and credentials must always go into `secrets` (which is `.gitignore`d). Never hardcode tokens in git-tracked MCP JSON files (`mcp_config.json`, `settings.json`, `mcp.json`, `opencode.jsonc`).
+2. **No Absolute App Paths in Configs**: Avoid machine-specific paths like `/Applications/LLM Wiki.app/...` in tracked MCP configs.
+3. **Use `bin/` Executable Wrappers**: Place a launcher script in `bin/` (e.g. `bin/llm-wiki-mcp`) that:
+   - Bootstraps `$PATH` (e.g., includes `/opt/homebrew/bin`, `/usr/local/bin`, `~/.local/bin`).
+   - Reads the required token dynamically from `$LLM_WIKI_API_TOKEN` or `secrets`.
+   - Locates and `exec`s the target runtime.
+   - MCP configs can then simply declare `"command": "llm-wiki-mcp"`, keeping the repository safe, portable, and clean.
+
 
 ## Author
 
