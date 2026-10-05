@@ -15,10 +15,17 @@
           "--only",
           "crashlytics"
         ]
+      },
+      "llm-wiki": {
+        "type": "local",
+        "command": [
+          "llm-wiki-mcp"
+        ]
       }
     }
   },
   "permissions": [
+    { "action": "llm-wiki_*", "resource": "*", "effect": "allow" },
     { "action": "android-studio_*", "resource": "*", "effect": "allow" },
     { "action": "android-studio_apply_patch", "resource": "*", "effect": "deny" },
     { "action": "android-studio_create_new_file", "resource": "*", "effect": "deny" },

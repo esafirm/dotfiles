@@ -16,7 +16,7 @@ mkdir -p ~/.gemini/config
 ln -sfn ~/dotfiles/.gemini/policies ~/.gemini/policies
 ln -sfn ~/dotfiles/.gemini/settings.json ~/.gemini/settings.json
 ln -sfn ~/dotfiles/.gemini/projects.json ~/.gemini/projects.json
-ln -sfn ~/dotfiles/.gemini/GEMINI.md ~/.gemini/GEMINI.md
+ln -sfn ~/dotfiles/.config/claude/CLAUDE.md ~/.gemini/GEMINI.md
 mkdir -p ~/.gemini/antigravity-cli
 ln -sfn ~/dotfiles/.gemini/antigravity-cli/settings.json ~/.gemini/antigravity-cli/settings.json
 ln -sfn ~/dotfiles/.gemini/extensions/extension-enablement.json ~/.gemini/extensions/extension-enablement.json
@@ -75,6 +75,10 @@ ln -sfn ~/dotfiles/kotlin/kscripts/jenkins-cli.main.kts ~/scripts/jenkins-cli.ma
 # Expose Jenkins CLI on PATH as `jenkins` (wrapper in kotlin/kscripts,
 # since a bare symlink without the .kts extension is not treated as a script)
 ln -sfn ~/dotfiles/kotlin/kscripts/jenkins ~/dotfiles/bin/jenkins
+
+## LLM Wiki MCP
+mkdir -p ~/.local/bin
+ln -sfn ~/dotfiles/bin/llm-wiki-mcp ~/.local/bin/llm-wiki-mcp
 
 ## herdr
 mkdir -p ~/.config/herdr
