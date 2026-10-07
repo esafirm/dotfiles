@@ -13,18 +13,31 @@
           "firebase",
           "mcp",
           "--only",
-          "crashlytics"
-        ]
+          "crashlytics",
+          "--dir",
+          "/tmp"
+        ],
+        "timeout": {
+          "catalog": 60000,
+          "startup": 60000
+        }
       },
       "llm-wiki": {
         "type": "local",
         "command": [
           "llm-wiki-mcp"
         ]
+      },
+      "play-store": {
+        "type": "local",
+        "command": [
+          "play-store-mcp"
+        ]
       }
     }
   },
   "permissions": [
+    { "action": "play-store_*", "resource": "*", "effect": "allow" },
     { "action": "llm-wiki_*", "resource": "*", "effect": "allow" },
     { "action": "android-studio_*", "resource": "*", "effect": "allow" },
     { "action": "android-studio_apply_patch", "resource": "*", "effect": "deny" },

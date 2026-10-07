@@ -70,6 +70,9 @@
     },
     "llm-wiki": {
       "command": "llm-wiki-mcp"
+    },
+    "play-store": {
+      "command": "play-store-mcp"
     }
   }
 }

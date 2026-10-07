@@ -3,6 +3,7 @@
 bin/*
 !bin/git-branch-label
 !bin/llm-wiki-mcp
+!bin/play-store-mcp
 
 ## Hold secret
 secrets
