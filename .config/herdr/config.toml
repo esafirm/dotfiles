@@ -9,16 +9,10 @@ open_worktree = "alt+o"
 toggle_sidebar = "prefix+shift+b"
 
 [[keys.command]]
-key = "prefix+b"
-type = "plugin_action"
-command = "ramarivera.palette.open"
-description = "Open palette"
-
-[[keys.command]]
 key = "prefix+f"
 type = "plugin_action"
-command = "hotchpotch.herdr-tiny-fingers.open"
-description = "Open fingers mode"
+command = "rmarganti.herdr-pluck.pluck"
+description = "Pluck visible token"
 
 [ui.toast]
 delivery = "terminal"
@@ -28,7 +22,9 @@ name = "catppuccin"
 
 auto_switch = false
 [ui]
+
 show_agent_labels_on_pane_borders = true
 prompt_new_tab_name = false
 agent_panel_sort = "priority"
 status_indicators = "symbols"
+
