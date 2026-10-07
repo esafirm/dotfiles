@@ -56,6 +56,8 @@ fun printUsage() {
           config-history <name-or-url> [timestamp]
                                                List config versions (who/when); pass timestamp to download it
           plugins [substring]                  List installed plugins, optionally filtered
+          credentials [substring]              List credentials (optionally filtered by id/desc/type)
+          credential <id> [outPath]            Fetch credential value (prints text or saves file)
           skill                                Agent-facing usage guide for this CLI
 
         Environment:
@@ -85,12 +87,22 @@ fun JsonObject?.double(key: String): Double? = this.str(key)?.toDoubleOrNull()
 
 fun JsonObject?.long(key: String): Long? = this.str(key)?.toLongOrNull()
 
+fun secureJenkinsUrl(url: String): String {
+    val uri = URI(url)
+    return if (
+        uri.scheme.equals("http", ignoreCase = true) &&
+        uri.host.equals("android-ci.bandlab.io", ignoreCase = true)
+    ) {
+        url.replaceFirst(Regex("^http:", RegexOption.IGNORE_CASE), "https:")
+    } else url
+}
+
 fun fetchUrl(
     url: String,
     method: String = "GET",
     followRedirects: Boolean = true
 ): HttpURLConnection {
-    val sanitized = url.replace("{", "%7B").replace("}", "%7D")
+    val sanitized = secureJenkinsUrl(url.replace("{", "%7B").replace("}", "%7D"))
     val conn = URI(sanitized).toURL().openConnection() as HttpURLConnection
     conn.requestMethod = method
     conn.setRequestProperty("Authorization", auth)
@@ -147,7 +159,7 @@ fun interactiveRun(jobName: String?) {
 }
 
 fun runJobInternal(jobName: String, def: JobDef, resolved: List<Pair<String, String>>) {
-    val jobUrl = def.url.trimEnd('/')
+    val jobUrl = secureJenkinsUrl(def.url.trimEnd('/'))
     val buildUrl = "${jobUrl}/buildWithParameters"
     val query = resolved.joinToString("&") { "${it.first}=${URI(it.second).toASCIIString()}" }
 
@@ -166,7 +178,7 @@ fun runJobInternal(jobName: String, def: JobDef, resolved: List<Pair<String, Str
     val location = conn.getHeaderField("Location")
     val queueUrl = location?.let { loc ->
         val jenkinsRoot = jobUrl.substringBefore("/job/")
-        if (loc.startsWith("http")) loc else "$jenkinsRoot$loc"
+        secureJenkinsUrl(if (loc.startsWith("http")) loc else "$jenkinsRoot$loc")
     }
     println("  Status: $status")
     if (queueUrl != null) println("  Queue: $queueUrl")
@@ -184,7 +196,7 @@ fun runJobInternal(jobName: String, def: JobDef, resolved: List<Pair<String, Str
                     val num = executable.int("number")
                     val buildUrlResult = executable.str("url").orEmpty()
                     println("  ✔ Build #$num started")
-                    println("  URL: ${buildUrlResult.ifBlank { "${jobUrl}/${num}/" }}")
+                    println("  URL: ${secureJenkinsUrl(buildUrlResult.ifBlank { "${jobUrl}/${num}/" })}")
                     return
                 }
             } catch (_: Exception) { }
@@ -328,9 +340,11 @@ fun showWarnings(url: String) {
 
 // ── get-job-config ─────────────────────────────────────────────────────────
 fun resolveJobUrl(ref: String): String =
-    jobs[ref]?.url?.trimEnd('/')
-        ?: if (ref.startsWith("http://") || ref.startsWith("https://")) ref.trimEnd('/')
-        else error("Unknown job '$ref'. Available: ${jobs.keys.joinToString(", ")}")
+    secureJenkinsUrl(
+        jobs[ref]?.url?.trimEnd('/')
+            ?: if (ref.startsWith("http://") || ref.startsWith("https://")) ref.trimEnd('/')
+            else error("Unknown job '$ref'. Available: ${jobs.keys.joinToString(", ")}")
+    )
 
 fun getJobConfig(ref: String) {
     val jobUrl = resolveJobUrl(ref)
@@ -436,7 +450,7 @@ fun showBuilds(ref: String, limit: Int) {
 
 // ── trigger (URL-based) ───────────────────────────────────────────────────
 fun triggerBuild(ref: String, args: List<String>) {
-    val jobUrl = if (ref.startsWith("http")) ref.trimEnd('/')
+    val jobUrl = if (ref.startsWith("http")) secureJenkinsUrl(ref.trimEnd('/'))
         else error("Usage: jenkins-cli.main.kts trigger <job-url> [key=value...]")
     val buildUrl = "$jobUrl/buildWithParameters"
     val cliParams = args.associate { p ->
@@ -459,7 +473,7 @@ fun triggerBuild(ref: String, args: List<String>) {
     }
     val location = conn.getHeaderField("Location")
     println("  Status: $status")
-    if (location != null) println("  Queue: $location")
+    if (location != null) println("  Queue: ${secureJenkinsUrl(location)}")
 }
 
 // ── rebuild (URL-based) ───────────────────────────────────────────────────
@@ -495,13 +509,15 @@ fun rebuildLastFailed(ref: String) {
     }
     val location = conn.getHeaderField("Location")
     println("  Status: $status")
-    if (location != null) println("  Queue: $location")
+    if (location != null) println("  Queue: ${secureJenkinsUrl(location)}")
 }
 
 // ── queue ───────────────────────────────────────────────────────────────────
 fun waitForQueuedBuild(queueRef: String, timeoutSec: Int) {
-    val queueUrl = if (queueRef.startsWith("http")) queueRef.trimEnd('/')
+    val queueUrl = secureJenkinsUrl(
+        if (queueRef.startsWith("http")) queueRef.trimEnd('/')
         else "https://android-ci.bandlab.io/queue/item/$queueRef".trimEnd('/')
+    )
     val apiUrl = "$queueUrl/api/json?tree=executable[number,url],why,cancelled"
     println("─── Waiting for queued build ──────────────")
     println("  Queue: $queueUrl")
@@ -517,7 +533,7 @@ fun waitForQueuedBuild(queueRef: String, timeoutSec: Int) {
         val num = exe?.int("number")
         val url = exe?.str("url")
         if (num != null && url != null) {
-            println("  Build #$num started: $url")
+            println("  Build #$num started: ${secureJenkinsUrl(url)}")
             return
         }
         if (item.str("cancelled") == "true") error("Queued build was cancelled.")
@@ -568,6 +584,185 @@ fun showPlugins(query: String?) {
         println("  $name  $version  active=$active")
     }
 }
+
+// ── groovy script execution ───────────────────────────────────────────────
+fun executeGroovy(script: String, jenkinsRoot: String = "https://android-ci.bandlab.io"): String {
+    val url = "${jenkinsRoot.trimEnd('/')}/scriptText"
+    val conn = fetchUrl(url, method = "POST", followRedirects = false)
+    conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
+    conn.doOutput = true
+    val body = "script=" + java.net.URLEncoder.encode(script, "UTF-8")
+    conn.outputStream.use { it.write(body.toByteArray()) }
+    val status = conn.responseCode
+    if (status !in 200..302) {
+        val err = conn.errorStream?.bufferedReader()?.readText().orEmpty()
+        error("Jenkins script execution failed (HTTP $status): $err")
+    }
+    return conn.inputStream.bufferedReader().readText()
+}
+
+// ── credentials ───────────────────────────────────────────────────────────
+fun listCredentials(query: String?) {
+    val groovy = """
+        import groovy.json.JsonOutput
+        def creds = com.cloudbees.plugins.credentials.CredentialsProvider.lookupCredentials(
+            com.cloudbees.plugins.credentials.Credentials.class,
+            jenkins.model.Jenkins.instance
+        )
+        def list = creds.collect { c ->
+            def type = "other"
+            if (c in org.jenkinsci.plugins.plaincredentials.StringCredentials) type = "secret_text"
+            else if (c in org.jenkinsci.plugins.plaincredentials.FileCredentials) type = "secret_file"
+            else if (c in com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials) type = "user_pass"
+            else if (c in com.cloudbees.jenkins.plugins.sshcredentials.SSHUserPrivateKey) type = "ssh_key"
+            [id: c.id, description: c.description ?: "", type: type, typeName: c.class.simpleName]
+        }
+        println JsonOutput.toJson(list)
+    """.trimIndent()
+
+    println("─── Credentials ────────────────────────────")
+    val raw = executeGroovy(groovy).trim()
+    val arr = Json.parseToJsonElement(raw).jsonArray
+    val wanted = query?.lowercase()
+    var count = 0
+    for (el in arr) {
+        val obj = el.jsonObject
+        val id = obj.str("id") ?: continue
+        val desc = obj.str("description").orEmpty()
+        val type = obj.str("type").orEmpty()
+        if (wanted != null && !id.lowercase().contains(wanted) && !desc.lowercase().contains(wanted) && !type.lowercase().contains(wanted)) {
+            continue
+        }
+        count++
+        val descStr = if (desc.isNotBlank()) " — $desc" else ""
+        println("  [$type] $id$descStr")
+    }
+    if (count == 0) {
+        println("  (no matching credentials)")
+    } else {
+        println("\nTotal: $count")
+    }
+}
+
+// ── credential (fetch/download) ───────────────────────────────────────────
+fun fetchCredential(credId: String, outPathArg: String?) {
+    val escapedId = credId.replace("\\", "\\\\").replace("'", "\\'")
+    val groovy = """
+        import groovy.json.JsonOutput
+        def targetId = '$escapedId'
+        def cred = com.cloudbees.plugins.credentials.CredentialsProvider.lookupCredentials(
+            com.cloudbees.plugins.credentials.Credentials.class,
+            jenkins.model.Jenkins.instance
+        ).find { it.id == targetId }
+
+        if (cred == null) {
+            println JsonOutput.toJson([found: false, error: "Credential '" + targetId + "' not found"])
+            return
+        }
+
+        def result = [
+            found: true,
+            id: cred.id,
+            description: cred.description ?: "",
+            className: cred.getClass().getName()
+        ]
+
+        if (cred in org.jenkinsci.plugins.plaincredentials.StringCredentials) {
+            result.type = "secret_text"
+            result.secret = cred.secret.plainText
+        } else if (cred in org.jenkinsci.plugins.plaincredentials.FileCredentials) {
+            result.type = "secret_file"
+            result.fileName = cred.fileName
+            result.base64Content = cred.content.readAllBytes().encodeBase64().toString()
+        } else if (cred in com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials) {
+            result.type = "user_pass"
+            result.username = cred.username
+            result.password = cred.password.plainText
+        } else if (cred in com.cloudbees.jenkins.plugins.sshcredentials.SSHUserPrivateKey) {
+            result.type = "ssh_key"
+            result.username = cred.username
+            result.passphrase = cred.passphrase?.plainText
+            result.privateKey = cred.privateKeys?.join("\n")
+        } else {
+            result.type = "unknown"
+        }
+
+        println JsonOutput.toJson(result)
+    """.trimIndent()
+
+    val raw = executeGroovy(groovy).trim()
+    val obj = Json.parseToJsonElement(raw).jsonObject
+    val found = obj["found"]?.jsonPrimitive?.content == "true"
+    if (!found) {
+        val err = obj.str("error") ?: "Credential '$credId' not found"
+        System.err.println("Error: $err")
+        kotlin.system.exitProcess(1)
+    }
+
+    val type = obj.str("type") ?: "unknown"
+    val desc = obj.str("description").orEmpty()
+    val descStr = if (desc.isNotBlank()) " ($desc)" else ""
+
+    when (type) {
+        "secret_file" -> {
+            val fileName = obj.str("fileName") ?: "$credId.bin"
+            val b64 = obj.str("base64Content") ?: ""
+            val bytes = Base64.getDecoder().decode(b64)
+            val targetFile = if (outPathArg != null) File(outPathArg) else File(fileName)
+            targetFile.writeBytes(bytes)
+            println("─── Secret File: $credId$descStr ───")
+            println("  Original name: $fileName")
+            println("  Size: ${bytes.size} bytes")
+            println("  Saved to: ${targetFile.absolutePath}")
+        }
+        "secret_text" -> {
+            val secret = obj.str("secret").orEmpty()
+            if (outPathArg != null) {
+                val targetFile = File(outPathArg)
+                targetFile.writeText(secret)
+                println("─── Secret Text: $credId$descStr ───")
+                println("  Saved to: ${targetFile.absolutePath}")
+            } else {
+                println(secret)
+            }
+        }
+        "user_pass" -> {
+            val username = obj.str("username").orEmpty()
+            val password = obj.str("password").orEmpty()
+            if (outPathArg != null) {
+                val targetFile = File(outPathArg)
+                targetFile.writeText("$username:$password\n")
+                println("─── Username/Password: $credId$descStr ───")
+                println("  Saved to: ${targetFile.absolutePath}")
+            } else {
+                println("Username: $username")
+                println("Password: $password")
+            }
+        }
+        "ssh_key" -> {
+            val username = obj.str("username").orEmpty()
+            val passphrase = obj.str("passphrase")
+            val key = obj.str("privateKey").orEmpty()
+            if (outPathArg != null) {
+                val targetFile = File(outPathArg)
+                targetFile.writeText(key)
+                println("─── SSH Key: $credId$descStr ───")
+                if (username.isNotBlank()) println("  User: $username")
+                if (!passphrase.isNullOrBlank()) println("  Passphrase: $passphrase")
+                println("  Saved to: ${targetFile.absolutePath}")
+            } else {
+                if (username.isNotBlank()) System.err.println("User: $username")
+                if (!passphrase.isNullOrBlank()) System.err.println("Passphrase: $passphrase")
+                println(key)
+            }
+        }
+        else -> {
+            System.err.println("Credential type '$type' (${obj.str("className")}) cannot be extracted automatically.")
+            kotlin.system.exitProcess(1)
+        }
+    }
+}
+
 
 // ── console ───────────────────────────────────────────────────────────────
 private val consoleCacheDir = File(
@@ -764,6 +959,14 @@ fun showSkill() {
           plugins [substring]    Installed plugin list (e.g. `plugins config` finds
                                  jobConfigHistory, `plugins copyartifact` finds CopyArtifact)
 
+        Credentials:
+          credentials [substring]   List credentials (id, type, description)
+          credential <id> [outPath] Fetch credential value:
+                                    - secret_file: saves file (to outPath or original fileName)
+                                    - secret_text: prints secret text (or saves to outPath)
+                                    - user_pass: prints username/password (or saves to outPath)
+                                    - ssh_key: prints SSH private key (or saves to outPath)
+
         Common flows:
           1. Inspect latest build:  build-info <job-url>/<N>
           2. Read its log:          console <build-url> tail / head
@@ -774,6 +977,7 @@ fun showSkill() {
           7. Re-trigger with params: trigger <job-url> tag=X channel=beta
 
         Notes:
+          - HTTP queue/build URLs from android-ci.bandlab.io are upgraded to HTTPS.
           - consoleText is gzipped on the wire but transparently decompressed;
             the disk cache is plain text.
           - Config writes go through the same API the UI uses; check
@@ -870,6 +1074,13 @@ fun main(args: Array<String>) {
         "download" -> {
             val ref = args.getOrNull(1) ?: error("Usage: jenkins-cli.main.kts download <artifact-url> [outPath] | <job-url> <relativePath> [outPath]")
             downloadArtifact(ref, args.getOrNull(2), args.getOrNull(3))
+        }
+        "credentials", "creds", "list-credentials", "list-creds" -> {
+            listCredentials(args.getOrNull(1))
+        }
+        "credential", "cred", "get-credential" -> {
+            val id = args.getOrNull(1) ?: error("Usage: jenkins-cli.main.kts credential <id> [outPath]")
+            fetchCredential(id, args.getOrNull(2))
         }
         "help", "--help", "-h" -> printUsage()
         "skill" -> showSkill()
