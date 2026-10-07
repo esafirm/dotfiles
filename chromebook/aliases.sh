@@ -5,5 +5,5 @@ alias g=git
 
 # This is because bat binary is different in chromebook
 alias cat="batcat --paging=never"
-alias ocat=cat
+alias ocat="/bin/cat"
 
