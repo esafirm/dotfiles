@@ -23,7 +23,8 @@
       "command(wc)",
       "mcp(android-studio/*)",
       "mcp(firebase/*)",
-      "mcp(llm-wiki/*)"
+      "mcp(llm-wiki/*)",
+      "mcp(play-store/*)"
     ]
   },
   "runningLightSpeed": "fast",

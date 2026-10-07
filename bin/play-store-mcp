@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Ensure standard bin paths are in PATH
+for p in /opt/homebrew/bin /usr/local/bin "$HOME/.local/bin" "$HOME/go/bin"; do
+  if [[ -d "$p" && ":$PATH:" != *":$p:"* ]]; then
+    PATH="$p:$PATH"
+  fi
+done
+
+# Load config from dotfiles secrets if not already in environment
+SECRETS_FILE="${DOTFILES_SECRETS:-$HOME/dotfiles/secrets}"
+if [[ -f "$SECRETS_FILE" ]]; then
+  if [[ -z "${PLAY_STORE_SERVICE_ACCOUNT_KEY_PATH:-}" ]]; then
+    KEY_LINE=$(grep -E '^[[:space:]]*(export[[:space:]]+)?PLAY_STORE_SERVICE_ACCOUNT_KEY_PATH=' "$SECRETS_FILE" | tail -n 1 || true)
+    if [[ -n "$KEY_LINE" ]]; then
+      eval "$KEY_LINE"
+    fi
+  fi
+  if [[ -z "${PLAY_STORE_DEFAULT_TRACK:-}" ]]; then
+    TRACK_LINE=$(grep -E '^[[:space:]]*(export[[:space:]]+)?PLAY_STORE_DEFAULT_TRACK=' "$SECRETS_FILE" | tail -n 1 || true)
+    if [[ -n "$TRACK_LINE" ]]; then
+      eval "$TRACK_LINE"
+    fi
+  fi
+fi
+
+# Locate Play Store MCP server binary
+BINARY_PATH="${PLAY_STORE_MCP_PATH:-}"
+if [[ -z "$BINARY_PATH" ]]; then
+  if [[ -x "$HOME/dotfiles/.bin/play-store-mcp" ]]; then
+    BINARY_PATH="$HOME/dotfiles/.bin/play-store-mcp"
+  elif [[ -x "$HOME/Documents/OSS/play-store-mcp-go/bin/play-store-mcp" ]]; then
+    BINARY_PATH="$HOME/Documents/OSS/play-store-mcp-go/bin/play-store-mcp"
+  fi
+fi
+
+if [[ -z "$BINARY_PATH" || ! -x "$BINARY_PATH" ]]; then
+  echo "Error: Play Store MCP binary not found or not executable at: ${BINARY_PATH:-<unset>}" >&2
+  echo "Build it with: cd ~/Documents/OSS/play-store-mcp-go && make build && cp bin/play-store-mcp ~/dotfiles/.bin/" >&2
+  exit 1
+fi
+
+exec "$BINARY_PATH" "$@"

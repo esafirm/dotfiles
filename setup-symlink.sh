@@ -80,6 +80,9 @@ ln -sfn ~/dotfiles/kotlin/kscripts/jenkins ~/dotfiles/bin/jenkins
 mkdir -p ~/.local/bin
 ln -sfn ~/dotfiles/bin/llm-wiki-mcp ~/.local/bin/llm-wiki-mcp
 
+## Play Store MCP
+ln -sfn ~/dotfiles/bin/play-store-mcp ~/.local/bin/play-store-mcp
+
 ## herdr
 mkdir -p ~/.config/herdr
 ln -sfn ~/dotfiles/.config/herdr/config.toml ~/.config/herdr/config.toml

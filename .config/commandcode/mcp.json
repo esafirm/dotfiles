@@ -29,6 +29,11 @@
       "transport": "stdio",
       "enabled": true,
       "command": "llm-wiki-mcp"
+    },
+    "play-store": {
+      "transport": "stdio",
+      "enabled": true,
+      "command": "play-store-mcp"
     }
   }
 }
