@@ -22,7 +22,7 @@ keepsecret
 temp.sh
 
 ## Mac relatad
-.DS_store
+.DS_Store
 
 ## Antigravity CLI - sensitive data/sessions
 .antigravitycli/

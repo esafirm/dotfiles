@@ -52,6 +52,12 @@ User-scope config lives in `.config/commandcode/` and is symlinked into `~/.comm
 Skills under `~/.agents/skills` are auto-discovered by Command Code and need no extra wiring.
 Never version `~/.commandcode/auth.json`, `history.jsonl`, `projects/`, or `file-history/`.
 
+## MCP Sync
+
+`opencode.jsonc` is the source of truth for MCP servers and their permissions. Claude Code servers are registered by the `claude_mcp` block in `setup-symlink.sh`, and MCP permissions live in `.config/claude/settings.json`.
+
+`.githooks/pre-push` runs `.githooks/verify-mcp-sync` to block pushes when the two drift. `setup-symlink.sh` enables it with `git config core.hooksPath .githooks`.
+
 ## Manual Setup
 
 Currently, we still need to manually setup this because we haven't found a way to automate it.
