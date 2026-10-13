@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "env": {
     "API_TIMEOUT_MS": "3000000",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
@@ -66,11 +67,23 @@
   "hooks": {
     "SessionStart": [
       {
-        "matcher": "*",
+        "matcher": "^(startup|resume|clear|compact|fork)$",
         "hooks": [
           {
             "type": "command",
             "command": "bash '/Users/esafirm/.claude/hooks/herdr-agent-state.sh' session",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash '/Users/esafirm/.claude/hooks/rtk-rewrite.sh'",
             "timeout": 10
           }
         ]
@@ -90,20 +103,5 @@
   },
   "effortLevel": "xhigh",
   "tui": "fullscreen",
-  "theme": "auto",
-  "general": {
-    "sessionRetention": {
-      "enabled": true,
-      "maxAge": "30d"
-    }
-  },
-  "hasCompletedOnboarding": true,
-  "output": {
-    "format": "text"
-  },
-  "ui": {
-    "showMemoryUsage": true,
-    "showModelInfoInChat": true,
-    "theme": "Dracula"
-  }
+  "theme": "auto"
 }
