@@ -16,7 +16,7 @@ mkdir -p ~/.gemini/config
 ln -sfn ~/dotfiles/.gemini/policies ~/.gemini/policies
 ln -sfn ~/dotfiles/.gemini/settings.json ~/.gemini/settings.json
 ln -sfn ~/dotfiles/.gemini/projects.json ~/.gemini/projects.json
-ln -sfn ~/dotfiles/.config/claude/CLAUDE.md ~/.gemini/GEMINI.md
+ln -sfn ~/dotfiles/.agents/AGENTS.md ~/.gemini/GEMINI.md
 mkdir -p ~/.gemini/antigravity-cli
 ln -sfn ~/dotfiles/.gemini/antigravity-cli/settings.json ~/.gemini/antigravity-cli/settings.json
 ln -sfn ~/dotfiles/.gemini/extensions/extension-enablement.json ~/.gemini/extensions/extension-enablement.json
@@ -26,13 +26,16 @@ ln -sfn ~/dotfiles/.gemini/config/mcp_config.json ~/.gemini/config/mcp_config.js
 ## Claude Code
 mkdir -p ~/.claude
 ln -sfn ~/dotfiles/.config/claude/settings.json ~/.claude/settings.json
-ln -sfn ~/dotfiles/.config/claude/CLAUDE.md ~/.claude/CLAUDE.md
+ln -sfn ~/dotfiles/.agents/AGENTS.md ~/.claude/CLAUDE.md
 ln -sfn ~/dotfiles/.config/claude/skills ~/.claude/skills
+mkdir -p ~/.claude/hooks
+ln -sfn ~/dotfiles/.config/claude/hooks/herdr-agent-state.sh ~/.claude/hooks/herdr-agent-state.sh
+# RTK hook (~/.claude/hooks/rtk-rewrite.sh) is managed by `rtk init -g`
 
 ## opencode
 mkdir -p ~/.config/opencode
 ln -sfn ~/dotfiles/opencode.jsonc ~/.config/opencode/opencode.jsonc
-ln -sfn ~/dotfiles/.config/claude/CLAUDE.md ~/.config/opencode/AGENTS.md
+ln -sfn ~/dotfiles/.agents/AGENTS.md ~/.config/opencode/AGENTS.md
 ln -sfn ~/dotfiles/.config/opencode/cli.json ~/.config/opencode/cli.json
 mkdir -p ~/.config/opencode/plugins
 ln -sfn ~/dotfiles/.config/opencode/package.json ~/.config/opencode/package.json

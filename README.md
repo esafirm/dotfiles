@@ -35,6 +35,10 @@ Please read the script first when you want to run it.
 
 For plugin we use [vim-plug](https://github.com/junegunn/vim-plug) and the setup is already included in `setup.sh`
 
+## Agent instructions
+
+`.agents/AGENTS.md` is the single shared instruction file. `setup-symlink.sh` links it to `~/.claude/CLAUDE.md`, `~/.gemini/GEMINI.md`, and `~/.config/opencode/AGENTS.md`. Claude Code only reads `AGENTS.md` at project level, so the user-level `~/.claude/CLAUDE.md` link is still required.
+
 ## Command Code
 
 User-scope config lives in `.config/commandcode/` and is symlinked into `~/.commandcode/` by `setup-symlink.sh`:
