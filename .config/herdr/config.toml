@@ -11,8 +11,14 @@ toggle_sidebar = "prefix+shift+b"
 [[keys.command]]
 key = "prefix+f"
 type = "plugin_action"
-command = "rmarganti.herdr-pluck.pluck"
+command = "esafirm.herdr-all-hands.pluck"
 description = "Pluck visible token"
+
+[[keys.command]]
+key = "prefix+u"
+type = "plugin_action"
+command = "esafirm.herdr-all-hands.open-url"
+description = "Open visible URL in browser"
 
 [ui.toast]
 delivery = "terminal"
