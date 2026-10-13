@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+hooks_dir="$(cd "$(dirname "$0")" && pwd)"
+
+python3 -I "$hooks_dir/verify-mcp-sync"

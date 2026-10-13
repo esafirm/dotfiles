@@ -31,6 +31,21 @@ ln -sfn ~/dotfiles/.config/claude/skills ~/.claude/skills
 mkdir -p ~/.claude/hooks
 ln -sfn ~/dotfiles/.config/claude/hooks/herdr-agent-state.sh ~/.claude/hooks/herdr-agent-state.sh
 # RTK hook (~/.claude/hooks/rtk-rewrite.sh) is managed by `rtk init -g`
+# MCP servers live in ~/.claude.json (mixed with runtime state), so register them via CLI.
+# Keep in sync with opencode.jsonc.
+if command -v claude >/dev/null 2>&1; then
+  claude_mcp() {
+    claude mcp remove -s user "$1" >/dev/null 2>&1
+    claude mcp add-json -s user "$1" "$2"
+  }
+  claude_mcp android-studio '{"type":"http","url":"http://127.0.0.1:64342/stream"}'
+  claude_mcp firebase '{"type":"stdio","command":"firebase","args":["mcp","--only","crashlytics","--dir","/tmp"]}'
+  claude_mcp llm-wiki '{"type":"stdio","command":"llm-wiki-mcp"}'
+  claude_mcp play-store '{"type":"stdio","command":"play-store-mcp"}'
+fi
+
+## Dotfiles git hooks (pre-push verifies MCP sync between opencode and Claude)
+git -C ~/dotfiles config core.hooksPath .githooks
 
 ## opencode
 mkdir -p ~/.config/opencode

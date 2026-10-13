@@ -2,7 +2,8 @@
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "env": {
     "API_TIMEOUT_MS": "3000000",
-    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
+    "MCP_TIMEOUT": "60000"
   },
   "permissions": {
     "allow": [
@@ -57,10 +58,18 @@
       "Bash(adb shell service:*)",
       "Bash(adb shell screencap:*)",
       "Bash(adb logcat:*)",
-      "Bash(*ai-trash.sh:*)"
+      "Bash(~/.config/opencode/scripts/ai-trash.sh:*)",
+      "Bash(/Users/esafirm/.config/opencode/scripts/ai-trash.sh:*)",
+      "mcp__play-store",
+      "mcp__llm-wiki",
+      "mcp__android-studio"
     ],
     "deny": [
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "mcp__android-studio__apply_patch",
+      "mcp__android-studio__create_new_file",
+      "mcp__android-studio__execute_terminal_command",
+      "mcp__android-studio__replace_text_in_file"
     ]
   },
   "model": "opus",
@@ -103,5 +112,10 @@
   },
   "effortLevel": "xhigh",
   "tui": "fullscreen",
-  "theme": "auto"
+  "theme": "auto",
+  "modelSettings": {
+    "claude-opus-5-5": {
+      "effortLevel": "high"
+    }
+  }
 }
