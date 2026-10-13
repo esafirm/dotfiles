@@ -89,6 +89,7 @@
     }
   },
   "effortLevel": "xhigh",
+  "tui": "fullscreen",
   "theme": "auto",
   "general": {
     "sessionRetention": {
