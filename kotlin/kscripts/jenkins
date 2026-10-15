@@ -2,5 +2,9 @@
 # `jenkins` — thin wrapper exposing jenkins-cli.main.kts on PATH.
 # A bare symlink named `jenkins` does not work because the `kotlin`
 # runner only treats files ending in `.kts` as scripts.
+# The serialization jars are passed via -cp: on kotlin 2.4.x, main-kts
+# DependsOn resolution no longer lands resolved jars on the script
+# classpath (KT-82109), so the imports fail at compile time.
 KTS="${DOT:-$HOME/dotfiles}/kotlin/kscripts/jenkins-cli.main.kts"
-exec kotlin "$KTS" "$@"
+M2="${HOME}/.m2/repository/org/jetbrains/kotlinx"
+exec kotlin -cp "$M2/kotlinx-serialization-json-jvm/1.6.3/kotlinx-serialization-json-jvm-1.6.3.jar:$M2/kotlinx-serialization-core-jvm/1.6.3/kotlinx-serialization-core-jvm-1.6.3.jar" "$KTS" "$@"
