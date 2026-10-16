@@ -1,8 +1,8 @@
 ---
 description: Ask for advice on current work context. Give it your goal, progress, and blockers — gets back structured guidance.
 mode: subagent
-model: opencode-go/glm-5.2
-variant: max
+model: opencode/gpt-6.1-sol
+variant: xhigh
 permission:
   read: allow
   edit: deny
