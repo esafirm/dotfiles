@@ -77,6 +77,15 @@
       "pluginName": "example-skills",
       "installedAt": "2026-10-01T14:42:16.135Z",
       "updatedAt": "2026-10-01T14:42:16.135Z"
+    },
+    "ip-as-logo": {
+      "source": "s1dashu/ip-as-logo-skill",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/s1dashu/ip-as-logo-skill.git",
+      "skillPath": "SKILL.md",
+      "skillFolderHash": "acb834c717bcd0a487c49732d08397ba280d690b",
+      "installedAt": "2026-10-14T23:16:45.156Z",
+      "updatedAt": "2026-10-14T23:16:45.156Z"
     }
   },
   "dismissed": {
