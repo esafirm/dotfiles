@@ -111,11 +111,11 @@
     }
   },
   "effortLevel": "xhigh",
-  "tui": "fullscreen",
-  "theme": "auto",
   "modelSettings": {
     "claude-opus-5-5": {
-      "effortLevel": "high"
+      "effortLevel": "xhigh"
     }
-  }
+  },
+  "tui": "fullscreen",
+  "theme": "auto"
 }
