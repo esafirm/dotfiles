@@ -20,9 +20,10 @@ git_command = 'git branch --sort=-committerdate' if command == 'recent'
 
 abort('Empty git command passed') if git_command.nil?
 
-git_result = `#{git_command}`.chomp.split("\n")
+git_result = `#{git_command} 2>/dev/null`.chomp.split("\n")
+git_result.reject! { |line| line.strip.empty? }
 
-abort('Invalid git command') if git_result.nil?
+abort('Not a git repository (or no branches found)') if !$?.success? || git_result.empty?
 
 ## Show prompt
 prompt = TTY::Prompt.new
