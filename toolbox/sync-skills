@@ -5,12 +5,10 @@
 # Scans the live skill dirs:
 #   ~/.agents/skills   (agent-agnostic, canonical)
 #   ~/.claude/skills   (Claude Code, also reused by opencode via symlink)
-#   ~/.gemini/skills   (Gemini CLI)
 #
 # and reports skills that are NOT managed in the dotfiles repo:
 #   ~/dotfiles/.agents/skills
 #   ~/dotfiles/.config/claude/skills
-#   ~/dotfiles/.gemini/skills
 #
 # This normally happens when a skill installer replaces one of the top-level
 # symlinks (see setup-symlink.sh) with a real directory, so new installs land
@@ -22,16 +20,16 @@
 #
 #   --list-only   just list unmanaged skills, don't prompt
 #   --dest DIR    move targets into DIR (default: ~/dotfiles/.agents/skills,
-#               i.e. universal). Also accepts: agents | claude | gemini
+#               i.e. universal). Also accepts: agents | claude
 #   --link-all    after adopting, also symlink each skill into the other
-#               dotfiles skill dirs (claude + gemini) without asking
+#               dotfiles skill dir (claude) without asking
 #   --plain       skip the interactive picker (git-del style) and use
 #               plain numbered input instead
 #   --help      show this help
 #
 # Env overrides (mainly for testing):
-#   DOTFILES, LIVE_AGENTS, LIVE_CLAUDE, LIVE_GEMINI,
-#   DOT_AGENTS, DOT_CLAUDE, DOT_GEMINI
+#   DOTFILES, LIVE_AGENTS, LIVE_CLAUDE,
+#   DOT_AGENTS, DOT_CLAUDE
 #
 # Note: plain bash 3.x compatible (macOS default bash), no fzf/gum needed.
 
@@ -42,11 +40,9 @@ DOTFILES="${DOTFILES:-$HOME/dotfiles}"
 
 LIVE_AGENTS="${LIVE_AGENTS:-$HOME/.agents/skills}"
 LIVE_CLAUDE="${LIVE_CLAUDE:-$HOME/.claude/skills}"
-LIVE_GEMINI="${LIVE_GEMINI:-$HOME/.gemini/skills}"
 
 DOT_AGENTS="${DOT_AGENTS:-$DOTFILES/.agents/skills}"
 DOT_CLAUDE="${DOT_CLAUDE:-$DOTFILES/.config/claude/skills}"
-DOT_GEMINI="${DOT_GEMINI:-$DOTFILES/.gemini/skills}"
 
 LIST_ONLY=0
 LINK_ALL=0
@@ -78,7 +74,6 @@ done
 case "$DEST" in
   agents) DEST="$DOT_AGENTS" ;;
   claude) DEST="$DOT_CLAUDE" ;;
-  gemini) DEST="$DOT_GEMINI" ;;
 esac
 
 # --- helpers ---------------------------------------------------------------
@@ -112,12 +107,12 @@ MANAGED_TMP="$(mktemp -t sync-skills-managed)"
 UNMANAGED_TMP="$(mktemp -t sync-skills-unmanaged)"
 trap 'rm -f "$MANAGED_TMP" "$UNMANAGED_TMP"' EXIT INT TERM
 
-for d in "$DOT_AGENTS" "$DOT_CLAUDE" "$DOT_GEMINI"; do
+for d in "$DOT_AGENTS" "$DOT_CLAUDE"; do
   list_skills "$d"
 done | sort -u > "$MANAGED_TMP"
 
 : > "$UNMANAGED_TMP"
-for live in "$LIVE_AGENTS" "$LIVE_CLAUDE" "$LIVE_GEMINI"; do
+for live in "$LIVE_AGENTS" "$LIVE_CLAUDE"; do
   # A dangling top-level symlink has no scannable content; flag it later.
   [ -d "$live" ] || continue
   list_skills "$live" | while IFS= read -r s; do
@@ -130,7 +125,7 @@ for live in "$LIVE_AGENTS" "$LIVE_CLAUDE" "$LIVE_GEMINI"; do
 done
 
 echo "== skill dirs =="
-for live in "$LIVE_AGENTS" "$LIVE_CLAUDE" "$LIVE_GEMINI"; do
+for live in "$LIVE_AGENTS" "$LIVE_CLAUDE"; do
   if is_top_symlink "$live"; then
     echo "  $live -> $(link_target "$live")"
   elif [ -d "$live" ]; then
@@ -141,7 +136,7 @@ for live in "$LIVE_AGENTS" "$LIVE_CLAUDE" "$LIVE_GEMINI"; do
 done
 echo
 echo "== dotfiles dirs =="
-for d in "$DOT_AGENTS" "$DOT_CLAUDE" "$DOT_GEMINI"; do
+for d in "$DOT_AGENTS" "$DOT_CLAUDE"; do
   count=$(list_skills "$d" | wc -l | tr -d ' ')
   echo "  $d ($count skills)"
 done
@@ -150,7 +145,7 @@ echo
 if [ ! -s "$UNMANAGED_TMP" ]; then
   echo "All live skills are already managed in the dotfiles. Nothing to do."
   # Still warn about broken top-level symlinks pointing at the wrong place.
-  for live in "$LIVE_AGENTS" "$LIVE_CLAUDE" "$LIVE_GEMINI"; do
+  for live in "$LIVE_AGENTS" "$LIVE_CLAUDE"; do
     if [ -d "$live" ] && ! is_top_symlink "$live"; then
       echo "NOTE: $live is a real directory, expected a symlink (see setup-symlink.sh)."
     fi
@@ -261,7 +256,7 @@ for n in $EXPANDED; do
 
   # Offer/link into the other dotfiles skill dirs (relative links: repo must
   # stay portable across machines, matching existing ../../../ style links).
-  for dotdir in "$DOT_AGENTS" "$DOT_CLAUDE" "$DOT_GEMINI"; do
+  for dotdir in "$DOT_AGENTS" "$DOT_CLAUDE"; do
     [ "$dotdir" = "$DEST" ] && continue
     has_skill "$dotdir" "$name" && continue
     do_link=0
@@ -275,7 +270,6 @@ for n in $EXPANDED; do
     if [ "$do_link" -eq 1 ]; then
       case "$dotdir" in
         "$DOT_CLAUDE") rel="../../../.agents/skills/$name" ;;
-        "$DOT_GEMINI") rel="../../.agents/skills/$name" ;;
         *) rel="$DEST/$name" ;;  # non-standard layout: absolute fallback
       esac
       # Only the canonical-agents relative links are valid; otherwise absolute.
