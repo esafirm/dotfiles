@@ -13,7 +13,6 @@ ln -sfn ~/dotfiles/.config/nvim ~/.config/nvim
 ## Gemini
 mkdir -p ~/.gemini/extensions
 mkdir -p ~/.gemini/config
-ln -sfn ~/dotfiles/.gemini/policies ~/.gemini/policies
 ln -sfn ~/dotfiles/.gemini/settings.json ~/.gemini/settings.json
 ln -sfn ~/dotfiles/.gemini/projects.json ~/.gemini/projects.json
 ln -sfn ~/dotfiles/.agents/AGENTS.md ~/.gemini/GEMINI.md
@@ -54,6 +53,7 @@ ln -sfn ~/dotfiles/opencode.jsonc ~/.config/opencode/opencode.jsonc
 ln -sfn ~/dotfiles/.agents/AGENTS.md ~/.config/opencode/AGENTS.md
 ln -sfn ~/dotfiles/.config/opencode/cli.json ~/.config/opencode/cli.json
 mkdir -p ~/.config/opencode/plugins
+ln -sfn ~/dotfiles/.config/opencode/plugins/auto-mode ~/.config/opencode/plugins/auto-mode
 ln -sfn ~/dotfiles/.config/opencode/package.json ~/.config/opencode/package.json
 ln -sfn ~/dotfiles/.config/opencode/package-lock.json ~/.config/opencode/package-lock.json
 ln -sfn ~/dotfiles/.config/opencode/.gitignore ~/.config/opencode/.gitignore
