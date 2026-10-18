@@ -20,7 +20,9 @@ ln -sfn ~/dotfiles/.agents/AGENTS.md ~/.gemini/GEMINI.md
 mkdir -p ~/.gemini/antigravity-cli
 ln -sfn ~/dotfiles/.gemini/antigravity-cli/settings.json ~/.gemini/antigravity-cli/settings.json
 ln -sfn ~/dotfiles/.gemini/extensions/extension-enablement.json ~/.gemini/extensions/extension-enablement.json
-ln -sfn ~/dotfiles/.gemini/skills ~/.gemini/skills
+# ~/.gemini/skills was the Gemini CLI location; skills now come from
+# ~/.agents/skills and ~/.claude/skills. Drop a stale link if present.
+if [[ -L ~/.gemini/skills ]]; then rm -f ~/.gemini/skills; fi
 ln -sfn ~/dotfiles/.gemini/config/mcp_config.json ~/.gemini/config/mcp_config.json
 
 ## Claude Code
