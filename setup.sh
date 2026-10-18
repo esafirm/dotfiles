@@ -11,3 +11,6 @@ cd $DOT
 
 ## Symlink all
 ./setup-symlink.sh
+
+## Set up herdr plugins (skips when herdr is not installed)
+./.config/herdr/setup.sh
