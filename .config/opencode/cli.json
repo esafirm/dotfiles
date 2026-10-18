@@ -17,7 +17,6 @@
     "devtools": false
   },
   "keybinds": {
-    "permission.mode": "<leader>p",
     "session.half.page.up": "ctrl+u",
     "session.half.page.down": "ctrl+d"
   }
