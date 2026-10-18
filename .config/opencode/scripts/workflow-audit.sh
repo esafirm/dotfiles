@@ -95,11 +95,7 @@ echo "─── Bash Command Breakdown ───"
 sqlite3 -header -column "$DB" "
 WITH raw AS (
   SELECT
-    CASE
-      WHEN json_extract(p.data, '\$.state.input.command') LIKE 'rtk %'
-        THEN 'rtk ' || substr(substr(json_extract(p.data, '\$.state.input.command'), 5), 1, instr(substr(json_extract(p.data, '\$.state.input.command'), 5) || ' ', ' ') - 1)
-      ELSE substr(json_extract(p.data, '\$.state.input.command'), 1, instr(json_extract(p.data, '\$.state.input.command') || ' ', ' ') - 1)
-    END AS command
+    substr(json_extract(p.data, '\$.state.input.command'), 1, instr(json_extract(p.data, '\$.state.input.command') || ' ', ' ') - 1) AS command
   FROM part p
   JOIN session s ON s.id = p.session_id
   WHERE json_extract(p.data, '\$.tool') = 'bash'

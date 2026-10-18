@@ -30,18 +30,6 @@
       "Bash(echo:*)",
       "Bash(sort:*)",
       "Bash(uniq:*)",
-      "Bash(rtk git log:*)",
-      "Bash(rtk git show:*)",
-      "Bash(rtk git diff:*)",
-      "Bash(rtk git diff-tree:*)",
-      "Bash(rtk git status:*)",
-      "Bash(rtk git ls-tree:*)",
-      "Bash(rtk git rev-parse:*)",
-      "Bash(rtk rg:*)",
-      "Bash(rtk grep:*)",
-      "Bash(rtk find:*)",
-      "Bash(rtk cat:*)",
-      "Bash(rtk ls:*)",
       "Bash(gh pr view:*)",
       "Bash(gh pr diff:*)",
       "Bash(adb devices)",
@@ -81,18 +69,6 @@
           {
             "type": "command",
             "command": "bash '/Users/esafirm/.claude/hooks/herdr-agent-state.sh' session",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash '/Users/esafirm/.claude/hooks/rtk-rewrite.sh'",
             "timeout": 10
           }
         ]

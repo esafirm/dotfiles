@@ -30,7 +30,6 @@ ln -sfn ~/dotfiles/.agents/AGENTS.md ~/.claude/CLAUDE.md
 ln -sfn ~/dotfiles/.config/claude/skills ~/.claude/skills
 mkdir -p ~/.claude/hooks
 ln -sfn ~/dotfiles/.config/claude/hooks/herdr-agent-state.sh ~/.claude/hooks/herdr-agent-state.sh
-# RTK hook (~/.claude/hooks/rtk-rewrite.sh) is managed by `rtk init -g`
 # MCP servers live in ~/.claude.json (mixed with runtime state), so register them via CLI.
 # Keep in sync with opencode.jsonc.
 if command -v claude >/dev/null 2>&1; then

@@ -50,7 +50,6 @@ Audit which tools and commands are actually used, then ensure permission rules c
 - **Edit/create tools** (`edit`, `write`): set to `"allow"` for trusted files
 - **Bash commands**: audit the "Bash Command Breakdown" section. For every command appearing >5% of bash calls, consider adding an explicit `"allow"` rule. Common candidates:
   - `git *` — git operations
-  - `rtk *` — custom CLI tool
   - `sqlite3 *` — DB queries
   - `ls *`, `cat *`, `which *` — file inspection
   - `rm *` — typically `"deny"`
