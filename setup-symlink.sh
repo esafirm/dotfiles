@@ -88,6 +88,12 @@ ln -sfn ~/dotfiles/.config/commandcode/hooks ~/.commandcode/hooks
 ln -sfn ~/dotfiles/.agents/skills ~/.agents/skills
 ln -sfn ~/dotfiles/.agents/.skill-lock.json ~/.agents/.skill-lock.json
 
+## Drop dangling skill links in agent fan-out dirs (uninstalled or relocated skills)
+for _skilldir in ~/.gemini/antigravity-cli/skills ~/.commandcode/skills ~/.copilot/skills; do
+  [ -d "$_skilldir" ] || continue
+  find "$_skilldir" -maxdepth 1 -type l ! -exec test -e {} \; -delete 2>/dev/null
+done
+
 ## Jenkins CLI
 mkdir -p ~/scripts
 ln -sfn ~/dotfiles/kotlin/kscripts/jenkins-cli.main.kts ~/scripts/jenkins-cli.main.kts
