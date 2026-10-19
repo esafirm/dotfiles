@@ -41,6 +41,7 @@ Plug 'vim-airline/vim-airline-themes'
 
 " File Tree
 Plug 'preservim/nerdtree'
+nnoremap <leader>n :NERDTreeToggle<CR> "Space+n toggles the file tree
 let NERDTreeIgnore=['\.pyc$', '\~$'] "ignore files in NERDTree
 
 " Python Specific

@@ -13,3 +13,5 @@ require('flash').setup {
 -- `s` jumps anywhere, `S` does treesitter-aware selection
 vim.keymap.set({ 'n', 'x', 'o' }, 's', function() require('flash').jump() end, { desc = 'Flash' })
 vim.keymap.set({ 'n', 'x', 'o' }, 'S', function() require('flash').treesitter() end, { desc = 'Flash Treesitter' })
+-- Space Space jumps too, same trigger as EasyMotion in .vimrc
+vim.keymap.set({ 'n', 'x', 'o' }, '<leader><leader>', function() require('flash').jump() end, { desc = 'Flash' })
