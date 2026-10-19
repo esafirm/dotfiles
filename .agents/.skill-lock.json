@@ -77,6 +77,60 @@
       "pluginName": "example-skills",
       "installedAt": "2026-10-01T14:42:16.135Z",
       "updatedAt": "2026-10-01T14:42:16.135Z"
+    },
+    "ponytail": {
+      "source": "DietrichGebert/ponytail",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/DietrichGebert/ponytail.git",
+      "skillPath": "skills/ponytail/SKILL.md",
+      "skillFolderHash": "e8d3fa76e7ff9223a784dbd4bcfc9ff46b3fa55d",
+      "installedAt": "2026-10-19T03:53:39.862Z",
+      "updatedAt": "2026-10-19T03:53:39.862Z"
+    },
+    "ponytail-audit": {
+      "source": "DietrichGebert/ponytail",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/DietrichGebert/ponytail.git",
+      "skillPath": "skills/ponytail-audit/SKILL.md",
+      "skillFolderHash": "0c1468092a2b011b7acd369becea098f0c17f1c0",
+      "installedAt": "2026-10-19T03:53:39.864Z",
+      "updatedAt": "2026-10-19T03:53:39.864Z"
+    },
+    "ponytail-debt": {
+      "source": "DietrichGebert/ponytail",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/DietrichGebert/ponytail.git",
+      "skillPath": "skills/ponytail-debt/SKILL.md",
+      "skillFolderHash": "16c3b7953629510afa8f061f0fefa61a104e3020",
+      "installedAt": "2026-10-19T03:53:39.865Z",
+      "updatedAt": "2026-10-19T03:53:39.865Z"
+    },
+    "ponytail-gain": {
+      "source": "DietrichGebert/ponytail",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/DietrichGebert/ponytail.git",
+      "skillPath": "skills/ponytail-gain/SKILL.md",
+      "skillFolderHash": "c41e9e90173ddc6844c0bc44a89ba739534e06b0",
+      "installedAt": "2026-10-19T03:53:39.866Z",
+      "updatedAt": "2026-10-19T03:53:39.866Z"
+    },
+    "ponytail-help": {
+      "source": "DietrichGebert/ponytail",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/DietrichGebert/ponytail.git",
+      "skillPath": "skills/ponytail-help/SKILL.md",
+      "skillFolderHash": "f293d9e0ecff5da72cb4accf8a9e4717892cf0ad",
+      "installedAt": "2026-10-19T03:53:39.867Z",
+      "updatedAt": "2026-10-19T03:53:39.867Z"
+    },
+    "ponytail-review": {
+      "source": "DietrichGebert/ponytail",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/DietrichGebert/ponytail.git",
+      "skillPath": "skills/ponytail-review/SKILL.md",
+      "skillFolderHash": "8ad8430c42a6f8cd18758dddb70cfee399725de6",
+      "installedAt": "2026-10-19T03:53:39.867Z",
+      "updatedAt": "2026-10-19T03:53:39.867Z"
     }
   },
   "dismissed": {
