@@ -60,7 +60,7 @@
       "mcp__android-studio__replace_text_in_file"
     ]
   },
-  "model": "opus",
+  "model": "sonnet",
   "hooks": {
     "SessionStart": [
       {
