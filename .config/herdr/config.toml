@@ -20,6 +20,12 @@ type = "plugin_action"
 command = "esafirm.herdr-all-hands.open-url"
 description = "Open visible URL in browser"
 
+[[keys.command]]
+key = "prefix+t"
+type = "plugin_action"
+command = "esafirm.herdr-all-hands.template-pane"
+description = "Open template pane"
+
 [ui.toast]
 delivery = "terminal"
 
