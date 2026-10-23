@@ -47,7 +47,6 @@
       "Bash(adb shell screencap:*)",
       "Bash(adb logcat:*)",
       "Bash(~/.config/opencode/scripts/ai-trash.sh:*)",
-      "Bash(/Users/esafirm/.config/opencode/scripts/ai-trash.sh:*)",
       "mcp__play-store",
       "mcp__llm-wiki",
       "mcp__android-studio"
@@ -60,7 +59,7 @@
       "mcp__android-studio__replace_text_in_file"
     ]
   },
-  "model": "sonnet",
+  "model": "opus",
   "hooks": {
     "SessionStart": [
       {
@@ -68,7 +67,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash '/Users/esafirm/.claude/hooks/herdr-agent-state.sh' session",
+            "command": "bash \"$HOME/.claude/hooks/herdr-agent-state.sh\" session",
             "timeout": 10
           }
         ]
