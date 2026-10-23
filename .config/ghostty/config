@@ -84,5 +84,10 @@ keybind = opt+delete=text:\x1bd
 
 # herdr owns Alt-bindings (alt+p / alt+n / alt+o etc. per ~/.config/herdr/config.toml),
 # so no tmux-style alt keybinds here. Ghostty keybinds would swallow them
-# before herdr ever sees them.
+# before herdr ever sees them. The presentation macro below is the exception:
+# it intentionally forwards Herdr chords.
 confirm-close-surface = false
+
+# Presentation/reader mode. Sends Herdr's prefix+shift+z chord; the mode script
+# handles zoom, font size, fullscreen, and replays the sidebar chord.
+keybind = cmd+alt+z=text:\x02Z

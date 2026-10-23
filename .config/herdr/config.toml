@@ -28,6 +28,12 @@ type = "plugin_action"
 command = "esafirm.herdr-all-hands.template-pane"
 description = "Open template pane"
 
+[[keys.command]]
+key = "prefix+shift+z"
+type = "shell"
+command = "HERDR_PRESENTATION_TARGET=current ~/.local/bin/herdr-presentation"
+description = "Toggle presentation mode"
+
 [ui.toast]
 delivery = "terminal"
 
@@ -41,4 +47,7 @@ show_agent_labels_on_pane_borders = true
 prompt_new_tab_name = false
 agent_panel_sort = "priority"
 status_indicators = "symbols"
+tab_bar_right = [
+  { type = "command", command = "~/.local/bin/herdr-presentation-status", interval_seconds = 1, timeout_seconds = 1 },
+]
 
