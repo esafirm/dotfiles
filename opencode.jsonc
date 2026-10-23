@@ -33,6 +33,15 @@
         "command": [
           "play-store-mcp"
         ]
+      },
+      "slack": {
+        "type": "remote",
+        "url": "https://mcp.slack.com/mcp",
+        "oauth": {
+          "client_id": "{file:secrets/slack-mcp-client-id}",
+          "callback_port": 19876,
+          "redirect_uri": "http://127.0.0.1:19876/mcp/oauth/callback"
+        }
       }
     }
   },
