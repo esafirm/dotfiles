@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+## Header/status helper for presentation mode.
+## Kept separate from the toggle script so the tab bar entry is one small,
+## side-effect-free executable.
+exec "$HOME/.local/bin/herdr-presentation" status

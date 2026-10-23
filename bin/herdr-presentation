@@ -1,0 +1,352 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+## Presentation/reader mode for Herdr.
+##
+## Default (HERDR_PRESENTATION_TARGET=current): bump the current Ghostty
+## window's font, toggle fullscreen, zoom the current Herdr pane, and replay
+## Herdr's sidebar chord through Hammerspoon. In other terminals the font and
+## fullscreen steps are skipped, but zoom and the sidebar still work.
+##
+## HERDR_PRESENTATION_TARGET=window launches a separate presentation window
+## with the sidebar hidden, which is useful when you do not want to disturb the
+## caller's terminal.
+##
+## Usage:
+##   herdr-presentation            toggle presentation mode
+##   herdr-presentation status     print PRESENT while the mode is active
+##   herdr-presentation client ID  internal: run the separate-window client
+
+STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/herdr"
+STATE_FILE="$STATE_DIR/presentation"
+CURRENT_STATE="$STATE_DIR/presentation-current"
+CONFIG_PATH="${HERDR_PRESENTATION_CONFIG:-$HOME/.config/herdr/presentation.toml}"
+GHOSTTY_APP="${GHOSTTY_APP:-/Applications/Ghostty.app}"
+FONT_STEP="${HERDR_PRESENTATION_FONT_STEP:-4}"
+FULLSCREEN="${HERDR_PRESENTATION_FULLSCREEN:-1}"
+MODE="${HERDR_PRESENTATION_TARGET:-current}"
+HERDR_BIN="${HERDR_BIN_PATH:-$(command -v herdr 2>/dev/null || printf '%s' /opt/homebrew/bin/herdr)}"
+
+read_state() {
+  [[ -f "$STATE_FILE" ]] || return 1
+  cat "$STATE_FILE"
+}
+
+active_pid() {
+  local state pid
+  state="$(read_state 2>/dev/null || true)"
+  [[ -n "$state" ]] || return 1
+  pid="${state%% *}"
+  [[ "$pid" =~ ^[0-9]+$ ]] || return 1
+  kill -0 "$pid" 2>/dev/null || return 1
+  printf '%s\n' "$pid"
+}
+
+status() {
+  if current_on; then
+    printf 'PRESENT\n'
+    return
+  fi
+  if active_pid >/dev/null 2>&1; then
+    printf 'PRESENT\n'
+  fi
+}
+
+base_font_size() {
+  local bin="$GHOSTTY_APP/Contents/MacOS/ghostty" size
+  size="$("$bin" +show-config 2>/dev/null | awk -F' = ' '/^font-size = / { print $2; exit }')"
+  printf '%s\n' "${size:-13}"
+}
+
+presentation_font_size() {
+  awk -v base="$(base_font_size)" -v step="$FONT_STEP" 'BEGIN { printf "%g", base + step }'
+}
+
+close_window() {
+  local win_id="${1:-}"
+  [[ "$win_id" == tab-group-* ]] || return 0
+  pgrep -x ghostty >/dev/null 2>&1 || return 0
+  osascript - "$win_id" >/dev/null 2>&1 <<'APPLESCRIPT'
+on run argv
+  tell application "Ghostty"
+    try
+      close window (first window whose id is (item 1 of argv))
+    end try
+  end tell
+end run
+APPLESCRIPT
+}
+
+current_pane() {
+  if [[ -n "${HERDR_ACTIVE_PANE_ID:-}" ]]; then
+    printf '%s\n' "$HERDR_ACTIVE_PANE_ID"
+    return
+  fi
+  "$HERDR_BIN" pane current 2>/dev/null | jq -r '.result.pane.pane_id // empty'
+}
+
+current_cwd() {
+  if [[ -n "${HERDR_ACTIVE_PANE_CWD:-}" ]]; then
+    printf '%s\n' "$HERDR_ACTIVE_PANE_CWD"
+    return
+  fi
+  "$HERDR_BIN" pane current 2>/dev/null | jq -r '.result.pane.foreground_cwd // .result.pane.cwd // empty'
+}
+
+launch_ghostty() {
+  local font="$1" pane="$2" session="$3" cwd="$4" command="$5" workspace="$6" tab="$7" fullscreen="$8"
+
+  if [[ ! -d "$GHOSTTY_APP" ]]; then
+    # Terminal.app fallback: works, but font size and fullscreen are best effort.
+    osascript - "$command" >/dev/null 2>&1 <<'APPLESCRIPT'
+on run argv
+  tell application "Terminal"
+    do script (item 1 of argv)
+    activate
+  end tell
+end run
+APPLESCRIPT
+    [[ -n "$workspace" ]] && HERDR_SESSION="$session" "$HERDR_BIN" workspace focus "$workspace" >/dev/null 2>&1 || true
+    [[ -n "$tab" ]] && HERDR_SESSION="$session" "$HERDR_BIN" tab focus "$tab" >/dev/null 2>&1 || true
+    return
+  fi
+
+  # Bring Ghostty forward, then create a new window and take it fullscreen.
+  # The surface configuration carries the larger font and the command, so the
+  # new window starts as a presentation view rather than mutating the caller's.
+  local win_id
+  win_id="$(osascript - "$font" "$pane" "$session" "$cwd" "$command" "$fullscreen" <<'APPLESCRIPT'
+on run argv
+  set fontSize to item 1 of argv as real
+  set paneID to item 2 of argv
+  set sessionName to item 3 of argv
+  set startDir to item 4 of argv
+  set shellCommand to item 5 of argv
+  set fullscreenFlag to item 6 of argv as integer
+
+  tell application "Ghostty"
+    activate
+    set cfg to new surface configuration
+    set font size of cfg to fontSize
+    set command of cfg to shellCommand
+    set initial working directory of cfg to startDir
+    set wait after command of cfg to false
+    set w to new window with configuration cfg
+    delay 0.6
+    set t to focused terminal of selected tab of w
+    if fullscreenFlag is 1 then perform action "toggle_fullscreen" on t
+    return id of w
+  end tell
+end run
+APPLESCRIPT
+  )" || return 0
+  win_id="$(printf '%s\n' "$win_id" | tail -n 1)"
+
+  # The client wrapper owns the PID. Attach the window id once it is up so the
+  # wrapper (or the next toggle) can close the window explicitly.
+  if [[ "$win_id" == tab-group-* ]]; then
+    local pid=""
+    for _ in {1..20}; do
+      pid="$(awk 'NR == 1 { print $1 }' "$STATE_FILE" 2>/dev/null || true)"
+      [[ "$pid" =~ ^[0-9]+$ ]] && break
+      sleep 0.05
+    done
+    if [[ "$pid" =~ ^[0-9]+$ ]]; then
+      printf '%s %s %s\n' "$pid" "$pane" "$win_id" > "$STATE_FILE"
+    fi
+  fi
+}
+
+current_on() {
+  [[ "$(awk 'NR == 1 { print $1 }' "$CURRENT_STATE" 2>/dev/null || true)" == "on" ]]
+}
+
+current_state_pane() {
+  awk 'NR == 1 { print $2 }' "$CURRENT_STATE" 2>/dev/null || true
+}
+
+front_is_ghostty() {
+  pgrep -x ghostty >/dev/null 2>&1 || return 1
+  local front
+  front="$(lsappinfo info -only name "$(lsappinfo front 2>/dev/null)" 2>/dev/null || true)"
+  [[ "$front" == *'"LSDisplayName"="Ghostty"'* ]]
+}
+
+ghostty_current_action() {
+  [[ $# -gt 0 ]] || return 0
+  front_is_ghostty || return 0
+  osascript - "$@" >/dev/null 2>&1 <<'APPLESCRIPT'
+on run argv
+  tell application "Ghostty"
+    set t to focused terminal of selected tab of front window
+    repeat with actionName in argv
+      try
+        perform action (actionName as text) on t
+      end try
+    end repeat
+  end tell
+end run
+APPLESCRIPT
+}
+
+toggle_sidebar_key() {
+  # Herdr has no socket action for the sidebar, so replay its own prefix chord
+  # through Hammerspoon. This targets the frontmost terminal, so it works even
+  # when Herdr runs in iTerm, Terminal, or another emulator.
+  # Matches prefix = "ctrl+b" and toggle_sidebar = "prefix+shift+b".
+  command -v hs >/dev/null 2>&1 || return 0
+  sleep 0.2
+  hs -c 'hs.eventtap.keyStroke({"ctrl"}, "b"); hs.timer.usleep(250000); hs.eventtap.keyStroke({"shift"}, "b")' >/dev/null 2>&1 || true
+}
+
+toggle_current() {
+  local pane base font
+  local actions=()
+
+  mkdir -p "$STATE_DIR"
+
+  if current_on; then
+    pane="$(current_state_pane)"
+    [[ -n "$pane" ]] || pane="$(current_pane)"
+    base="$(base_font_size)"
+    actions=("set_font_size:$base")
+    [[ "$FULLSCREEN" == "1" ]] && actions+=("toggle_fullscreen")
+    ghostty_current_action "${actions[@]}"
+    [[ -n "$pane" ]] && "$HERDR_BIN" pane zoom --pane "$pane" --off >/dev/null 2>&1 || true
+    printf 'off\n' > "$CURRENT_STATE"
+    toggle_sidebar_key
+    return
+  fi
+
+  pane="$(current_pane)"
+  if [[ -z "$pane" ]]; then
+    printf 'herdr-presentation: no active pane\n' >&2
+    exit 1
+  fi
+
+  font="$(presentation_font_size)"
+  actions=("set_font_size:$font")
+  [[ "$FULLSCREEN" == "1" ]] && actions+=("toggle_fullscreen")
+  ghostty_current_action "${actions[@]}"
+  "$HERDR_BIN" pane zoom --pane "$pane" --on >/dev/null 2>&1 || true
+  printf 'on %s\n' "$pane" > "$CURRENT_STATE"
+  toggle_sidebar_key
+}
+
+toggle_window() {
+  local pid pane session cwd font command win_id workspace tab
+  if pid="$(active_pid)"; then
+    win_id="$(awk 'NR == 1 { print $3 }' "$STATE_FILE" 2>/dev/null || true)"
+    # The wrapper runs the Herdr client in the foreground. Kill the client
+    # first so the wrapper's cleanup (unzoom, close window) can run.
+    child="$(pgrep -P "$pid" 2>/dev/null | head -n 1 || true)"
+    [[ -n "$child" ]] && kill -TERM "$child" 2>/dev/null || true
+    kill -TERM "$pid" 2>/dev/null || true
+    # Give the wrapper time to unzoom, clear the state, and close its window.
+    for _ in {1..30}; do
+      kill -0 "$pid" 2>/dev/null || break
+      sleep 0.05
+    done
+    close_window "$win_id"
+    return
+  fi
+
+  # A stale state file from a crashed window must not block a new launch.
+  mkdir -p "$STATE_DIR"
+  win_id="$(awk 'NR == 1 { print $3 }' "$STATE_FILE" 2>/dev/null || true)"
+  close_window "$win_id"
+  printf 'off\n' > "$STATE_FILE"
+
+  pane="$(current_pane)"
+  if [[ -z "$pane" ]]; then
+    printf 'herdr-presentation: no active pane\n' >&2
+    exit 1
+  fi
+
+  session="${HERDR_SESSION:-default}"
+  cwd="$(current_cwd)"
+  [[ -n "$cwd" && -d "$cwd" ]] || cwd="$HOME"
+  font="$(presentation_font_size)"
+  command="$(printf '%q client %q %q' "$HOME/.local/bin/herdr-presentation" "$pane" "$session")"
+
+  workspace="${HERDR_ACTIVE_WORKSPACE_ID:-}"
+  tab="${HERDR_ACTIVE_TAB_ID:-}"
+  if [[ -z "$workspace" || -z "$tab" ]]; then
+    local info
+    info="$(HERDR_SESSION="$session" "$HERDR_BIN" pane get "$pane" 2>/dev/null || true)"
+    [[ -n "$workspace" ]] || workspace="$(printf '%s' "$info" | jq -r '.result.pane.workspace_id // empty' 2>/dev/null || true)"
+    [[ -n "$tab" ]] || tab="$(printf '%s' "$info" | jq -r '.result.pane.tab_id // empty' 2>/dev/null || true)"
+  fi
+
+  # A new client inherits the session's focused workspace. Point it at the
+  # caller's workspace/tab before it attaches so the presentation starts there.
+  [[ -n "$workspace" ]] && HERDR_SESSION="$session" "$HERDR_BIN" workspace focus "$workspace" >/dev/null 2>&1 || true
+  [[ -n "$tab" ]] && HERDR_SESSION="$session" "$HERDR_BIN" tab focus "$tab" >/dev/null 2>&1 || true
+
+  launch_ghostty "$font" "$pane" "$session" "$cwd" "$command" "$workspace" "$tab" "$FULLSCREEN"
+
+  # The client can push its own unzoomed layout when it attaches, so apply the
+  # zoom again once the window is up.
+  sleep 0.3
+  HERDR_SESSION="$session" "$HERDR_BIN" pane zoom --pane "$pane" --on >/dev/null 2>&1 || true
+}
+
+toggle() {
+  if [[ "$MODE" == "window" ]]; then
+    toggle_window
+  else
+    toggle_current
+  fi
+}
+
+client() {
+  local pane="$1" session="$2"
+
+  mkdir -p "$STATE_DIR"
+
+  printf '%s %s\n' "$$" "$pane" > "$STATE_FILE"
+
+  cleanup() {
+    local win_id=""
+    win_id="$(awk 'NR == 1 { print $3 }' "$STATE_FILE" 2>/dev/null || true)"
+    HERDR_SESSION="$session" "$HERDR_BIN" pane zoom --pane "$pane" --off >/dev/null 2>&1 || true
+    printf 'off\n' > "$STATE_FILE"
+    close_window "$win_id"
+  }
+
+  HERDR_SESSION="$session" "$HERDR_BIN" pane zoom --pane "$pane" --on >/dev/null 2>&1 || true
+
+  # Run the client in the foreground so it owns the TTY and receives input.
+  # The launcher kills this child (and the wrapper) when toggling off.
+  trap 'pkill -TERM -P $$ 2>/dev/null || true; sleep 0.3; cleanup; exit 0' TERM INT HUP
+  # Strip the caller pane's Herdr environment so this client does not look like
+  # a nested pane to the guard. HERDR_SESSION still selects the same session.
+  set +e
+  env -u HERDR_ENV -u HERDR_PANE_ID -u HERDR_TAB_ID -u HERDR_WORKSPACE_ID \
+    -u HERDR_SOCKET_PATH -u HERDR_BIN_PATH -u HERDR_ACTIVE_PANE_ID \
+    HERDR_CONFIG_PATH="$CONFIG_PATH" HERDR_SESSION="$session" "$HERDR_BIN"
+  status=$?
+  set -e
+  cleanup
+  exit "$status"
+}
+
+case "${1:-toggle}" in
+  status)
+    status
+    ;;
+  client)
+    if [[ $# -lt 3 ]]; then
+      printf 'usage: herdr-presentation client PANE_ID SESSION\n' >&2
+      exit 2
+    fi
+    client "$2" "$3"
+    ;;
+  toggle|"")
+    toggle
+    ;;
+  *)
+    printf 'usage: herdr-presentation [status|client PANE_ID SESSION]\n' >&2
+    exit 2
+    ;;
+esac

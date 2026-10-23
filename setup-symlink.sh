@@ -111,6 +111,9 @@ ln -sfn ~/dotfiles/bin/play-store-mcp ~/.local/bin/play-store-mcp
 ## herdr
 mkdir -p ~/.config/herdr
 ln -sfn ~/dotfiles/.config/herdr/config.toml ~/.config/herdr/config.toml
+ln -sfn ~/dotfiles/.config/herdr/presentation.toml ~/.config/herdr/presentation.toml
+ln -sfn ~/dotfiles/bin/herdr-presentation ~/.local/bin/herdr-presentation
+ln -sfn ~/dotfiles/bin/herdr-presentation-status ~/.local/bin/herdr-presentation-status
 
 ## Ghostty
 mkdir -p ~/.config/ghostty

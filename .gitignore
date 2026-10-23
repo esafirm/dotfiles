@@ -2,6 +2,8 @@
 .bin/
 bin/*
 !bin/git-branch-label
+!bin/herdr-presentation
+!bin/herdr-presentation-status
 !bin/llm-wiki-mcp
 !bin/play-store-mcp
 

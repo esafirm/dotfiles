@@ -1,0 +1,35 @@
+# Client-only config for the presentation/reader window.
+# herdr-presentation launches a second Herdr client with HERDR_CONFIG_PATH
+# pointing here, so the main window keeps its normal chrome.
+onboarding = false
+
+[keys]
+prefix = ["ctrl+b", "ctrl+space"]
+
+[[keys.command]]
+key = "prefix+shift+z"
+type = "shell"
+command = "HERDR_PRESENTATION_TARGET=window ~/.local/bin/herdr-presentation"
+description = "Exit presentation mode"
+
+[ui]
+sidebar_start_collapsed = true
+sidebar_collapsed_mode = "hidden"
+hide_tab_bar_when_single_tab = true
+show_agent_labels_on_pane_borders = true
+prompt_new_tab_name = false
+agent_panel_sort = "priority"
+status_indicators = "symbols"
+mouse_capture = false
+
+[ui.toast]
+delivery = "terminal"
+
+[experimental]
+# The presentation client is launched from a Herdr-managed pane, so opt in to
+# the nested-client guard for this client config.
+allow_nested = true
+
+[theme]
+name = "catppuccin"
+auto_switch = false
