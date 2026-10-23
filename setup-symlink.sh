@@ -42,6 +42,7 @@ if command -v claude >/dev/null 2>&1; then
   claude_mcp firebase '{"type":"stdio","command":"firebase","args":["mcp","--only","crashlytics","--dir","/tmp"]}'
   claude_mcp llm-wiki '{"type":"stdio","command":"llm-wiki-mcp"}'
   claude_mcp play-store '{"type":"stdio","command":"play-store-mcp"}'
+  claude_mcp slack '{"type":"http","url":"https://mcp.slack.com/mcp"}'
 fi
 
 ## Dotfiles git hooks (pre-push verifies MCP sync between opencode and Claude)
