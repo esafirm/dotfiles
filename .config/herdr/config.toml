@@ -5,6 +5,8 @@ previous_tab = "alt+p"
 next_tab = "alt+n"
 previous_workspace = "alt+k"
 next_workspace = "alt+j"
+navigate_workspace_up = "k"
+navigate_workspace_down = "j"
 open_worktree = "alt+o"
 toggle_sidebar = "prefix+shift+b"
 
