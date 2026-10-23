@@ -72,8 +72,8 @@ if [ "$PICK_BRANCH" -eq 1 ] && [ -z "$BRANCH" ]; then
     | sed -e '/origin\/HEAD/d' -e '/^[[:space:]]*$/d' \
     | awk '!seen[$0]++')
   picked=$( { echo "(current branch)"; printf '%s\n' "$branches"; } \
-    | fzf --no-sort --height=40% --reverse --border --inline-info \
-      --margin=1,2 --padding=1 \
+    | fzf --no-sort --height=40% --reverse --inline-info \
+      --gap=1 --margin=0,2,1,2 --padding=1 \
       --color='hl:179:underline,hl+:214:underline' \
       --prompt='branch> ' \
       --preview='git log --oneline --graph --color=always --decorate -20 {} 2>/dev/null | head -40' \
@@ -90,7 +90,8 @@ if [ -n "$BRANCH" ]; then REV="$BRANCH"; else REV="HEAD"; fi
 # column at a time. Subject truncates to the terminal width with a ".."
 # marker; cell widths are subtracted from the real terminal size, so the
 # row always fits exactly and nothing on the right is clipped. Narrow
-# terminals (< 96 inner columns) drop the refs/author cells. The hash
+# terminals (< 96 inner columns) drop the refs cell and keep
+# subject | author | date | hash. The hash
 # stays last so `{-1}` (preview) and `$NF` (extraction) keep working.
 # Colors: subject bold, refs green, hash cyan (it is what gets copied),
 # author/date 256-color gray 245 (Ghostty renders SGR dim nearly
@@ -101,14 +102,14 @@ inner=$((cols - 6))   # fzf --margin=1,2 + --padding=1 eat 6 columns
 if [ "$inner" -ge 96 ]; then
   fmt="%<($((inner - 52)),trunc)%C(bold)%s%Creset %C(green)%<(22,trunc)%d%Creset %C(245)%<(11,trunc)%an%Creset %C(245)%cd%Creset %C(cyan)%h%Creset"
 else
-  W=$((inner - 18)); [ "$W" -lt 20 ] && W=20
-  fmt="%<(${W},trunc)%C(bold)%s%Creset %C(245)%cd%Creset %C(cyan)%h%Creset"
+  W=$((inner - 31)); [ "$W" -lt 20 ] && W=20
+  fmt="%<(${W},trunc)%C(bold)%s%Creset %C(245)%<(11,trunc)%an%Creset %C(245)%cd%Creset %C(cyan)%h%Creset"
 fi
 
 selection=$(git log "$REV" -n "$LIMIT" --color=always \
   --date=format:'%y-%m-%d' --pretty=format:"$fmt" 2>/dev/null \
-  | fzf --ansi --no-sort --height=80% --reverse --border --inline-info \
-    --margin=1,2 --padding=1 \
+  | fzf --ansi --no-sort --height=80% --reverse --inline-info \
+    --gap=1 --margin=0,2,1,2 --padding=1 \
     --color='hl:179:underline,hl+:214:underline' \
     --prompt='commit> ' \
     --bind='ctrl-p:toggle-preview' \
