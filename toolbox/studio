@@ -16,4 +16,4 @@ for o in "$@"; do
   fi
 done
 
-open -na "/Users/esafirm/Applications/Android Studio.app/Contents/MacOS/studio" $wait --args "${intellij_args[@]}"
+open -na "$HOME/Applications/Android Studio.app/Contents/MacOS/studio" $wait --args "${intellij_args[@]}"

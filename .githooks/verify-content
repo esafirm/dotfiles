@@ -1,0 +1,220 @@
+#!/usr/bin/env python3
+"""Block pushes that add secrets or machine-specific absolute paths.
+
+Reads the ref lines git hands a pre-push hook on stdin (see githooks(5)) and
+scans only the files changed by the commits being pushed, so legacy paths in
+untouched files do not block unrelated work.
+
+Usage:
+  verify-content            # pre-push mode, reads refs from stdin
+  verify-content --all      # audit every tracked file
+  verify-content --self-test
+
+A line can opt out with `content-check: ignore` when a match is deliberate.
+"""
+from __future__ import annotations
+
+import re
+import subprocess
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+ZERO = "0" * 40
+
+# Real usernames are a leak. These show up in docs as placeholders and are fine.
+PLACEHOLDER_USERS = {
+    "me",
+    "user",
+    "username",
+    "you",
+    "your",
+    "yourname",
+    "name",
+    "example",
+    "linuxbrew",
+    "shared",
+}
+
+# Files that are machine-specific by nature. Keep this list short and explained.
+ALLOWED_PATHS = {
+    # trustedWorkspaces only works with real absolute directories.
+    ".gemini/antigravity-cli/settings.json",
+}
+
+ABSOLUTE_PATH_PATTERNS = [
+    re.compile(r"(?<![\w.])/(?:Users|home)/([A-Za-z0-9._-]+)/"),
+    re.compile(r"(?i)\b[A-Za-z]:[\\/]Users[\\/]([A-Za-z0-9._-]+)[\\/]"),
+]
+
+SECRET_PATTERNS = [
+    ("private key", re.compile(r"-----BEGIN (?:[A-Z0-9]+ )*PRIVATE KEY-----")),
+    ("API key", re.compile(r"\bsk-(?:ant-)?[A-Za-z0-9_-]{20,}")),
+    ("GitHub token", re.compile(r"\b(?:gh[pousr]|github_pat)_[A-Za-z0-9_]{20,}")),
+    ("AWS access key", re.compile(r"\bAKIA[0-9A-Z]{16}\b")),
+    ("Google API key", re.compile(r"\bAIza[0-9A-Za-z_-]{35}\b")),
+    ("Slack token", re.compile(r"\bxox[baprs]-[A-Za-z0-9-]{10,}")),
+    ("Stripe live key", re.compile(r"\b(?:sk|rk)_live_[A-Za-z0-9]{16,}")),
+    ("JWT", re.compile(r"\beyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}")),
+    (
+        "credential assignment",
+        re.compile(
+            r"(?i)\b(?:api[_-]?key|secret|token|password|passwd|client[_-]?secret)\b"
+            r"\s*[:=]\s*[\"']?([A-Za-z0-9_+/.-]{24,})"
+        ),
+    ),
+]
+
+# Values that look like a credential but are documentation.
+SECRET_PLACEHOLDERS = re.compile(
+    r"(?i)your[-_]|example|placeholder|redacted|changeme|dummy|fake|xxxx|\.\.\.|<"
+)
+
+IGNORE_LINE = re.compile(r"content-check:\s*ignore")
+
+
+def git(*args: str) -> str:
+    result = subprocess.run(
+        ["git", "-C", str(ROOT), *args],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    return result.stdout
+
+
+def git_ok(*args: str) -> str | None:
+    result = subprocess.run(
+        ["git", "-C", str(ROOT), *args],
+        capture_output=True,
+        text=True,
+    )
+    return result.stdout if result.returncode == 0 else None
+
+
+def diff_names(old: str, new: str) -> set[str]:
+    return {p for p in git("diff", "--name-only", "-z", old, new).split("\0") if p}
+
+
+def changed_in_commit(sha: str) -> set[str]:
+    return {
+        p
+        for p in git(
+            "diff-tree", "-m", "-r", "--no-commit-id", "--name-only", "-z", sha
+        ).split("\0")
+        if p
+    }
+
+
+def paths_for_push(ref_lines: str) -> set[str]:
+    """Files changed by the commits on their way to the remote."""
+    paths: set[str] = set()
+    for line in ref_lines.splitlines():
+        parts = line.split()
+        if len(parts) != 4:
+            continue
+        _, local_sha, _, remote_sha = parts
+        if set(local_sha) == {ZERO[0]}:
+            continue  # deleting a ref pushes no content
+        if set(remote_sha) == {ZERO[0]}:
+            # New branch: everything not already on a remote, plus the tip commit.
+            for sha in git("rev-list", local_sha, "--not", "--remotes").split():
+                paths |= changed_in_commit(sha)
+            paths |= changed_in_commit(local_sha)
+        else:
+            paths |= diff_names(remote_sha, local_sha)
+    return paths
+
+
+def all_tracked_paths() -> set[str]:
+    return {p for p in git("ls-files", "-z").split("\0") if p}
+
+
+def check_text(relpath: str, text: str) -> list[str]:
+    issues: list[str] = []
+    for lineno, line in enumerate(text.splitlines(), 1):
+        if IGNORE_LINE.search(line):
+            continue
+        for pattern in ABSOLUTE_PATH_PATTERNS:
+            for match in pattern.finditer(line):
+                if match.group(1).lower() in PLACEHOLDER_USERS:
+                    continue
+                issues.append(
+                    f"{relpath}:{lineno}: absolute home path "
+                    f"({match.group(0).strip()}) - use ~ or $HOME"
+                )
+        for name, pattern in SECRET_PATTERNS:
+            for match in pattern.finditer(line):
+                if name == "credential assignment" and SECRET_PLACEHOLDERS.search(
+                    match.group(1)
+                ):
+                    continue
+                # Never echo the value itself.
+                issues.append(f"{relpath}:{lineno}: possible {name}")
+    return issues
+
+
+def check_files(paths: set[str]) -> list[str]:
+    issues: list[str] = []
+    for relpath in sorted(paths):
+        if relpath in ALLOWED_PATHS:
+            continue
+        path = ROOT / relpath
+        if not path.is_file():
+            continue
+        data = path.read_bytes()
+        if b"\0" in data[:8000]:
+            continue  # binary
+        issues.extend(check_text(relpath, data.decode("utf-8", "replace")))
+    return issues
+
+
+def self_test() -> None:
+    cases = [
+        ("x", "key = ghp_" + "a" * 36, True),
+        ("x", "key = sk-ant-api03-" + "a" * 40, True),
+        ("x", "-----BEGIN OPENSSH PRIVATE KEY-----", True),  # content-check: ignore
+        ("x", "key = AKIA" + "A" * 16, True),
+        ("x", "key: sk_live_" + "a" * 24, True),
+        ("x", "path = /Users/esafirm/dotfiles", True),  # content-check: ignore
+        ("x", "path = C:\\Users\\esafirm\\dotfiles", True),
+        ("x", "path = /Users/me/foo", False),
+        ("x", "path = ~/.config/opencode", False),
+        ("x", 'token = "your-token-goes-here-please-replace"', False),
+        ("x", "content-check: ignore /Users/esafirm/x", False),
+    ]
+    failed = [
+        line
+        for _, line, expected in cases
+        if bool(check_text("x", line)) is not expected
+    ]
+    if failed:
+        print("self-test failed:", *failed, sep="\n  ")
+        sys.exit(1)
+    print(f"self-test ok ({len(cases)} cases)")
+
+
+def main() -> int:
+    args = sys.argv[1:]
+    if "--self-test" in args:
+        self_test()
+        return 0
+
+    paths = all_tracked_paths() if "--all" in args else paths_for_push(sys.stdin.read())
+    issues = check_files(paths)
+
+    if not issues:
+        return 0
+
+    print("verify-content: push blocked", file=sys.stderr)
+    for issue in issues:
+        print(f"  {issue}", file=sys.stderr)
+    print(
+        "\nRemove the value, or mark a deliberate match with `content-check: ignore`.",
+        file=sys.stderr,
+    )
+    return 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

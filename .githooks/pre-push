@@ -3,4 +3,7 @@ set -euo pipefail
 
 hooks_dir="$(cd "$(dirname "$0")" && pwd)"
 
-python3 -I "$hooks_dir/verify-mcp-sync"
+status=0
+python3 -I "$hooks_dir/verify-mcp-sync" || status=1
+python3 -I "$hooks_dir/verify-content" || status=1
+exit "$status"
