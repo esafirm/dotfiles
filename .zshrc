@@ -138,7 +138,7 @@ export PATH=$HOME/.opencode/bin:$PATH
 alias jk='kotlin $DOT/kotlin/kscripts/jenkins-cli.main.kts'
 
 # bun completions
-[ -s "/Users/esafirm/.bun/_bun" ] && source "/Users/esafirm/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
