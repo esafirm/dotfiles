@@ -42,6 +42,7 @@ fun printUsage() {
           get-job-config <name-or-url>         Print a job's config.xml
           update-job-config <name-or-url> <config-file>
                                                Update a job's config.xml (full replace)
+          validate <jenkinsfile> [jenkins-url] Check a declarative Jenkinsfile's syntax on the server
           build-info <job>/<buildNumber>       Show a build's result and parameters
                      or <build-url>
           builds <name-or-url> [limit]          List recent builds (default 10) with results
@@ -377,6 +378,35 @@ fun updateJobConfig(ref: String, configFile: String) {
     println("  Status: $status")
 }
 
+// ── validate ──────────────────────────────────────────────────────────────
+fun validateJenkinsfile(file: String, baseUrl: String) {
+    val script = File(file).also { if (!it.isFile) error("Jenkinsfile not found: $file") }.readText()
+    val server = baseUrl.trimEnd('/')
+    println("─── Validate Jenkinsfile ──────────────────")
+    println("  File: $file")
+    println("  Server: $server")
+    val conn = fetchUrl("$server/pipeline-model-converter/validateJenkinsfile", method = "POST", followRedirects = false)
+    conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
+    conn.doOutput = true
+    conn.outputStream.use { it.write(("jenkinsfile=" + java.net.URLEncoder.encode(script, "UTF-8")).toByteArray()) }
+    val status = conn.responseCode
+    val stream = if (status in 200..299) conn.inputStream else conn.errorStream
+    val reply = stream?.bufferedReader()?.readText()?.trim().orEmpty()
+    println()
+    val data = runCatching { Json.parseToJsonElement(reply).jsonObject["data"]?.jsonObject }.getOrNull()
+    val valid = if (data != null) {
+        // Newer Jenkins answers JSON; syntax errors still come back as HTTP 200, so the result field decides.
+        val ok = data.str("result") == "success"
+        if (ok) println("  ✓ Jenkinsfile is valid") else println("  ✗ Jenkinsfile has errors:")
+        for (e in data["errors"]?.jsonArray.orEmpty()) println("    - ${e.jsonObject.str("error")}")
+        ok
+    } else {
+        println(reply.ifEmpty { "(no response body)" })
+        status in 200..299 && reply.contains("successfully validated", ignoreCase = true)
+    }
+    if (!valid) kotlin.system.exitProcess(1)
+}
+
 // ── build-info ────────────────────────────────────────────────────────────
 fun showBuildInfo(ref: String) {
     val buildUrl = if (ref.startsWith("http")) ref.trimEnd('/')
@@ -458,7 +488,8 @@ fun triggerBuild(ref: String, args: List<String>) {
         if (eq <= 0) error("Invalid param format '$p' — use key=value")
         p.substring(0, eq) to p.substring(eq + 1)
     }
-    val query = cliParams.entries.joinToString("&") { "${it.key}=${URI(it.value).toASCIIString()}" }
+    fun enc(text: String) = java.net.URLEncoder.encode(text, "UTF-8")
+    val query = cliParams.entries.joinToString("&") { "${enc(it.key)}=${enc(it.value)}" }
 
     println("─── Triggering build ───────────────────────")
     println("  Job: $jobUrl")
@@ -942,6 +973,8 @@ fun showSkill() {
                                         Pass a timestamp to also download that config.xml.
                                         Endpoint is /jobConfigHistory (NOT /configHistory).
           update-job-config <ref> <file>  POST a full replacement config.xml
+          validate <jenkinsfile> [url]    Check a declarative Jenkinsfile's syntax on the server
+                                          (read-only; defaults to android-ci). Exit 1 on errors.
 
         Triggering:
           trigger <job-url> [key=value...]   POST buildWithParameters; prints the queue URL
@@ -1033,6 +1066,10 @@ fun main(args: Array<String>) {
             val ref = args.getOrNull(1) ?: error("Usage: jenkins-cli.main.kts update-job-config <jobName-or-url> <config.xml>")
             val configFile = args.getOrNull(2) ?: error("Usage: jenkins-cli.main.kts update-job-config <jobName-or-url> <config.xml>")
             updateJobConfig(ref, configFile)
+        }
+        "validate" -> {
+            val file = args.getOrNull(1) ?: error("Usage: jenkins-cli.main.kts validate <jenkinsfile> [jenkins-url]")
+            validateJenkinsfile(file, args.getOrNull(2) ?: "https://android-ci.bandlab.io")
         }
         "build-info" -> {
             val ref = args.getOrNull(1) ?: error("Usage: jenkins-cli.main.kts build-info <job>/<buildNumber> or <build-url>")
