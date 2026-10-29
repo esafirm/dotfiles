@@ -20,6 +20,10 @@
 # Press ctrl-p in the picker to toggle a full patch preview (hidden by
 # default, since the subject line is usually enough).
 #
+# Press ctrl-o in the picker to read the highlighted commit in a pager, and
+# drop back into the picker when you quit it. Uses GIT_PICK_COMMIT_PAGER when
+# set, otherwise bat if installed, otherwise less -R.
+#
 # Note: plain bash 3.x compatible (macOS default bash).
 
 set -u
@@ -106,13 +110,23 @@ else
   fmt="%<(${W},trunc)%C(bold)%s%Creset %C(245)%<(11,trunc)%an%Creset %C(245)%cd%Creset %C(cyan)%h%Creset"
 fi
 
+# ctrl-o hands the terminal to a pager for the highlighted commit. execute()
+# restores the picker when the pager quits, so it reads like `git show | less`.
+if [ -n "${GIT_PICK_COMMIT_PAGER-}" ]; then
+  reader="git show --color=always --stat --patch {-1} | $GIT_PICK_COMMIT_PAGER"
+elif command -v bat >/dev/null 2>&1; then
+  reader="git show --stat --patch --color=never {-1} | bat -l diff --paging=always --style=plain --color=always"
+else
+  reader="git show --color=always --stat --patch {-1} | less -R"
+fi
+
 selection=$(git log "$REV" -n "$LIMIT" --color=always \
   --date=format:'%y-%m-%d' --pretty=format:"$fmt" 2>/dev/null \
   | fzf --ansi --no-sort --height=80% --reverse --inline-info \
     --gap=1 --margin=0,2,1,2 --padding=1 \
     --color='hl:179:underline,hl+:214:underline' \
     --prompt='commit> ' \
-    --bind='ctrl-p:toggle-preview' \
+    --bind="ctrl-o:execute($reader),ctrl-p:toggle-preview" \
     --preview='git show --color=always --stat --patch {-1} 2>/dev/null | head -200' \
     --preview-window='right:60%:wrap:hidden') || exit 0
 [ -z "$selection" ] && exit 0
