@@ -18,6 +18,18 @@ When a plan pivots mid-session, regenerate the removal list from
 architecture changes. Verify the list against the current diff before
 staging, and compile/test the affected modules afterwards.
 
+## Git Worktrees
+
+Never create a worktree on your own. Ask first, every time, and say why you think
+one is needed. This includes the `worktree_create` tool.
+
+Default to not using one. A worktree only pays for itself when there is a concrete
+reason: work that must run in parallel, keeping a dirty checkout untouched, or a
+long build running while edits continue elsewhere. For a normal edit and test loop,
+stay in the current checkout. If the reason is weak, say so and skip it.
+
+Confirm before removing, moving, or repointing an existing worktree as well.
+
 ## Gradle Build Cache
 
 When a Gradle build fails and all tasks report `UP-TO-DATE`, **do not assume cache is the
