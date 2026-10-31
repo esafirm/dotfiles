@@ -91,6 +91,11 @@
       "effortLevel": "high"
     }
   },
+  "statusLine": {
+    "type": "command",
+    "command": "bash /Users/esafirm/.claude/statusline-command.sh",
+    "padding": 0
+  },
   "tui": "fullscreen",
   "theme": "auto"
 }
