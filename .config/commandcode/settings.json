@@ -1,5 +1,7 @@
 {
-  "skills": ["~/.claude/skills"],
+  "skills": [
+    "~/.claude/skills"
+  ],
   "hooks": {
     "PreToolUse": [
       {
@@ -9,6 +11,39 @@
             "type": "command",
             "command": "$HOME/.commandcode/hooks/guard-secrets.sh",
             "timeout": 5
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "GHOSTEX_AGENT='command-code' $HOME/.local/share/ghostex/hooks/agent-shell-notify.sh",
+            "timeout": 10
+          }
+        ],
+        "matcher": ".*"
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "GHOSTEX_AGENT='command-code' $HOME/.local/share/ghostex/hooks/agent-shell-notify.sh",
+            "timeout": 10
+          }
+        ],
+        "matcher": ".*"
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "GHOSTEX_AGENT='command-code' $HOME/.local/share/ghostex/hooks/agent-shell-notify.sh",
+            "timeout": 10
           }
         ]
       }

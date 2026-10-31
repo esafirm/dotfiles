@@ -1,5 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "cleanupPeriodDays": 36500,
   "env": {
     "API_TIMEOUT_MS": "3000000",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
@@ -59,7 +60,7 @@
       "mcp__android-studio__replace_text_in_file"
     ]
   },
-  "model": "opus",
+  "model": "sonnet",
   "hooks": {
     "SessionStart": [
       {
@@ -71,8 +72,179 @@
             "timeout": 10
           }
         ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "GHOSTEX_AGENT='claude' $HOME/.local/share/ghostex/hooks/agent-shell-notify.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "GHOSTEX_AGENT='claude' $HOME/.local/share/ghostex/hooks/agent-shell-notify.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "GHOSTEX_AGENT='claude' $HOME/.local/share/ghostex/hooks/agent-shell-notify.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "GHOSTEX_AGENT='claude' $HOME/.local/share/ghostex/hooks/agent-shell-notify.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "GHOSTEX_AGENT='claude' $HOME/.local/share/ghostex/hooks/agent-shell-notify.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "GHOSTEX_AGENT='claude' $HOME/.local/share/ghostex/hooks/agent-shell-notify.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "StopFailure": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "GHOSTEX_AGENT='claude' $HOME/.local/share/ghostex/hooks/agent-shell-notify.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "GHOSTEX_AGENT='claude' $HOME/.local/share/ghostex/hooks/agent-shell-notify.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "GHOSTEX_AGENT='claude' $HOME/.local/share/ghostex/hooks/agent-shell-notify.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "TeammateIdle": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "GHOSTEX_AGENT='claude' $HOME/.local/share/ghostex/hooks/agent-shell-notify.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "GHOSTEX_AGENT='claude' $HOME/.local/share/ghostex/hooks/agent-shell-notify.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "GHOSTEX_AGENT='claude' $HOME/.local/share/ghostex/hooks/agent-shell-notify.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "GHOSTEX_AGENT='claude' $HOME/.local/share/ghostex/hooks/agent-shell-notify.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostCompact": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "GHOSTEX_AGENT='claude' $HOME/.local/share/ghostex/hooks/agent-shell-notify.sh",
+            "timeout": 5
+          }
+        ]
       }
     ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash $HOME/.claude/statusline-command.sh",
+    "padding": 0
   },
   "enabledPlugins": {
     "vercel@claude-plugins-official": true
@@ -89,12 +261,10 @@
   "modelSettings": {
     "claude-opus-5-5": {
       "effortLevel": "high"
+    },
+    "claude-sonnet-5-5": {
+      "effortLevel": "high"
     }
-  },
-  "statusLine": {
-    "type": "command",
-    "command": "bash /Users/esafirm/.claude/statusline-command.sh",
-    "padding": 0
   },
   "tui": "fullscreen",
   "theme": "auto"

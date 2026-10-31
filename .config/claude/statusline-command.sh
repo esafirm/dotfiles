@@ -82,5 +82,5 @@ fi
 
 printf '%s' "$out"
 
-printf '%s' "$input" | '/Users/esafirm/.local/share/ghostex/hooks/agent-statusline.sh' >/dev/null 2>&1
+printf '%s' "$input" | "$HOME/.local/share/ghostex/hooks/agent-statusline.sh" >/dev/null 2>&1
 printf '\n'

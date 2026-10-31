@@ -1,0 +1,38 @@
+# Shared terminal appearance for Ghostty and Ghostex.
+background = #16181a
+foreground = #ffffff
+background-opacity = 1
+background-blur-radius = 10
+unfocused-split-opacity = 0.46
+minimum-contrast = 1
+
+# Fira Code is installed in ~/Library/Fonts.
+font-family = "Fira Code"
+font-size = 12
+font-style-bold = Bold
+adjust-cell-height = 15%
+font-thicken = true
+font-thicken-strength = 100
+
+# Muted amber instead of neon lime for readability at 12pt.
+palette = 0=#16181a
+palette = 1=#ff6e5e
+palette = 2=#5eff6c
+palette = 3=#e5c07b
+palette = 4=#3b6fd4
+palette = 5=#bd5eff
+palette = 6=#5ef1ff
+palette = 7=#ffffff
+palette = 8=#3c4048
+palette = 9=#ff6e5e
+palette = 10=#5eff6c
+palette = 11=#ffcb6b
+palette = 12=#7aa2f7
+palette = 13=#bd5eff
+palette = 14=#5ef1ff
+palette = 15=#ffffff
+
+cursor-color = #ffffff
+cursor-text = #16181a
+selection-background = #3c4048
+selection-foreground = #ffffff

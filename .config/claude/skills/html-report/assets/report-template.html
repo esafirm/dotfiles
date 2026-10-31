@@ -282,8 +282,21 @@
     .tile .n { font-size: 23px; }
   }
 
+
+  /* Inline comments */
+  mark.cmt { background: rgba(240, 190, 40, 0.38); color: inherit; border-radius: 2px; cursor: pointer; }
+  :root[data-theme="dark"] mark.cmt { background: rgba(240, 190, 40, 0.28); }
+  mark.cmt:hover, mark.cmt.cmt-open { background: rgba(240, 190, 40, 0.6); }
+  .cmt-pop { position: absolute; z-index: 60; background: var(--surface); border: 1px solid var(--border-strong); border-radius: 10px; box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18); padding: 8px; font: 13px/1.4 var(--sans); color: var(--ink); }
+  .cmt-pop[hidden] { display: none; }
+  .cmt-pop textarea { display: block; width: 280px; max-width: 70vw; min-height: 76px; resize: vertical; box-sizing: border-box; padding: 8px; font: 14px/1.4 var(--sans); color: var(--ink); background: var(--bg); border: 1px solid var(--border-strong); border-radius: 6px; }
+  .cmt-pop .row { display: flex; gap: 6px; margin-top: 8px; justify-content: flex-end; }
+  .cmt-pop .btn { height: 28px; }
+  .cmt-pop .quote { max-width: 280px; margin: 0 0 8px; color: var(--muted); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
   @media print {
-    .topbar, .toc, .scrim, .to-top { display: none !important; }
+    .topbar, .toc, .scrim, .to-top, .cmt-pop { display: none !important; }
+    mark.cmt { background: none; }
     .layout { display: block; max-width: none; padding: 0; }
     main { max-width: none; padding: 0; }
     details.commit { break-inside: avoid; }
@@ -298,6 +311,14 @@
   </button>
   <span class="topbar-title">{{TITLE}}</span>
   <div class="controls">
+    <button class="btn" id="comments-copy" type="button" title="Copy all inline comments" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span class="label-text" id="comments-label">Copy comments</span>
+    </button>
+    <button class="btn" id="read-toggle" type="button" aria-pressed="false" title="Mark this report as read">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+      <span class="label-text" id="read-label">Mark as read</span>
+    </button>
     <button class="btn" id="theme-toggle" type="button" title="Switch theme">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
       <span class="label-text" id="theme-label">Light</span>
@@ -318,6 +339,7 @@
   </main>
 </div>
 <div class="scrim"></div>
+<div class="cmt-pop" id="cmt-pop" hidden></div>
 <button class="to-top" type="button" aria-label="Back to top">
   <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
 </button>
@@ -325,6 +347,23 @@
   (function () {
     var root = document.documentElement;
     var main = document.getElementById("content");
+
+    // Mark as read: remembered per report file, so a reopened report shows whether it was already read.
+    var readBtn = document.getElementById("read-toggle");
+    var readLabel = document.getElementById("read-label");
+    var readKey = "report-read:" + location.pathname;
+    function applyRead(on, save) {
+      readBtn.setAttribute("aria-pressed", on ? "true" : "false");
+      readBtn.title = on ? "Marked as read. Click to mark as unread" : "Mark this report as read";
+      readLabel.textContent = on ? "Read" : "Mark as read";
+      if (save) { try { on ? localStorage.setItem(readKey, "1") : localStorage.removeItem(readKey); } catch (e) {} }
+    }
+    var wasRead = false;
+    try { wasRead = localStorage.getItem(readKey) === "1"; } catch (e) {}
+    applyRead(wasRead, false);
+    readBtn.addEventListener("click", function () {
+      applyRead(readBtn.getAttribute("aria-pressed") !== "true", true);
+    });
 
     // Theme: light or dark, remembered across visits.
     var themeLabel = document.getElementById("theme-label");
@@ -430,6 +469,148 @@
     list.addEventListener("click", function (e) { if (e.target.tagName === "A") document.body.classList.remove("toc-open"); });
 
     document.querySelector(".to-top").addEventListener("click", function () { window.scrollTo({ top: 0 }); });
+
+    // Inline comments: select text, add a note. Kept in localStorage per report file; "Copy comments" exports them.
+    var pop = document.getElementById("cmt-pop");
+    var copyBtn = document.getElementById("comments-copy");
+    var copyLabel = document.getElementById("comments-label");
+    var cmtKey = "report-comments:" + location.pathname;
+    var comments = [];
+    try { comments = JSON.parse(localStorage.getItem(cmtKey) || "[]"); } catch (e) {}
+    function saveComments() {
+      try { comments.length ? localStorage.setItem(cmtKey, JSON.stringify(comments)) : localStorage.removeItem(cmtKey); } catch (e) {}
+      copyBtn.hidden = !comments.length;
+      copyLabel.textContent = "Copy comments (" + comments.length + ")";
+    }
+    function textNodes() {
+      var w = document.createTreeWalker(main, NodeFilter.SHOW_TEXT), out = [], pos = 0, n;
+      while ((n = w.nextNode())) { out.push({ node: n, start: pos }); pos += n.data.length; }
+      return { nodes: out, text: out.map(function (t) { return t.node.data; }).join("") };
+    }
+    function wrapRange(c) {
+      var info = textNodes(), start = c.start;
+      if (info.text.substr(start, c.quote.length) !== c.quote) {
+        start = info.text.indexOf(c.quote);
+        if (start < 0) return;
+      }
+      var end = start + c.quote.length;
+      info.nodes.forEach(function (t) {
+        var s = Math.max(start, t.start), e = Math.min(end, t.start + t.node.data.length);
+        if (s >= e || !t.node.data.slice(s - t.start, e - t.start).trim()) return;
+        var node = t.node;
+        if (e - t.start < node.data.length) node.splitText(e - t.start);
+        if (s - t.start > 0) node = node.splitText(s - t.start);
+        var m = document.createElement("mark");
+        m.className = "cmt"; m.dataset.cid = c.id; m.title = c.note;
+        node.parentNode.insertBefore(m, node);
+        m.appendChild(node);
+      });
+    }
+    function unwrap(id) {
+      Array.prototype.forEach.call(main.querySelectorAll('mark.cmt[data-cid="' + id + '"]'), function (m) {
+        var p = m.parentNode;
+        while (m.firstChild) p.insertBefore(m.firstChild, m);
+        p.removeChild(m);
+        p.normalize();
+      });
+    }
+    function placePop(rect) {
+      pop.hidden = false;
+      var x = Math.min(Math.max(8, rect.left + scrollX), scrollX + innerWidth - pop.offsetWidth - 8);
+      var y = rect.top + scrollY - pop.offsetHeight - 8;
+      if (y < scrollY + 60) y = rect.bottom + scrollY + 8;
+      pop.style.left = x + "px"; pop.style.top = y + "px";
+    }
+    function closePop() {
+      pop.hidden = true; pop.innerHTML = "";
+      Array.prototype.forEach.call(main.querySelectorAll("mark.cmt-open"), function (m) { m.classList.remove("cmt-open"); });
+    }
+    function button(label, onClick) {
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "btn"; b.textContent = label;
+      b.addEventListener("click", onClick);
+      return b;
+    }
+    function openEditor(rect, quote, note, onSave, onDelete) {
+      pop.innerHTML = "";
+      var q = document.createElement("div"); q.className = "quote"; q.textContent = "“" + quote + "”";
+      var ta = document.createElement("textarea"); ta.value = note; ta.placeholder = "Comment";
+      var row = document.createElement("div"); row.className = "row";
+      if (onDelete) row.appendChild(button("Delete", onDelete));
+      row.appendChild(button("Cancel", closePop));
+      row.appendChild(button("Save", function () { if (ta.value.trim()) onSave(ta.value.trim()); }));
+      ta.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") closePop();
+        if (e.key === "Enter" && (e.metaKey || e.ctrlKey) && ta.value.trim()) onSave(ta.value.trim());
+      });
+      pop.appendChild(q); pop.appendChild(ta); pop.appendChild(row);
+      placePop(rect);
+      ta.focus();
+    }
+    function showSelection() {
+      var sel = getSelection();
+      if (!sel.rangeCount || sel.isCollapsed) return;
+      var range = sel.getRangeAt(0);
+      if (!main.contains(range.commonAncestorContainer)) return;
+      var quote = range.toString();
+      if (!quote.trim() || quote.length > 600) return;
+      if (main.querySelector("mark.cmt") && Array.prototype.some.call(main.querySelectorAll("mark.cmt"), function (m) { return range.intersectsNode(m); })) return;
+      var pre = document.createRange();
+      pre.selectNodeContents(main); pre.setEnd(range.startContainer, range.startOffset);
+      var start = pre.toString().length, rect = range.getBoundingClientRect();
+      pop.innerHTML = "";
+      pop.appendChild(button("Comment", function () {
+        openEditor(rect, quote, "", function (note) {
+          var c = { id: "c" + Date.now(), start: start, quote: quote, note: note };
+          comments.push(c); saveComments(); wrapRange(c); closePop(); sel.removeAllRanges();
+        });
+      }));
+      placePop(rect);
+    }
+    function sectionOf(el) {
+      var hs = main.querySelectorAll("h2, h3"), found = "";
+      Array.prototype.forEach.call(hs, function (h) {
+        if (h.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING) found = h.textContent;
+      });
+      return found;
+    }
+    pop.addEventListener("mousedown", function (e) { if (e.target.tagName !== "TEXTAREA") e.preventDefault(); });
+    document.addEventListener("mouseup", function (e) {
+      if (pop.contains(e.target)) return;
+      var mark = e.target.closest && e.target.closest("mark.cmt");
+      if (mark && getSelection().isCollapsed) {
+        var c = comments.filter(function (x) { return x.id === mark.dataset.cid; })[0];
+        if (!c) return;
+        closePop(); mark.classList.add("cmt-open");
+        openEditor(mark.getBoundingClientRect(), c.quote, c.note, function (note) {
+          c.note = note; saveComments();
+          Array.prototype.forEach.call(main.querySelectorAll('mark.cmt[data-cid="' + c.id + '"]'), function (m) { m.title = note; });
+          closePop();
+        }, function () {
+          comments = comments.filter(function (x) { return x !== c; });
+          saveComments(); unwrap(c.id); closePop();
+        });
+        return;
+      }
+      setTimeout(function () { closePop(); showSelection(); }, 0);
+    });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") closePop(); });
+    comments.forEach(wrapRange);
+    saveComments();
+    copyBtn.addEventListener("click", function () {
+      var text = comments.map(function (c) {
+        var m = main.querySelector('mark.cmt[data-cid="' + c.id + '"]');
+        var where = m ? sectionOf(m) : "";
+        return (where ? "[" + where + "]\n" : "") + "> " + c.quote.replace(/\s+/g, " ") + "\n" + c.note;
+      }).join("\n\n");
+      function done() { copyLabel.textContent = "Copied"; setTimeout(saveComments, 1200); }
+      function fallback() {
+        var ta = document.createElement("textarea"); ta.value = text; document.body.appendChild(ta); ta.select();
+        try { document.execCommand("copy"); } catch (e) {}
+        ta.remove(); done();
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback); else fallback();
+    });
 
     // Opening a link to a collapsed section expands it.
     function openTargetCommit() {
