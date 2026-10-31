@@ -15,6 +15,10 @@ What the template gives every report:
   visit follows the OS setting.
 - **Reader mode**: hides the menu, enlarges the type in one serif reading column and goes full screen.
   Leaving full screen (Esc) leaves reader mode. It is not remembered, since full screen needs a click.
+- **Mark as read**: a top-bar button that toggles "Mark as read" / "Read". Remembered in `localStorage` per file path.
+- **Inline comments**: select text in the body and click "Comment" to add a note. It is highlighted in place,
+  and clicking the highlight edits or deletes it. Kept in `localStorage` per file path, so renaming or moving the
+  file loses them. "Copy comments" puts every note on the clipboard, each with its quote and section, to paste back.
 - Code uses JetBrains Mono, then Fira Code, with ligatures on. Fonts are not embedded, so a viewer without either
   falls back to the system monospace (no ligatures).
 - Muted greys, syntax colours and links are tuned to at least 4.5:1 contrast in both themes. Keep that when

@@ -120,5 +120,12 @@ ln -sfn ~/dotfiles/bin/herdr-presentation-status ~/.local/bin/herdr-presentation
 ## Ghostty
 mkdir -p ~/.config/ghostty
 ln -sfn ~/dotfiles/.config/ghostty/config ~/.config/ghostty/config
+ln -sfn ~/dotfiles/.config/ghostty/appearance ~/.config/ghostty/appearance
 mkdir -p ~/Library/Application\ Support/com.mitchellh.ghostty
 ln -sfn ~/dotfiles/.config/ghostty/config ~/Library/Application\ Support/com.mitchellh.ghostty/config
+ln -sfn ~/dotfiles/.config/ghostty/appearance ~/Library/Application\ Support/com.mitchellh.ghostty/appearance
+
+## Ghostex keeps its own managed settings; include the shared appearance.
+mkdir -p ~/.config/ghostex/ghostty
+touch ~/.config/ghostex/ghostty/config.ghostty
+grep -Fqx 'config-file = ../../ghostty/appearance' ~/.config/ghostex/ghostty/config.ghostty || printf '\n# Shared with Ghostty\nconfig-file = ../../ghostty/appearance\n' >> ~/.config/ghostex/ghostty/config.ghostty
