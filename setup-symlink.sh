@@ -27,6 +27,11 @@ ln -sfn ~/dotfiles/.gemini/config/mcp_config.json ~/.gemini/config/mcp_config.js
 ## Claude Code
 mkdir -p ~/.claude
 ln -sfn ~/dotfiles/.config/claude/settings.json ~/.claude/settings.json
+if [[ ! -e ~/.claude/keybindings.json && ! -L ~/.claude/keybindings.json ]]; then
+  ln -s ~/dotfiles/.config/claude/keybindings.json ~/.claude/keybindings.json
+else
+  echo "Keeping existing ~/.claude/keybindings.json (not replacing it)"
+fi
 ln -sfn ~/dotfiles/.agents/AGENTS.md ~/.claude/CLAUDE.md
 ln -sfn ~/dotfiles/.config/claude/skills ~/.claude/skills
 mkdir -p ~/.claude/hooks
