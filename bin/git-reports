@@ -1,0 +1,205 @@
+#!/usr/bin/env bash
+# Reports shared by every worktree of a repo: <git-common-dir>/reports. It sits inside .git, so it is never tracked
+# and never shows in git status. Works in any local repo. Only .md and .html files count as reports.
+#
+#   git reports [text...]           interactive picker (fzf) in a terminal, plain list when piped
+#       type to filter by text      enter  open in Chrome and mark read (the picker stays open)
+#       ctrl-u unread only          ctrl-r read only          ctrl-a all
+#       ctrl-t toggle read/unread   ctrl-p show or hide the preview        esc  quit
+#   git reports -l [text...]        plain list, newest first. -u unread only, -r read only
+#   git reports open <n|name>       open an html report in Chrome and mark it read
+#   git reports read <n|name|all>   mark read          git reports unread <n|name>   mark unread
+#   git reports path                print the directory (created if missing)
+#
+# In the plain list <n> is the row number, stable under any filter. A name may be a unique substring. The "Mark as
+# read" button inside a report is browser localStorage and cannot be read from a shell, so read state is kept in
+# <reports>/.read (one file name per line). REPORTS_DIR overrides the directory.
+set -euo pipefail
+
+SELF="$(cd "$(dirname "$0")" && pwd)/$(basename "$0")"
+R=${REPORTS_DIR:-}
+if [[ -z "$R" ]]; then
+  common=$(git rev-parse --git-common-dir 2>/dev/null) || { echo "git reports: not inside a git repo" >&2; exit 1; }
+  R="$(cd "$common" && pwd)/reports"
+fi
+mkdir -p "$R"
+export REPORTS_DIR="$R"
+READ="$R/.read"
+touch "$READ"
+
+names() {
+  ls -t "$R" | grep -E '\.(md|html)$' | while IFS= read -r n; do [[ -f "$R/$n" ]] && echo "$n"; done || true
+}
+is_read() { grep -qxF "$1" "$READ"; }
+
+title_of() {
+  local p="$R/$1" t=""
+  case "$1" in
+    *.html) t=$(grep -m1 -o '<title>[^<]*' "$p" | sed 's/<title>//' || true) ;;
+    *.md)   t=$(grep -m1 '^# ' "$p" | sed 's/^# //' || true) ;;
+  esac
+  echo "${t:-$1}"
+}
+
+kind_of() {
+  case "$1" in
+    handsoff_*) echo "handoff" ;;
+    *.html)     echo "html" ;;
+    *)          echo "md" ;;
+  esac
+}
+
+age_of() {  # age_of <epoch>
+  local d=$(( $(date +%s) - $1 ))
+  if   (( d < 3600 ));    then echo "$(( d / 60 ))m"
+  elif (( d < 86400 ));   then echo "$(( d / 3600 ))h"
+  elif (( d < 1209600 )); then echo "$(( d / 86400 ))d"
+  else echo "$(( d / 604800 ))w"; fi
+}
+
+pad() {  # pad <text> <width>: truncate with an ellipsis, then pad with spaces (character-aware)
+  local s=$1 w=$2
+  if (( ${#s} > w )); then s="${s:0:w-1}…"; fi
+  printf '%s%*s' "$s" $(( w - ${#s} )) ''
+}
+
+resolve() {  # resolve <n|name> -> file name
+  local q=$1 hit
+  if [[ "$q" =~ ^[0-9]+$ ]]; then
+    hit=$(names | sed -n "${q}p")
+  else
+    hit=$(names | grep -F -- "$q" || true)
+    [[ $(printf '%s\n' "$hit" | grep -c .) -le 1 ]] || { echo "ambiguous: $q" >&2; printf '%s\n' "$hit" >&2; exit 1; }
+  fi
+  [[ -n "$hit" ]] || { echo "no report matches: $q" >&2; exit 1; }
+  echo "$hit"
+}
+
+mark() {  # mark read|unread <name>
+  local state=$1 name=$2 tmp
+  tmp=$(mktemp)
+  grep -vxF "$name" "$READ" > "$tmp" || true
+  [[ "$state" == read ]] && echo "$name" >> "$tmp"
+  cat "$tmp" > "$READ"
+}
+
+# rows <state> <mode> [terms...]: mode "fzf" prefixes each row with the file name and a tab.
+# Columns: title, state, age, kind, file, row number. Unread titles are bold, read rows are dimmed.
+rows() {
+  local want=$1 mode=$2; shift 2
+  local terms=("$@")
+  local bold="" dim="" yellow="" off=""
+  if [[ "$mode" == fzf || -t 1 || -n "${FORCE_COLOR:-}" ]]; then bold=$'\033[1m'; dim=$'\033[2m'; yellow=$'\033[33m'; off=$'\033[0m'; fi
+  local cols=${COLUMNS:-}
+  if [[ -z "$cols" ]]; then if [[ -t 1 ]]; then cols=$(tput cols 2>/dev/null || echo 120); else cols=140; fi; fi
+  local name_w title_w
+  name_w=$(names | awk '{ if (length($0) > m) m = length($0) } END { print m + 0 }')
+  (( name_w > 46 )) && name_w=46
+  if [[ "$mode" == fzf ]]; then title_w=58; else title_w=$(( cols - 2 - 4 - 7 - name_w - 4 - 5 - 3 )); fi
+  (( title_w < 24 )) && title_w=24
+
+  local i=0 n title hay t flag age kind lead num
+  while IFS= read -r n; do
+    i=$((i + 1))
+    if is_read "$n"; then flag=read; else flag=unread; fi
+    [[ "$want" != all && "$flag" != "$want" ]] && continue
+    title=$(title_of "$n")
+    if (( ${#terms[@]} )); then
+      hay=$(printf '%s %s' "$n" "$title" | tr '[:upper:]' '[:lower:]')
+      for t in "${terms[@]}"; do
+        [[ "$hay" == *"$(printf '%s' "$t" | tr '[:upper:]' '[:lower:]')"* ]] || continue 2
+      done
+    fi
+    age=$(age_of "$(stat -f %m "$R/$n")")
+    kind=$(kind_of "$n")
+    lead=""; [[ "$mode" == fzf ]] && lead="$n"$'\t'
+    num=""; [[ "$mode" == fzf ]] || num=$(printf ' %3d' "$i")
+    if [[ $flag == unread ]]; then
+      printf '%s%s%s%s %s●%s %4s %s %s%s%s\n' "$lead" "$bold" "$(pad "$title" "$title_w")" "$off" "$yellow" "$off" "$age" "$(pad "$kind" 7)" "$dim" "$(pad "$n" "$name_w")" "$off$num"
+    else
+      printf '%s%s%s  %4s %s %s%s%s\n' "$lead" "$dim" "$(pad "$title" "$title_w")" "$age" "$(pad "$kind" 7)" "$(pad "$n" "$name_w")" "$off$num"
+    fi
+  done < <(names)
+}
+
+summary() {  # summary <state> [terms...]
+  local want=$1; shift
+  local total unread
+  total=$(names | grep -c . || true)
+  unread=$(names | while IFS= read -r n; do is_read "$n" || echo "$n"; done | grep -c . || true)
+  local filt=""
+  [[ "$want" != all ]] && filt=" · $want only"
+  (( $# )) && filt="$filt · matching: $*"
+  printf '%d unread of %d reports%s   %s\n' "$unread" "$total" "$filt" "$R"
+}
+
+preview() {  # preview <name>: readable text of a report
+  local p="$R/$1"
+  case "$1" in
+    *.html) sed -n '/<main/,/<\/main>/p' "$p" | sed -e 's/<\/\(p\|h[1-6]\|li\|tr\|div\|pre\)>/&\n/g' -e 's/<[^>]*>//g' \
+              -e 's/&lt;/</g; s/&gt;/>/g; s/&amp;/\&/g; s/&nbsp;/ /g' | grep -v '^[[:space:]]*$' | head -120 ;;
+    *)      head -120 "$p" ;;
+  esac
+}
+
+state_file() { echo "${REPORTS_STATE:-/dev/null}"; }
+cur_state() { local f; f=$(state_file); [[ -s "$f" ]] && cat "$f" || echo all; }
+
+pick() {  # interactive picker
+  local initial=$1; shift
+  local query="$*"
+  export REPORTS_STATE; REPORTS_STATE=$(mktemp)
+  echo "$initial" > "$REPORTS_STATE"
+  trap 'rm -f "$REPORTS_STATE"' EXIT
+  local reload="reload($SELF --fzf-rows)"
+  rows "$initial" fzf | fzf --ansi --reverse --height=85% --border=none --no-sort \
+    --delimiter=$'\t' --with-nth=2 --nth=1.. --query="$query" \
+    --prompt="$initial> " --info=inline-right \
+    --header=$'enter open · ctrl-u unread · ctrl-r read · ctrl-a all · ctrl-t toggle read · ctrl-p preview · esc quit' \
+    --preview="$SELF --preview {1}" --preview-window='right,45%,wrap,hidden' \
+    --bind="enter:execute-silent($SELF open {1})+$reload" \
+    --bind="ctrl-t:execute-silent($SELF toggle {1})+$reload" \
+    --bind="ctrl-u:execute-silent(echo unread > \$REPORTS_STATE)+$reload+transform-prompt(echo 'unread> ')" \
+    --bind="ctrl-r:execute-silent(echo read > \$REPORTS_STATE)+$reload+transform-prompt(echo 'read> ')" \
+    --bind="ctrl-a:execute-silent(echo all > \$REPORTS_STATE)+$reload+transform-prompt(echo 'all> ')" \
+    --bind="ctrl-p:toggle-preview" > /dev/null || true
+}
+
+# Hidden helpers used by the picker's key bindings.
+case "${1:-}" in
+  --fzf-rows) rows "$(cur_state)" fzf; exit 0 ;;
+  --preview)  preview "$2"; exit 0 ;;
+  toggle)     if is_read "$2"; then mark unread "$2"; else mark read "$2"; fi; exit 0 ;;
+esac
+
+cmd=${1:-}
+case "$cmd" in
+  path) echo "$R" ;;
+  open)
+    name=$(resolve "${2:?name or number}")
+    open -a "Google Chrome" "$R/$name"; mark read "$name"; echo "opened and marked read: $name" ;;
+  read)
+    if [[ "${2:-}" == all ]]; then names > "$READ"; echo "all marked read"; exit 0; fi
+    name=$(resolve "${2:?name or number}"); mark read "$name"; echo "read: $name" ;;
+  unread)
+    name=$(resolve "${2:?name or number}"); mark unread "$name"; echo "unread: $name" ;;
+  -h|--help|help) sed -n '2,19p' "$0" ;;
+  *)
+    want=all; plain=0; terms=()
+    for a in "$@"; do
+      case "$a" in
+        -u|--unread) want=unread ;;
+        -r|--read)   want=read ;;
+        -l|--list)   plain=1 ;;
+        *)           terms+=("$a") ;;
+      esac
+    done
+    if [[ $plain -eq 0 && -t 1 && -t 0 ]] && command -v fzf >/dev/null 2>&1; then
+      pick "$want" ${terms[@]+"${terms[@]}"}
+    else
+      summary "$want" ${terms[@]+"${terms[@]}"}
+      body=$(rows "$want" list ${terms[@]+"${terms[@]}"})
+      if [[ -z "$body" ]]; then echo "  (nothing matches)"; else printf '%s\n' "$body"; fi
+    fi
+    ;;
+esac

@@ -43,6 +43,7 @@
 	excluded = !git ls-files --others --ignored --exclude-standard --directory
 	label = !$DOT/bin/git-branch-label
 	labels = !$DOT/bin/git-branch-label list
+	reports = !$DOT/bin/git-reports
 
 [color]
 	ui = auto
