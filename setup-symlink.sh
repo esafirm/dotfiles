@@ -83,20 +83,12 @@ ln -sfn ~/dotfiles/.config/opencode/scripts/ai-trash.sh ~/.config/opencode/scrip
 rm -rf ~/.config/opencode/skill ~/.config/opencode/skills
 ln -sfn ~/.claude/skills ~/.config/opencode/skills
 
-## Command Code
-mkdir -p ~/.commandcode
-ln -sfn ~/dotfiles/.config/commandcode/AGENTS.md ~/.commandcode/AGENTS.md
-ln -sfn ~/dotfiles/.config/commandcode/settings.json ~/.commandcode/settings.json
-ln -sfn ~/dotfiles/.config/commandcode/mcp.json ~/.commandcode/mcp.json
-ln -sfn ~/dotfiles/.config/commandcode/commands ~/.commandcode/commands
-ln -sfn ~/dotfiles/.config/commandcode/hooks ~/.commandcode/hooks
-
 ## Agent skills (~/.agents)
 ln -sfn ~/dotfiles/.agents/skills ~/.agents/skills
 ln -sfn ~/dotfiles/.agents/.skill-lock.json ~/.agents/.skill-lock.json
 
 ## Drop dangling skill links in agent fan-out dirs (uninstalled or relocated skills)
-for _skilldir in ~/.gemini/antigravity-cli/skills ~/.commandcode/skills ~/.copilot/skills; do
+for _skilldir in ~/.gemini/antigravity-cli/skills ~/.copilot/skills; do
   [ -d "$_skilldir" ] || continue
   find "$_skilldir" -maxdepth 1 -type l ! -exec test -e {} \; -delete 2>/dev/null
 done
