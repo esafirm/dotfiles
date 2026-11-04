@@ -39,19 +39,6 @@ For plugin we use [vim-plug](https://github.com/junegunn/vim-plug) and the setup
 
 `.agents/AGENTS.md` is the single shared instruction file. `setup-symlink.sh` links it to `~/.claude/CLAUDE.md`, `~/.gemini/GEMINI.md`, and `~/.config/opencode/AGENTS.md`. Claude Code only reads `AGENTS.md` at project level, so the user-level `~/.claude/CLAUDE.md` link is still required.
 
-## Command Code
-
-User-scope config lives in `.config/commandcode/` and is symlinked into `~/.commandcode/` by `setup-symlink.sh`:
-
-- `AGENTS.md` — user memory, loaded in every project (imports `~/.claude/CLAUDE.md`)
-- `mcp.json` — user-scope MCP servers (android-studio, idea, android-studio-debugger, firebase)
-- `settings.json` — extra skill paths (`~/.claude/skills`) and the `PreToolUse` secrets guard
-- `commands/` — user slash commands (e.g. `/trash`)
-- `hooks/` — hook scripts referenced from `settings.json`
-
-Skills under `~/.agents/skills` are auto-discovered by Command Code and need no extra wiring.
-Never version `~/.commandcode/auth.json`, `history.jsonl`, `projects/`, or `file-history/`.
-
 ## MCP Sync
 
 `opencode.jsonc` is the source of truth for MCP servers and their permissions. Claude Code servers are registered by the `claude_mcp` block in `setup-symlink.sh`, and MCP permissions live in `.config/claude/settings.json`.
