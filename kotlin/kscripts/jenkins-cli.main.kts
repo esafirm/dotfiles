@@ -89,6 +89,11 @@ fun printUsage() {
           get-job-config <name-or-url>         Print a job's config.xml
           update-job-config <name-or-url> <config-file>
                                                Update a job's config.xml (full replace)
+          failure-causes [filter]              List Build Failure Analyzer causes (id, name, categories)
+          failure-causes get <id>              Show a cause's description and indication patterns
+          failure-causes create <cause.json>   Create a cause from JSON
+          failure-causes update <id> <cause.json>
+                                               Update a cause from JSON
           validate <jenkinsfile> [jenkins-url] Check a declarative Jenkinsfile's syntax on the server
           build-info <job>/<buildNumber>       Show a build's result and parameters
                      or <build-url>
@@ -451,6 +456,124 @@ fun updateJobConfig(ref: String, configFile: String) {
         kotlin.system.exitProcess(1)
     }
     println("  Status: $status")
+}
+
+// ── failure-causes (Build Failure Analyzer) ───────────────────────────────
+val bfaUrl = "$jenkinsBaseUrl/failure-cause-management"
+
+val BFA_MULTILINE_INDICATION =
+    "com.sonyericsson.jenkins.plugins.bfa.model.indication.MultilineBuildLogIndication"
+val BFA_LINE_INDICATION =
+    "com.sonyericsson.jenkins.plugins.bfa.model.indication.BuildLogIndication"
+
+fun unescapeHtml(value: String): String =
+    value.replace("&lt;", "<")
+        .replace("&gt;", ">")
+        .replace("&quot;", "\"")
+        .replace("&#39;", "'")
+        .replace("&amp;", "&")
+
+fun fetchText(url: String): String = fetchUrl(url).inputStream.bufferedReader().readText()
+
+fun failureCauses(filter: String?) {
+    val html = fetchText("$bfaUrl/")
+    val table = Regex("""<table[^>]*id="failureCausesTable".*?</table>""", RegexOption.DOT_MATCHES_ALL)
+        .find(html)?.value ?: error("Could not find the failure-cause table at $bfaUrl")
+    println("─── Failure Causes ──────────────────────")
+    println("  Server: $bfaUrl")
+    println()
+    var found = 0
+    for (row in Regex("""<tr>(.*?)</tr>""", RegexOption.DOT_MATCHES_ALL).findAll(table)) {
+        val link = Regex("""<td><a href="([^"]+)">([^<]+)</a></td>""").find(row.value) ?: continue
+        val id = link.groupValues[1]
+        val name = unescapeHtml(link.groupValues[2])
+        if (!name.contains(filter.orEmpty(), ignoreCase = true)) continue
+        val cells = Regex("""<td[^>]*>(.*?)</td>""", RegexOption.DOT_MATCHES_ALL)
+            .findAll(row.value).map { it.groupValues[1] }.toList()
+        val categories = cells.getOrNull(1)
+            ?.replace(Regex("<[^>]+>"), "")
+            ?.let(::unescapeHtml)
+            ?.trim()
+            .orEmpty()
+        println("  $id  $name${if (categories.isNotEmpty()) "  [$categories]" else ""}")
+        found++
+    }
+    if (found == 0) println("  (no causes${filter?.let { " matching '$it'" } ?: ""})")
+}
+
+fun failureCause(id: String) {
+    val html = fetchText("$bfaUrl/$id/")
+    fun input(field: String): String? {
+        val tag = Regex("""<input[^>]*name="${Regex.escape(field)}"[^>]*>""").find(html)?.value ?: return null
+        return Regex("""value="([^"]*)"""").find(tag)?.groupValues?.get(1)?.let(::unescapeHtml)
+    }
+    fun area(field: String): String? =
+        Regex("""<textarea[^>]*name="${Regex.escape(field)}"[^>]*>(.*?)</textarea>""", RegexOption.DOT_MATCHES_ALL)
+            .find(html)?.groupValues?.get(1)?.let(::unescapeHtml)?.trim()
+
+    println("─── Failure Cause ───────────────────────")
+    println("  Id: ${input("_.id") ?: id}")
+    println("  Name: ${input("_.name") ?: ""}")
+    println("  Categories: ${input("_.categories") ?: ""}")
+    println("  Comment: ${area("_.comment") ?: ""}")
+    println("  Description:")
+    for (line in (area("_.description") ?: "").lines()) println("    $line")
+    println("  Indications:")
+    for (match in Regex("""<input[^>]*name="pattern"[^>]*value="([^"]*)"""").findAll(html)) {
+        val pattern = unescapeHtml(match.groupValues[1])
+        if (pattern.isEmpty()) continue
+        val descriptor = Regex("""descriptorId="([^"]+)"""")
+            .findAll(html.substring(0, match.range.first)).lastOrNull()
+            ?.groupValues?.get(1)?.substringAfterLast('.')
+        println("    - ${descriptor ?: "indication"}: $pattern")
+    }
+}
+
+fun saveFailureCause(id: String?, file: String) {
+    val cause = Json.parseToJsonElement(File(file).readText()).jsonObject
+    val form = buildJsonObject {
+        put("id", id ?: "")
+        put("name", cause.str("name") ?: error("Cause JSON needs a name"))
+        put("description", cause.str("description") ?: error("Cause JSON needs a description"))
+        put("comment", cause.str("comment") ?: "")
+        put("categories", cause.str("categories") ?: "")
+        put("indications", buildJsonArray {
+            val entries = cause["indications"]?.jsonArray ?: error("Cause JSON needs an indications array")
+            for (entry in entries) {
+                val indication = entry.jsonObject
+                val clazz = when (val type = indication.str("type") ?: "multiline") {
+                    "multiline" -> BFA_MULTILINE_INDICATION
+                    "line" -> BFA_LINE_INDICATION
+                    else -> error("Unknown indication type '$type' (use 'multiline' or 'line')")
+                }
+                addJsonObject {
+                    put("stapler-class", clazz)
+                    put("\$class", clazz)
+                    put("@class", clazz)
+                    put("pattern", indication.str("pattern") ?: error("Indication JSON needs a pattern"))
+                }
+            }
+        })
+    }
+    val action = if (id == null) "Create" else "Update"
+    val url = if (id == null) "$bfaUrl/new/configSubmit" else "$bfaUrl/$id/configSubmit"
+    println("─── $action Failure Cause ─────────────────")
+    println("  ${form.str("name")}")
+    val conn = fetchUrl(url, method = "POST", followRedirects = false)
+    conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
+    conn.doOutput = true
+    // Jenkins submits its forms as one JSON parameter named `json`; Stapler reads it back the same way.
+    val body = "json=" + java.net.URLEncoder.encode(form.toString(), "UTF-8")
+    conn.outputStream.use { it.write(body.toByteArray()) }
+    val status = conn.responseCode
+    if (status !in 200..302) {
+        System.err.println("Error: HTTP $status — ${conn.responseMessage}")
+        val errorText = conn.errorStream?.bufferedReader()?.readText().orEmpty()
+        Regex("""<title>(.*?)</title>""", RegexOption.DOT_MATCHES_ALL)
+            .find(errorText)?.groupValues?.get(1)?.let { System.err.println("  ${unescapeHtml(it).trim()}") }
+        kotlin.system.exitProcess(1)
+    }
+    println("  Status: $status${conn.getHeaderField("Location")?.let { " → $it" } ?: ""}")
 }
 
 // ── validate ──────────────────────────────────────────────────────────────
@@ -1055,6 +1178,11 @@ fun showSkill() {
           update-job-config <ref> <file>  POST a full replacement config.xml
           validate <jenkinsfile> [url]    Check a declarative Jenkinsfile's syntax on the server
                                           (read-only; defaults to the configured server). Exit 1 on errors.
+          failure-causes [filter]         List failure causes (id, name, categories)
+          failure-causes get <id>         Show description and indication patterns
+          failure-causes create <file>    Create from JSON: name, description, indications[{type,pattern}]
+          failure-causes update <id> <file>
+                                          Update an existing cause
 
         Triggering:
           trigger <job-url> [key=value...]   POST buildWithParameters; prints the queue URL
@@ -1153,6 +1281,23 @@ fun main(args: Array<String>) {
             val ref = args.getOrNull(1) ?: error("Usage: jenkins-cli.main.kts update-job-config <jobName-or-url> <config.xml>")
             val configFile = args.getOrNull(2) ?: error("Usage: jenkins-cli.main.kts update-job-config <jobName-or-url> <config.xml>")
             updateJobConfig(ref, configFile)
+        }
+        "failure-causes", "failure-cause", "bfa" -> {
+            when (val sub = args.getOrNull(1)) {
+                null -> failureCauses(null)
+                "get" -> failureCause(
+                    args.getOrNull(2) ?: error("Usage: jenkins-cli.main.kts failure-causes get <id>")
+                )
+                "create" -> saveFailureCause(
+                    null,
+                    args.getOrNull(2) ?: error("Usage: jenkins-cli.main.kts failure-causes create <cause.json>")
+                )
+                "update" -> saveFailureCause(
+                    args.getOrNull(2) ?: error("Usage: jenkins-cli.main.kts failure-causes update <id> <cause.json>"),
+                    args.getOrNull(3) ?: error("Usage: jenkins-cli.main.kts failure-causes update <id> <cause.json>")
+                )
+                else -> failureCauses(sub)
+            }
         }
         "validate" -> {
             val file = args.getOrNull(1) ?: error("Usage: jenkins-cli.main.kts validate <jenkinsfile> [jenkins-url]")
