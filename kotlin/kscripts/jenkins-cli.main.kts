@@ -9,17 +9,63 @@ import java.net.URI
 import java.util.Base64
 
 // ── Config ────────────────────────────────────────────────────────────────
-val user = System.getenv("JENKINS_USER") ?: error("Missing JENKINS_USER env var")
-val token = System.getenv("JENKINS_TOKEN") ?: error("Missing JENKINS_TOKEN env var")
-val auth = "Basic " + Base64.getEncoder().encodeToString("$user:$token".toByteArray())
+// Server URL resolution: JENKINS_URL env var > ~/.config/jenkins-cli/config > built-in default.
+val configFile = File(
+    System.getenv("XDG_CONFIG_HOME")?.takeIf { it.isNotBlank() } ?: "${System.getProperty("user.home")}/.config",
+    "jenkins-cli/config"
+)
+val defaultJenkinsUrl = "https://android-ci.bandlab.io"
+
+fun normalizeJenkinsUrl(raw: String): String {
+    val withScheme = if (raw.startsWith("http://") || raw.startsWith("https://")) raw else "https://$raw"
+    val trimmed = withScheme.trimEnd('/')
+    require(runCatching { URI(trimmed).host }.getOrNull() != null) { "Invalid Jenkins URL: $raw" }
+    return trimmed
+}
+
+fun configuredJenkinsUrl(): String? =
+    configFile.takeIf { it.isFile }?.readLines()
+        ?.map { it.trim() }
+        ?.firstOrNull { it.startsWith("url=") }
+        ?.substringAfter('=')
+        ?.trim()
+        ?.takeIf { it.isNotEmpty() }
+
+val jenkinsBaseUrl = try {
+    normalizeJenkinsUrl(
+        System.getenv("JENKINS_URL")?.takeIf { it.isNotBlank() }
+            ?: configuredJenkinsUrl()
+            ?: defaultJenkinsUrl
+    )
+} catch (e: IllegalArgumentException) {
+    error("${e.message}. Run `jenkins init` or edit ${configFile.absolutePath}")
+}
+
+// Credentials stay in the environment so they never end up in a dotfile.
+val user = System.getenv("JENKINS_USER")
+val auth: String by lazy {
+    val u = user ?: error("Missing JENKINS_USER env var")
+    val token = System.getenv("JENKINS_TOKEN") ?: error("Missing JENKINS_TOKEN env var")
+    "Basic " + Base64.getEncoder().encodeToString("$u:$token".toByteArray())
+}
 
 val jobs = mapOf(
     "run_ui_tests" to JobDef(
-        url = "https://jenkins.example.com/job/run_ui_tests",
+        url = "$jenkinsBaseUrl/job/run_ui_tests",
         params = listOf(
             ParamDef("branch", "branch to test"),
             ParamDef("testClass", "FQCN of test class or method", required = false),
             ParamDef("deviceName", "device pool name", default = "Pixel_7"),
+        )
+    ),
+    "run_ui_test_marathon" to JobDef(
+        url = "$jenkinsBaseUrl/job/run_ui_test_marathon",
+        params = listOf(
+            ParamDef("user", "user to attribute the run to", default = System.getenv("JENKINS_USER"), required = false),
+            ParamDef("branch", "branch or ref to test, e.g. refs/pull/123/merge"),
+            ParamDef("testApi", "test API environment", default = "prod"),
+            ParamDef("targets", """JSON array of test targets, e.g. ["annotation com.bandlab.bandlab.PageInfra"]"""),
+            ParamDef("prId", "PR number, links the run to the pull request", required = false),
         )
     )
 )
@@ -34,6 +80,7 @@ fun printUsage() {
         Usage: jenkins-cli.main.kts <command> [args]
 
         Commands:
+          init [jenkinsUrl]                    Save the server URL to ~/.config/jenkins-cli/config
           test-report <buildOrTestReportUrl>   Show build cause, summary, and failed tests
           run-job <jobName> [key=value...]     Trigger a build non-interactively
           run [<jobName>]                      Interactive mode — pick or enter params
@@ -64,14 +111,40 @@ fun printUsage() {
         Environment:
           JENKINS_USER    Jenkins username (LDAP)
           JENKINS_TOKEN   Jenkins API token
+          JENKINS_URL     Overrides the configured server URL
+
+        Config:
+          ~/.config/jenkins-cli/config   Set with `init`, overridden by JENKINS_URL
 
         Examples:
-          jenkins-cli.main.kts test-report https://jenkins.example.com/job/run_ui_tests/9299
+          jenkins-cli.main.kts init https://jenkins.example.com
+          jenkins-cli.main.kts test-report $jenkinsBaseUrl/job/run_ui_tests/9299
           jenkins-cli.main.kts run-job run_ui_tests branch=feature/test-test testClass=com.example.FooTest
-          jenkins-cli.main.kts warnings https://jenkins.example.com/job/build_android_pull_requests/87431/
-          jenkins-cli.main.kts warnings https://jenkins.example.com/job/build_android_pull_requests/87431/analysis/origin.-1125574399/
+          jenkins-cli.main.kts warnings $jenkinsBaseUrl/job/build_android_pull_requests/87431/
+          jenkins-cli.main.kts warnings $jenkinsBaseUrl/job/build_android_pull_requests/87431/analysis/origin.-1125574399/
         """.trimIndent()
     )
+}
+
+// ── init ──────────────────────────────────────────────────────────────────
+fun initConfig(args: List<String>) {
+    val existing = configuredJenkinsUrl()
+    val input = args.firstOrNull()?.takeIf { it.isNotBlank() } ?: run {
+        print("Jenkins URL [${existing ?: defaultJenkinsUrl}]: ")
+        readLine()?.trim()?.takeIf { it.isNotEmpty() }
+    }
+    val url = normalizeJenkinsUrl(input ?: existing ?: defaultJenkinsUrl)
+    configFile.parentFile?.mkdirs()
+    configFile.writeText(
+        "# Jenkins server for jenkins-cli\n" +
+            "# Overridden by the JENKINS_URL env var\n" +
+            "url=$url\n"
+    )
+    println("─── Jenkins config ────────────────────────")
+    println("  Config: ${configFile.absolutePath}")
+    println("  URL: $url")
+    println()
+    println("  Auth stays in env vars: JENKINS_USER, JENKINS_TOKEN")
 }
 
 // ── HTTP helpers ──────────────────────────────────────────────────────────
@@ -90,9 +163,11 @@ fun JsonObject?.long(key: String): Long? = this.str(key)?.toLongOrNull()
 
 fun secureJenkinsUrl(url: String): String {
     val uri = URI(url)
+    val base = URI(jenkinsBaseUrl)
     return if (
         uri.scheme.equals("http", ignoreCase = true) &&
-        uri.host.equals("android-ci.bandlab.io", ignoreCase = true)
+        base.scheme.equals("https", ignoreCase = true) &&
+        uri.host.equals(base.host, ignoreCase = true)
     ) {
         url.replaceFirst(Regex("^http:", RegexOption.IGNORE_CASE), "https:")
     } else url
@@ -547,7 +622,7 @@ fun rebuildLastFailed(ref: String) {
 fun waitForQueuedBuild(queueRef: String, timeoutSec: Int) {
     val queueUrl = secureJenkinsUrl(
         if (queueRef.startsWith("http")) queueRef.trimEnd('/')
-        else "https://android-ci.bandlab.io/queue/item/$queueRef".trimEnd('/')
+        else "$jenkinsBaseUrl/queue/item/$queueRef"
     )
     val apiUrl = "$queueUrl/api/json?tree=executable[number,url],why,cancelled"
     println("─── Waiting for queued build ──────────────")
@@ -601,7 +676,7 @@ fun showArtifacts(ref: String) {
 
 // ── plugins ───────────────────────────────────────────────────────────────
 fun showPlugins(query: String?) {
-    val url = "https://android-ci.bandlab.io/pluginManager/api/json?depth=1&tree=plugins[shortName,version,active]"
+    val url = "$jenkinsBaseUrl/pluginManager/api/json?depth=1&tree=plugins[shortName,version,active]"
     println("─── Installed Plugins ──────────────────────")
     val root = fetchJson(url).jsonObject
     val plugins = root["plugins"]?.jsonArray ?: emptyList()
@@ -617,7 +692,7 @@ fun showPlugins(query: String?) {
 }
 
 // ── groovy script execution ───────────────────────────────────────────────
-fun executeGroovy(script: String, jenkinsRoot: String = "https://android-ci.bandlab.io"): String {
+fun executeGroovy(script: String, jenkinsRoot: String = jenkinsBaseUrl): String {
     val url = "${jenkinsRoot.trimEnd('/')}/scriptText"
     val conn = fetchUrl(url, method = "POST", followRedirects = false)
     conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
@@ -941,10 +1016,15 @@ fun showSkill() {
         """
         # Jenkins CLI — Agent Skill Guide
 
-        Auth (required):
+        Auth (required for server calls):
           export JENKINS_USER=<ldap-user>
           export JENKINS_TOKEN=<api-token>
-          (the tool errors at startup if either is missing)
+
+        Server:
+          Defaults to $jenkinsBaseUrl, resolved from (in order):
+            1. JENKINS_URL env var
+            2. ~/.config/jenkins-cli/config (write it with `init [url]`)
+            3. built-in default
 
         Job references: every command accepts either a job NAME from the
         `jobs` map below or a full https:// URL. Use the URL when the job is
@@ -974,7 +1054,7 @@ fun showSkill() {
                                         Endpoint is /jobConfigHistory (NOT /configHistory).
           update-job-config <ref> <file>  POST a full replacement config.xml
           validate <jenkinsfile> [url]    Check a declarative Jenkinsfile's syntax on the server
-                                          (read-only; defaults to android-ci). Exit 1 on errors.
+                                          (read-only; defaults to the configured server). Exit 1 on errors.
 
         Triggering:
           trigger <job-url> [key=value...]   POST buildWithParameters; prints the queue URL
@@ -1010,7 +1090,8 @@ fun showSkill() {
           7. Re-trigger with params: trigger <job-url> tag=X channel=beta
 
         Notes:
-          - HTTP queue/build URLs from android-ci.bandlab.io are upgraded to HTTPS.
+          - HTTP queue/build URLs for the configured host are upgraded to HTTPS
+            when the server itself is configured with https.
           - consoleText is gzipped on the wire but transparently decompressed;
             the disk cache is plain text.
           - Config writes go through the same API the UI uses; check
@@ -1028,6 +1109,9 @@ fun main(args: Array<String>) {
     }
 
     when (args[0]) {
+        "init", "configure" -> {
+            initConfig(args.drop(1))
+        }
         "test-report" -> {
             val url = args.getOrNull(1) ?: error("Usage: jenkins-cli.main.kts test-report <testReportUrl>")
             testReport(url)
@@ -1044,6 +1128,9 @@ fun main(args: Array<String>) {
             interactiveRun(args.getOrNull(1))
         }
         "jobs" -> {
+            println("Server: $jenkinsBaseUrl")
+            println("Config: ${configFile.absolutePath}${if (configFile.isFile) "" else " (not created; run `init`)"}")
+            println()
             for ((name, def) in jobs) {
                 println("$name  → ${def.url}")
                 for (p in def.params) {
@@ -1069,7 +1156,7 @@ fun main(args: Array<String>) {
         }
         "validate" -> {
             val file = args.getOrNull(1) ?: error("Usage: jenkins-cli.main.kts validate <jenkinsfile> [jenkins-url]")
-            validateJenkinsfile(file, args.getOrNull(2) ?: "https://android-ci.bandlab.io")
+            validateJenkinsfile(file, args.getOrNull(2) ?: jenkinsBaseUrl)
         }
         "build-info" -> {
             val ref = args.getOrNull(1) ?: error("Usage: jenkins-cli.main.kts build-info <job>/<buildNumber> or <build-url>")
