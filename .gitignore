@@ -36,3 +36,13 @@ temp.sh
 ## Vim swap files
 *.swp
 *.swo
+
+## Python cache
+__pycache__/
+*.pyc
+
+## Agent skills installed outside the lock file
+.agents/skills/ghostex-*/
+.agents/skills/instabox*/
+.config/claude/skills/ghostex-*
+.config/claude/skills/instabox*
