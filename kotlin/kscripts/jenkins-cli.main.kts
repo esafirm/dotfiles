@@ -89,6 +89,7 @@ fun printUsage() {
           get-job-config <name-or-url>         Print a job's config.xml
           update-job-config <name-or-url> <config-file>
                                                Update a job's config.xml (full replace)
+          rename-job <name-or-url> <new-name>  Rename a job (build history and config are kept)
           failure-causes [filter]              List Build Failure Analyzer causes (id, name, categories)
           failure-causes get <id>              Show a cause's description and indication patterns
           failure-causes create <cause.json>   Create a cause from JSON
@@ -456,6 +457,26 @@ fun updateJobConfig(ref: String, configFile: String) {
         kotlin.system.exitProcess(1)
     }
     println("  Status: $status")
+}
+
+// ── rename-job ────────────────────────────────────────────────────────────
+fun renameJob(ref: String, newName: String) {
+    val jobUrl = resolveJobUrl(ref)
+    require(newName.isNotBlank() && '/' !in newName) { "Invalid new name '$newName'" }
+    val encoded = java.net.URLEncoder.encode(newName, "UTF-8").replace("+", "%20")
+    println("─── Rename Job ────────────────────────────")
+    println("  Job: $jobUrl")
+    println("  New name: $newName")
+    val conn = fetchUrl("$jobUrl/doRename?newName=$encoded", method = "POST", followRedirects = false)
+    conn.doOutput = true
+    conn.outputStream.use { it.write(ByteArray(0)) }
+    val status = conn.responseCode
+    if (status !in 200..302) {
+        System.err.println("Error: HTTP $status — ${conn.responseMessage}")
+        kotlin.system.exitProcess(1)
+    }
+    println("  Status: $status")
+    println("  Location: ${conn.getHeaderField("Location") ?: "-"}")
 }
 
 // ── failure-causes (Build Failure Analyzer) ───────────────────────────────
@@ -1176,6 +1197,7 @@ fun showSkill() {
                                         Pass a timestamp to also download that config.xml.
                                         Endpoint is /jobConfigHistory (NOT /configHistory).
           update-job-config <ref> <file>  POST a full replacement config.xml
+          rename-job <ref> <new-name>     Rename a job in place (history kept; old URL stops working)
           validate <jenkinsfile> [url]    Check a declarative Jenkinsfile's syntax on the server
                                           (read-only; defaults to the configured server). Exit 1 on errors.
           failure-causes [filter]         List failure causes (id, name, categories)
@@ -1281,6 +1303,11 @@ fun main(args: Array<String>) {
             val ref = args.getOrNull(1) ?: error("Usage: jenkins-cli.main.kts update-job-config <jobName-or-url> <config.xml>")
             val configFile = args.getOrNull(2) ?: error("Usage: jenkins-cli.main.kts update-job-config <jobName-or-url> <config.xml>")
             updateJobConfig(ref, configFile)
+        }
+        "rename-job" -> {
+            val ref = args.getOrNull(1) ?: error("Usage: jenkins-cli.main.kts rename-job <jobName-or-url> <new-name>")
+            val newName = args.getOrNull(2) ?: error("Usage: jenkins-cli.main.kts rename-job <jobName-or-url> <new-name>")
+            renameJob(ref, newName)
         }
         "failure-causes", "failure-cause", "bfa" -> {
             when (val sub = args.getOrNull(1)) {
