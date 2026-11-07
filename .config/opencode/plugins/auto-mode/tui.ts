@@ -1,7 +1,7 @@
 import { Plugin } from "@opencode/plugin/tui"
-import { readFileSync, writeFileSync } from "node:fs"
+import { lstatSync, readFileSync, unlinkSync, writeFileSync } from "node:fs"
 import { homedir } from "node:os"
-import { join } from "node:path"
+import { dirname, join } from "node:path"
 
 // Toggle auto-accept permissions from the TUI.
 //
@@ -50,6 +50,21 @@ function isPlainJson(text: string): boolean {
   }
 }
 
+// The TUI watches the directory that holds cli.json and reloads on any change.
+// When cli.json is a symlink into a dotfiles checkout the write lands on the
+// target in another directory, so the watcher never fires. A transient sibling
+// file makes it reload the config we just wrote.
+function nudgeConfigWatcher(path: string) {
+  try {
+    if (!lstatSync(path).isSymbolicLink()) return
+    const canary = join(dirname(path), `.auto-mode-reload-${process.pid}`)
+    writeFileSync(canary, "")
+    unlinkSync(canary)
+  } catch {
+    // A missed reload is harmless. The setting applies on the next TUI start.
+  }
+}
+
 export default Plugin.define({
   id: "auto-mode",
   setup(context) {
@@ -85,6 +100,7 @@ export default Plugin.define({
         fail(`Could not write ${path}`)
         return
       }
+      nudgeConfigWatcher(path)
 
       context.ui.toast.show({
         title: "Auto mode",
