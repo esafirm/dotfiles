@@ -36,6 +36,11 @@ alias npmls="npm ls --depth=0"
 ## Genymotion
 alias geny="open -a /Applications/Genymotion.app/Contents/MacOS/player.app --args --vm-name"
 
+# Claude Code with Remote Control (needs feature-flag evaluation enabled)
+function claude-rc {
+    env -u CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC claude "$@"
+}
+
 # Safe-rm
 alias rm="safe-rm"
 

@@ -3,7 +3,6 @@
   "cleanupPeriodDays": 36500,
   "env": {
     "API_TIMEOUT_MS": "3000000",
-    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
     "MCP_TIMEOUT": "60000"
   },
   "permissions": {
