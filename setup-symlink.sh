@@ -1,48 +1,104 @@
 #!/usr/bin/env bash
+set -euo pipefail
+source "$(dirname -- "${BASH_SOURCE[0]}")/setup-common.sh"
+[[ $# -eq 0 ]] || { printf 'Use ./setup.sh --only links for options such as --dry-run.\n' >&2; exit 2; }
 
-## Symlink all
-ln -sfn ~/dotfiles/.vimrc ~/.vimrc
-ln -sfn ~/dotfiles/.zshrc ~/.zshrc
-ln -sfn ~/dotfiles/.warprc ~/.warprc
-ln -sfn ~/dotfiles/.gitconfig ~/.gitconfig
+# Each call is: setup_link "source in this repo" "destination".
+
+## Shell and Git
+setup_link "$SETUP_ROOT/.vimrc" "$HOME/.vimrc"
+setup_link "$SETUP_ROOT/.zshrc" "$HOME/.zshrc"
+setup_link "$SETUP_ROOT/.warprc" "$HOME/.warprc"
+setup_link "$SETUP_ROOT/.gitconfig" "$HOME/.gitconfig"
 
 ## Neovim
-mkdir -p ~/.config
-ln -sfn ~/dotfiles/.config/nvim ~/.config/nvim
+setup_link "$SETUP_ROOT/.config/nvim" "$HOME/.config/nvim"
 
 ## Gemini
-mkdir -p ~/.gemini/extensions
-mkdir -p ~/.gemini/config
-ln -sfn ~/dotfiles/.gemini/settings.json ~/.gemini/settings.json
-ln -sfn ~/dotfiles/.gemini/projects.json ~/.gemini/projects.json
-ln -sfn ~/dotfiles/.agents/AGENTS.md ~/.gemini/GEMINI.md
-mkdir -p ~/.gemini/antigravity-cli
-ln -sfn ~/dotfiles/.gemini/antigravity-cli/settings.json ~/.gemini/antigravity-cli/settings.json
-ln -sfn ~/dotfiles/.gemini/extensions/extension-enablement.json ~/.gemini/extensions/extension-enablement.json
-# ~/.gemini/skills was the Gemini CLI location; skills now come from
-# ~/.agents/skills and ~/.claude/skills. Drop a stale link if present.
-if [[ -L ~/.gemini/skills ]]; then rm -f ~/.gemini/skills; fi
-ln -sfn ~/dotfiles/.gemini/config/mcp_config.json ~/.gemini/config/mcp_config.json
+setup_link "$SETUP_ROOT/.gemini/settings.json" "$HOME/.gemini/settings.json"
+setup_link "$SETUP_ROOT/.gemini/projects.json" "$HOME/.gemini/projects.json"
+setup_link "$SETUP_ROOT/.agents/AGENTS.md" "$HOME/.gemini/GEMINI.md"
+setup_link "$SETUP_ROOT/.gemini/antigravity-cli/settings.json" "$HOME/.gemini/antigravity-cli/settings.json"
+setup_link "$SETUP_ROOT/.gemini/extensions/extension-enablement.json" "$HOME/.gemini/extensions/extension-enablement.json"
+setup_link "$SETUP_ROOT/.gemini/config/mcp_config.json" "$HOME/.gemini/config/mcp_config.json"
 
 ## Claude Code
-mkdir -p ~/.claude
-ln -sfn ~/dotfiles/.config/claude/settings.json ~/.claude/settings.json
-if [[ ! -e ~/.claude/keybindings.json && ! -L ~/.claude/keybindings.json ]]; then
-  ln -s ~/dotfiles/.config/claude/keybindings.json ~/.claude/keybindings.json
+setup_link "$SETUP_ROOT/.config/claude/settings.json" "$HOME/.claude/settings.json"
+if [[ ! -e "$HOME/.claude/keybindings.json" && ! -L "$HOME/.claude/keybindings.json" ]]; then
+  setup_link "$SETUP_ROOT/.config/claude/keybindings.json" "$HOME/.claude/keybindings.json"
 else
-  echo "Keeping existing ~/.claude/keybindings.json (not replacing it)"
+  printf '  Keeping existing ~/.claude/keybindings.json (not replacing it)\n'
 fi
-ln -sfn ~/dotfiles/.agents/AGENTS.md ~/.claude/CLAUDE.md
-ln -sfn ~/dotfiles/.config/claude/skills ~/.claude/skills
-mkdir -p ~/.claude/hooks
-ln -sfn ~/dotfiles/.config/claude/hooks/herdr-agent-state.sh ~/.claude/hooks/herdr-agent-state.sh
-ln -sfn ~/dotfiles/.config/claude/statusline-command.sh ~/.claude/statusline-command.sh
-# MCP servers live in ~/.claude.json (mixed with runtime state), so register them via CLI.
+setup_link "$SETUP_ROOT/.agents/AGENTS.md" "$HOME/.claude/CLAUDE.md"
+setup_link "$SETUP_ROOT/.config/claude/skills" "$HOME/.claude/skills"
+setup_link "$SETUP_ROOT/.config/claude/hooks/herdr-agent-state.sh" "$HOME/.claude/hooks/herdr-agent-state.sh"
+setup_link "$SETUP_ROOT/.config/claude/statusline-command.sh" "$HOME/.claude/statusline-command.sh"
+
+## OpenCode
+setup_link "$SETUP_ROOT/opencode.jsonc" "$HOME/.config/opencode/opencode.jsonc"
+setup_link "$SETUP_ROOT/.agents/AGENTS.md" "$HOME/.config/opencode/AGENTS.md"
+setup_link "$SETUP_ROOT/.config/opencode/cli.json" "$HOME/.config/opencode/cli.json"
+setup_link "$SETUP_ROOT/.config/opencode/plugins/auto-mode" "$HOME/.config/opencode/plugins/auto-mode"
+setup_link "$SETUP_ROOT/.config/opencode/package.json" "$HOME/.config/opencode/package.json"
+setup_link "$SETUP_ROOT/.config/opencode/package-lock.json" "$HOME/.config/opencode/package-lock.json"
+setup_link "$SETUP_ROOT/.config/opencode/.gitignore" "$HOME/.config/opencode/.gitignore"
+setup_link "$SETUP_ROOT/.config/opencode/agents/advice.md" "$HOME/.config/opencode/agents/advice.md"
+setup_link "$SETUP_ROOT/.config/opencode/agents/pr-reviewer.md" "$HOME/.config/opencode/agents/pr-reviewer.md"
+setup_link "$SETUP_ROOT/.config/opencode/agents/verify-finding.md" "$HOME/.config/opencode/agents/verify-finding.md"
+setup_link "$SETUP_ROOT/.config/opencode/commands/workflow-audit.md" "$HOME/.config/opencode/commands/workflow-audit.md"
+setup_link "$SETUP_ROOT/.config/opencode/commands/advice.md" "$HOME/.config/opencode/commands/advice.md"
+setup_link "$SETUP_ROOT/.config/opencode/commands/review-pr.md" "$HOME/.config/opencode/commands/review-pr.md"
+setup_link "$SETUP_ROOT/.config/opencode/commands/verify.md" "$HOME/.config/opencode/commands/verify.md"
+setup_link "$SETUP_ROOT/.config/opencode/commands/trash.md" "$HOME/.config/opencode/commands/trash.md"
+setup_link "$SETUP_ROOT/.config/opencode/scripts/workflow-audit.sh" "$HOME/.config/opencode/scripts/workflow-audit.sh"
+setup_link "$SETUP_ROOT/.config/opencode/scripts/review-pr.sh" "$HOME/.config/opencode/scripts/review-pr.sh"
+setup_link "$SETUP_ROOT/.config/opencode/scripts/ai-trash.sh" "$HOME/.config/opencode/scripts/ai-trash.sh"
+setup_link "$SETUP_ROOT/.config/claude/skills" "$HOME/.config/opencode/skills"
+
+## Shared agent skills
+setup_link "$SETUP_ROOT/.agents/skills" "$HOME/.agents/skills"
+setup_link "$SETUP_ROOT/.agents/.skill-lock.json" "$HOME/.agents/.skill-lock.json"
+
+## CLI tools
+setup_link "$SETUP_ROOT/kotlin/kscripts/jenkins-cli.main.kts" "$HOME/scripts/jenkins-cli.main.kts"
+setup_link "$SETUP_ROOT/bin/llm-wiki-mcp" "$HOME/.local/bin/llm-wiki-mcp"
+setup_link "$SETUP_ROOT/bin/play-store-mcp" "$HOME/.local/bin/play-store-mcp"
+setup_link "$SETUP_ROOT/kotlin/kscripts/jenkins" "$SETUP_ROOT/bin/jenkins"
+
+## herdr
+setup_link "$SETUP_ROOT/.config/herdr/config.toml" "$HOME/.config/herdr/config.toml"
+setup_link "$SETUP_ROOT/.config/herdr/presentation.toml" "$HOME/.config/herdr/presentation.toml"
+setup_link "$SETUP_ROOT/bin/herdr-presentation" "$HOME/.local/bin/herdr-presentation"
+setup_link "$SETUP_ROOT/bin/herdr-presentation-status" "$HOME/.local/bin/herdr-presentation-status"
+
+## Ghostty
+setup_link "$SETUP_ROOT/.config/ghostty/config" "$HOME/.config/ghostty/config"
+setup_link "$SETUP_ROOT/.config/ghostty/appearance" "$HOME/.config/ghostty/appearance"
+setup_link "$SETUP_ROOT/.config/ghostty/config" "$HOME/Library/Application Support/com.mitchellh.ghostty/config"
+setup_link "$SETUP_ROOT/.config/ghostty/appearance" "$HOME/Library/Application Support/com.mitchellh.ghostty/appearance"
+
+# Claude's config mixes MCP servers with runtime state, so register them via CLI.
 # Keep in sync with opencode.jsonc.
 if command -v claude >/dev/null 2>&1; then
+  claude_config="${CLAUDE_CONFIG_DIR:-$HOME}/.claude.json"
+  mcp_backed_up=0
   claude_mcp() {
-    claude mcp remove -s user "$1" >/dev/null 2>&1
-    claude mcp add-json -s user "$1" "$2"
+    local comparison='def defaults: .args //= [] | .env //= {}; (.mcpServers[$name] | defaults) == ($expected | defaults)'
+    # jq is optional. Without it, safely refresh entries as before.
+    if command -v jq >/dev/null 2>&1 && [[ -f "$claude_config" ]] &&
+      jq -e --arg name "$1" --argjson expected "$2" "$comparison" "$claude_config" >/dev/null 2>&1; then
+      printf '  MCP already configured: %s\n' "$1"
+      return 0
+    fi
+    if [[ "$mcp_backed_up" == 0 ]]; then
+      if [[ -f "$claude_config" ]]; then
+        setup_backup "$claude_config" copy
+      fi
+      mcp_backed_up=1
+    fi
+    # remove returns nonzero for absent entries. The following add must succeed.
+    setup_run claude mcp remove -s user "$1" >/dev/null 2>&1 || true
+    setup_run claude mcp add-json -s user "$1" "$2"
   }
   claude_mcp android-studio '{"type":"http","url":"http://127.0.0.1:64342/stream"}'
   claude_mcp firebase '{"type":"stdio","command":"firebase","args":["mcp","--only","crashlytics","--dir","/tmp"]}'
@@ -52,77 +108,28 @@ if command -v claude >/dev/null 2>&1; then
 fi
 
 ## Dotfiles git hooks (pre-push verifies MCP sync between opencode and Claude)
-git -C ~/dotfiles config core.hooksPath .githooks
-
-## opencode
-mkdir -p ~/.config/opencode
-ln -sfn ~/dotfiles/opencode.jsonc ~/.config/opencode/opencode.jsonc
-ln -sfn ~/dotfiles/.agents/AGENTS.md ~/.config/opencode/AGENTS.md
-ln -sfn ~/dotfiles/.config/opencode/cli.json ~/.config/opencode/cli.json
-mkdir -p ~/.config/opencode/plugins
-ln -sfn ~/dotfiles/.config/opencode/plugins/auto-mode ~/.config/opencode/plugins/auto-mode
-ln -sfn ~/dotfiles/.config/opencode/package.json ~/.config/opencode/package.json
-ln -sfn ~/dotfiles/.config/opencode/package-lock.json ~/.config/opencode/package-lock.json
-ln -sfn ~/dotfiles/.config/opencode/.gitignore ~/.config/opencode/.gitignore
-mkdir -p ~/.config/opencode/agents
-ln -sfn ~/dotfiles/.config/opencode/agents/advice.md ~/.config/opencode/agents/advice.md
-ln -sfn ~/dotfiles/.config/opencode/agents/pr-reviewer.md ~/.config/opencode/agents/pr-reviewer.md
-ln -sfn ~/dotfiles/.config/opencode/agents/verify-finding.md ~/.config/opencode/agents/verify-finding.md
-mkdir -p ~/.config/opencode/commands
-ln -sfn ~/dotfiles/.config/opencode/commands/workflow-audit.md ~/.config/opencode/commands/workflow-audit.md
-ln -sfn ~/dotfiles/.config/opencode/commands/advice.md ~/.config/opencode/commands/advice.md
-ln -sfn ~/dotfiles/.config/opencode/commands/review-pr.md ~/.config/opencode/commands/review-pr.md
-ln -sfn ~/dotfiles/.config/opencode/commands/verify.md ~/.config/opencode/commands/verify.md
-ln -sfn ~/dotfiles/.config/opencode/commands/trash.md ~/.config/opencode/commands/trash.md
-mkdir -p ~/.config/opencode/scripts
-ln -sfn ~/dotfiles/.config/opencode/scripts/workflow-audit.sh ~/.config/opencode/scripts/workflow-audit.sh
-ln -sfn ~/dotfiles/.config/opencode/scripts/review-pr.sh ~/.config/opencode/scripts/review-pr.sh
-ln -sfn ~/dotfiles/.config/opencode/scripts/ai-trash.sh ~/.config/opencode/scripts/ai-trash.sh
-
-## Consolidate opencode skill dir to dotfiles-managed .config/claude/skills
-rm -rf ~/.config/opencode/skill ~/.config/opencode/skills
-ln -sfn ~/.claude/skills ~/.config/opencode/skills
-
-## Agent skills (~/.agents)
-ln -sfn ~/dotfiles/.agents/skills ~/.agents/skills
-ln -sfn ~/dotfiles/.agents/.skill-lock.json ~/.agents/.skill-lock.json
-
-## Drop dangling skill links in agent fan-out dirs (uninstalled or relocated skills)
-for _skilldir in ~/.gemini/antigravity-cli/skills ~/.copilot/skills; do
-  [ -d "$_skilldir" ] || continue
-  find "$_skilldir" -maxdepth 1 -type l ! -exec test -e {} \; -delete 2>/dev/null
-done
-
-## Jenkins CLI
-mkdir -p ~/scripts
-ln -sfn ~/dotfiles/kotlin/kscripts/jenkins-cli.main.kts ~/scripts/jenkins-cli.main.kts
-# Expose Jenkins CLI on PATH as `jenkins` (wrapper in kotlin/kscripts,
-# since a bare symlink without the .kts extension is not treated as a script)
-ln -sfn ~/dotfiles/kotlin/kscripts/jenkins ~/dotfiles/bin/jenkins
-
-## LLM Wiki MCP
-mkdir -p ~/.local/bin
-ln -sfn ~/dotfiles/bin/llm-wiki-mcp ~/.local/bin/llm-wiki-mcp
-
-## Play Store MCP
-ln -sfn ~/dotfiles/bin/play-store-mcp ~/.local/bin/play-store-mcp
-
-## herdr
-mkdir -p ~/.config/herdr
-ln -sfn ~/dotfiles/.config/herdr/config.toml ~/.config/herdr/config.toml
-ln -sfn ~/dotfiles/.config/herdr/presentation.toml ~/.config/herdr/presentation.toml
-ln -sfn ~/dotfiles/bin/herdr-presentation ~/.local/bin/herdr-presentation
-ln -sfn ~/dotfiles/bin/herdr-presentation-status ~/.local/bin/herdr-presentation-status
-
-## Ghostty
-mkdir -p ~/.config/ghostty
-ln -sfn ~/dotfiles/.config/ghostty/config ~/.config/ghostty/config
-ln -sfn ~/dotfiles/.config/ghostty/appearance ~/.config/ghostty/appearance
-mkdir -p ~/Library/Application\ Support/com.mitchellh.ghostty
-ln -sfn ~/dotfiles/.config/ghostty/config ~/Library/Application\ Support/com.mitchellh.ghostty/config
-ln -sfn ~/dotfiles/.config/ghostty/appearance ~/Library/Application\ Support/com.mitchellh.ghostty/appearance
+if [[ "$(git -C "$SETUP_ROOT" config --local --get core.hooksPath || true)" != .githooks ]]; then
+  git_config="$(git -C "$SETUP_ROOT" rev-parse --path-format=absolute --git-path config)"
+  setup_backup "$git_config" copy
+  setup_run git -C "$SETUP_ROOT" config --local core.hooksPath .githooks
+fi
 
 ## Ghostex keeps its own managed settings; include the shared appearance.
-mkdir -p ~/.config/ghostex/ghostty
-touch ~/.config/ghostex/ghostty/config.ghostty
-grep -Fqx 'config-file = ../../ghostty/appearance' ~/.config/ghostex/ghostty/config.ghostty || printf '\n# Shared with Ghostty\nconfig-file = ../../ghostty/appearance\n' >> ~/.config/ghostex/ghostty/config.ghostty
+ghostex="$HOME/.config/ghostex/ghostty/config.ghostty"
+if ! grep -Fqx 'config-file = ../../ghostty/appearance' "$ghostex" 2>/dev/null; then
+  if [[ -e "$ghostex" ]]; then
+    setup_backup "$ghostex" copy
+  fi
+  printf '  Append shared Ghostty appearance to %s\n' "$ghostex"
+  if [[ "$SETUP_DRY_RUN" != 1 ]]; then
+    mkdir -p -- "$(dirname -- "$ghostex")"
+    printf '\n# Shared with Ghostty\nconfig-file = ../../ghostty/appearance\n' >> "$ghostex"
+  fi
+fi
+
+# Legacy locations are preserved rather than deleting potentially user-owned skills.
+for legacy in "$HOME/.gemini/skills" "$HOME/.config/opencode/skill"; do
+  if [[ -e "$legacy" || -L "$legacy" ]]; then
+    printf '  Legacy skills left untouched: %s\n' "$legacy"
+  fi
+done

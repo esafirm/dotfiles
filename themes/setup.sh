@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
+set -euo pipefail
+source "$(dirname -- "${BASH_SOURCE[0]}")/../setup-common.sh"
+[[ $# -eq 0 ]] || { printf 'Use ./setup.sh --only theme for options such as --dry-run.\n' >&2; exit 2; }
 
-THEME_FILE=$DOT/themes/theme.sh
+ZSH="${ZSH:-$HOME/.oh-my-zsh}"
+if [[ ! -d "$ZSH" ]]; then
+  printf 'Skip theme: Oh My Zsh is missing.\n'
+  exit 0
+fi
 
-# Sometimes the custom path is empty. Use default one
-ZSH_CUSTOM="$ZSH/custom"
-
-# Oh My ZSH Bullet Train theme
-BULLET_DIR=$ZSH_CUSTOM/themes/bullet-train.zsh-theme
-
-ln -s $THEME_FILE $BULLET_DIR
-sed -i '' 's/ZSH_THEME="robbyrussell"/ZSH_THEME="bullet-train"/g' ~/.zshrc
+# The managed .zshrc already selects bullet-train. Never edit a user's .zshrc here.
+setup_link "$SETUP_ROOT/themes/theme.sh" "${ZSH_CUSTOM:-$ZSH/custom}/themes/bullet-train.zsh-theme"

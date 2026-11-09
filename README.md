@@ -8,20 +8,55 @@ The first thing you should remember is:
 
 1. Generate yout SSH key
 2. Update that key to remote repo (Github for dotfiles)
-3. Clone dotfiles to `~/dotfiles`
+3. Clone dotfiles to `~/dotfiles` (the shell config expects this location)
 
-You don't need to:
+For the managed shell config, install [Oh My Zsh](https://ohmyz.sh/) first and use Zsh
+as your login shell. Setup links the theme but does not install Oh My Zsh or change
+your login shell.
 
-1. Install oh-my-zsh and set the theme manually
-2. Set default login shell to zsh 
+Run `./setup.sh`. It previews the changes and asks before applying them (default: no).
 
+```sh
+./setup.sh --dry-run          # Preview only. No file changes or installs.
+./setup.sh --only links       # Config links, Claude MCP, Git hooks, and Ghostex include.
+./setup.sh --only brew        # Just missing Homebrew packages and apps.
+./setup.sh --yes              # Apply all steps without the setup prompt.
+./setup.sh --help
+```
 
-So what you've got to do is:
+Setup finds the repository from its own location, not `$DOT` or your working directory.
+It skips correct links, missing optional sources, installed packages, and installed herdr plugins.
+Oh My Zsh and herdr are optional. Missing tools are reported and their steps skipped.
+Homebrew is installed only when missing. Formulae and casks use separate install commands.
+There is no bulk upgrade, cleanup, plugin uninstall, or recursive skill deletion. Homebrew
+can still install or upgrade dependencies required by a new package. Installers may prompt
+for sudo, and herdr plugins are third-party code.
+Homebrew metadata is not refreshed automatically. If an install fails because metadata
+is stale, run `brew update` yourself before retrying. This does not upgrade packages.
 
-1. Run `./setup-zsh.sh` to setup ZSH
-2. Run `./setup.sh` to install everything else
+When `jq` is available, unchanged Claude MCP entries are skipped. Otherwise entries
+are refreshed on each run, with one full Claude config backup before changes. The
+config is `~/.claude.json`, or `$CLAUDE_CONFIG_DIR/.claude.json` when overridden.
+Backups are retained without automatic pruning.
 
-Please read the script first when you want to run it. 
+Conflicting files, directories, and symlinks are moved intact into a private
+`~/.dotfiles-backups/<run>/` directory, preserving physical absolute paths beneath it.
+Setup refuses symlinked or foreign-owned backup directories and enforces owner-only
+directory access. Configs edited in place (Claude's MCP config, this repo's Git config,
+and Ghostex's appearance include) are copied there first. The output shows every backup
+path. To restore a conflict, move
+the new link aside, then move its backup back to the original path. To undo an in-place
+edit, copy the backed-up file over the original. Stop the affected app before restoring
+its config, and keep any newer edits you want first. Backups may contain credentials.
+
+Setup stops on errors and names the failed step. Completed steps are not automatically
+rolled back. Fix the reported issue and rerun, or use `--only` for the affected step.
+Piped/non-interactive runs require `--yes` or `--dry-run`. Prefer this entry point over
+the lower-level setup scripts, which apply immediately without arguments and reject
+options rather than silently ignoring them.
+
+Safety checks (isolated homes and fake installers, no actual installs):
+`python3 -B tests/test_setup.py`.
 
 ## VScode 
 
@@ -71,4 +106,4 @@ Currently, we still need to manually setup this because we haven't found a way t
 
 ## Author
 
-esafirm 
+esafirm
