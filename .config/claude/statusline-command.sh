@@ -82,5 +82,7 @@ fi
 
 printf '%s' "$out"
 
-printf '%s' "$input" | "$HOME/.local/share/ghostex/hooks/agent-statusline.sh" >/dev/null 2>&1
+if [ -f "$HOME/.ghostex/hooks/agent-statusline.sh" ]; then
+  printf '%s' "$input" | "$HOME/.ghostex/hooks/agent-statusline.sh" >/dev/null 2>&1
+fi
 printf '\n'

@@ -60,7 +60,7 @@
       "mcp__android-studio__replace_text_in_file"
     ]
   },
-  "model": "sonnet",
+  "model": "opus",
   "hooks": {
     "SessionStart": [
       {
@@ -78,7 +78,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "GHOSTEX_AGENT='claude' $HOME/.local/share/ghostex/hooks/agent-shell-notify.sh",
+            "command": "f=\"$HOME/.ghostex/hooks/agent-shell-notify.sh\"; [ -f \"$f\" ] && GHOSTEX_AGENT='claude' /bin/bash \"$f\" || true",
             "timeout": 5
           }
         ]
@@ -90,7 +90,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "GHOSTEX_AGENT='claude' $HOME/.local/share/ghostex/hooks/agent-shell-notify.sh",
+            "command": "f=\"$HOME/.ghostex/hooks/agent-shell-notify.sh\"; [ -f \"$f\" ] && GHOSTEX_AGENT='claude' /bin/bash \"$f\" || true",
             "timeout": 5
           }
         ]
@@ -102,7 +102,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "GHOSTEX_AGENT='claude' $HOME/.local/share/ghostex/hooks/agent-shell-notify.sh",
+            "command": "f=\"$HOME/.ghostex/hooks/agent-shell-notify.sh\"; [ -f \"$f\" ] && GHOSTEX_AGENT='claude' /bin/bash \"$f\" || true",
             "timeout": 5
           }
         ]
@@ -114,7 +114,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "GHOSTEX_AGENT='claude' $HOME/.local/share/ghostex/hooks/agent-shell-notify.sh",
+            "command": "f=\"$HOME/.ghostex/hooks/agent-shell-notify.sh\"; [ -f \"$f\" ] && GHOSTEX_AGENT='claude' /bin/bash \"$f\" || true",
             "timeout": 5
           }
         ]
@@ -126,7 +126,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "GHOSTEX_AGENT='claude' $HOME/.local/share/ghostex/hooks/agent-shell-notify.sh",
+            "command": "f=\"$HOME/.ghostex/hooks/agent-shell-notify.sh\"; [ -f \"$f\" ] && GHOSTEX_AGENT='claude' /bin/bash \"$f\" || true",
             "timeout": 5
           }
         ]
@@ -138,7 +138,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "GHOSTEX_AGENT='claude' $HOME/.local/share/ghostex/hooks/agent-shell-notify.sh",
+            "command": "f=\"$HOME/.ghostex/hooks/agent-shell-notify.sh\"; [ -f \"$f\" ] && GHOSTEX_AGENT='claude' /bin/bash \"$f\" || true",
             "timeout": 5
           }
         ]
@@ -150,7 +150,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "GHOSTEX_AGENT='claude' $HOME/.local/share/ghostex/hooks/agent-shell-notify.sh",
+            "command": "f=\"$HOME/.ghostex/hooks/agent-shell-notify.sh\"; [ -f \"$f\" ] && GHOSTEX_AGENT='claude' /bin/bash \"$f\" || true",
             "timeout": 5
           }
         ]
@@ -162,7 +162,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "GHOSTEX_AGENT='claude' $HOME/.local/share/ghostex/hooks/agent-shell-notify.sh",
+            "command": "f=\"$HOME/.ghostex/hooks/agent-shell-notify.sh\"; [ -f \"$f\" ] && GHOSTEX_AGENT='claude' /bin/bash \"$f\" || true",
             "timeout": 5
           }
         ]
@@ -174,7 +174,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "GHOSTEX_AGENT='claude' $HOME/.local/share/ghostex/hooks/agent-shell-notify.sh",
+            "command": "f=\"$HOME/.ghostex/hooks/agent-shell-notify.sh\"; [ -f \"$f\" ] && GHOSTEX_AGENT='claude' /bin/bash \"$f\" || true",
             "timeout": 5
           }
         ]
@@ -186,7 +186,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "GHOSTEX_AGENT='claude' $HOME/.local/share/ghostex/hooks/agent-shell-notify.sh",
+            "command": "f=\"$HOME/.ghostex/hooks/agent-shell-notify.sh\"; [ -f \"$f\" ] && GHOSTEX_AGENT='claude' /bin/bash \"$f\" || true",
             "timeout": 5
           }
         ]
@@ -198,7 +198,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "GHOSTEX_AGENT='claude' $HOME/.local/share/ghostex/hooks/agent-shell-notify.sh",
+            "command": "f=\"$HOME/.ghostex/hooks/agent-shell-notify.sh\"; [ -f \"$f\" ] && GHOSTEX_AGENT='claude' /bin/bash \"$f\" || true",
             "timeout": 5
           }
         ]
@@ -210,7 +210,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "GHOSTEX_AGENT='claude' $HOME/.local/share/ghostex/hooks/agent-shell-notify.sh",
+            "command": "f=\"$HOME/.ghostex/hooks/agent-shell-notify.sh\"; [ -f \"$f\" ] && GHOSTEX_AGENT='claude' /bin/bash \"$f\" || true",
             "timeout": 5
           }
         ]
@@ -222,7 +222,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "GHOSTEX_AGENT='claude' $HOME/.local/share/ghostex/hooks/agent-shell-notify.sh",
+            "command": "f=\"$HOME/.ghostex/hooks/agent-shell-notify.sh\"; [ -f \"$f\" ] && GHOSTEX_AGENT='claude' /bin/bash \"$f\" || true",
             "timeout": 5
           }
         ]
@@ -234,7 +234,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "GHOSTEX_AGENT='claude' $HOME/.local/share/ghostex/hooks/agent-shell-notify.sh",
+            "command": "f=\"$HOME/.ghostex/hooks/agent-shell-notify.sh\"; [ -f \"$f\" ] && GHOSTEX_AGENT='claude' /bin/bash \"$f\" || true",
             "timeout": 5
           }
         ]
