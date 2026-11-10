@@ -14,7 +14,7 @@ val configFile = File(
     System.getenv("XDG_CONFIG_HOME")?.takeIf { it.isNotBlank() } ?: "${System.getProperty("user.home")}/.config",
     "jenkins-cli/config"
 )
-val defaultJenkinsUrl = "https://android-ci.bandlab.io"
+val defaultJenkinsUrl = "https://android-ci.bandlabtechnologies.net"
 
 fun normalizeJenkinsUrl(raw: String): String {
     val withScheme = if (raw.startsWith("http://") || raw.startsWith("https://")) raw else "https://$raw"
@@ -53,19 +53,16 @@ val jobs = mapOf(
     "run_ui_tests" to JobDef(
         url = "$jenkinsBaseUrl/job/run_ui_tests",
         params = listOf(
-            ParamDef("branch", "branch to test"),
-            ParamDef("testClass", "FQCN of test class or method", required = false),
-            ParamDef("deviceName", "device pool name", default = "Pixel_7"),
-        )
-    ),
-    "run_ui_test_marathon" to JobDef(
-        url = "$jenkinsBaseUrl/job/run_ui_test_marathon",
-        params = listOf(
-            ParamDef("user", "user to attribute the run to", default = System.getenv("JENKINS_USER"), required = false),
-            ParamDef("branch", "branch or ref to test, e.g. refs/pull/123/merge"),
-            ParamDef("testApi", "test API environment", default = "prod"),
-            ParamDef("targets", """JSON array of test targets, e.g. ["annotation com.bandlab.bandlab.PageInfra"]"""),
-            ParamDef("prId", "PR number, links the run to the pull request", required = false),
+            ParamDef("branch", "branch, tag or commit to test; a PR is refs/pull/<N>/merge with user=bandlab"),
+            ParamDef("user", "GitHub account whose bandlab-android fork holds the branch (job default: bandlab)", required = false),
+            ParamDef("backend", "ftl or marathon; empty uses the job's UI_TEST_BACKEND_DEFAULT", required = false),
+            ParamDef("testApi", "build variant to test: prod or stage (job default: prod)", required = false),
+            ParamDef("targets", """JSON array of test targets, e.g. ["class com.example.FooTest"]; the job default excludes LargeTest""", required = false),
+            ParamDef("devices", """device JSON, e.g. [ {"model": "MediumPhone.arm", "version": "36"} ]""", required = false),
+            ParamDef("shardTimeout", "FTL shard timeout, e.g. 30m", required = false),
+            ParamDef("filterComposition", "UNION or INTERSECTION across target groups", required = false),
+            ParamDef("prId", "PR number, links statuses to the pull request", required = false),
+            ParamDef("extraGradleFlags", "Gradle flags for the APK build, e.g. --rerun-tasks", required = false),
         )
     )
 )
@@ -102,6 +99,7 @@ fun printUsage() {
           trigger <job-url> [key=value...]     Trigger a build by URL (for jobs not in `jobs` map)
           rebuild <name-or-url>                Rebuild last failed build with its same parameters
           queue <queue-url-or-id> [timeout]    Wait until a queued item starts; prints build URL (default 300s)
+          abort <build-url>                    Stop a running build (no-op if it already finished)
           console <build-url> [head|tail|range:start:len] [bytes] [--refresh]
                                                Read a build's console log (tail by default, 12k bytes)
           artifacts <build-url>                List files archived by a build (with sizes)
@@ -125,7 +123,7 @@ fun printUsage() {
         Examples:
           jenkins-cli.main.kts init https://jenkins.example.com
           jenkins-cli.main.kts test-report $jenkinsBaseUrl/job/run_ui_tests/9299
-          jenkins-cli.main.kts run-job run_ui_tests branch=feature/test-test testClass=com.example.FooTest
+          jenkins-cli.main.kts run-job run_ui_tests branch=feature/test-test 'targets=["class com.example.FooTest"]'
           jenkins-cli.main.kts warnings $jenkinsBaseUrl/job/build_android_pull_requests/87431/
           jenkins-cli.main.kts warnings $jenkinsBaseUrl/job/build_android_pull_requests/87431/analysis/origin.-1125574399/
         """.trimIndent()
@@ -762,6 +760,29 @@ fun rebuildLastFailed(ref: String) {
     if (location != null) println("  Queue: ${secureJenkinsUrl(location)}")
 }
 
+// ── abort ───────────────────────────────────────────────────────────────────
+fun abortBuild(ref: String) {
+    val buildUrl = if (ref.startsWith("http")) secureJenkinsUrl(ref.trimEnd('/'))
+        else error("Usage: jenkins-cli.main.kts abort <build-url>")
+    if (!Regex(".*/\\d+$").matches(buildUrl)) error("Not a build URL (expected .../job/<name>/<number>): $buildUrl")
+    val info = fetchJson("$buildUrl/api/json?tree=number,building,result").jsonObject
+    val num = info.int("number")
+    println("─── Aborting build ─────────────────────────")
+    println("  Build: $buildUrl")
+    if (info.str("building") != "true") {
+        println("  Build #$num is not running (result: ${info.str("result") ?: "?"}). Nothing to abort.")
+        return
+    }
+    val conn = fetchUrl("$buildUrl/stop", method = "POST", followRedirects = false)
+    val status = conn.responseCode
+    if (status !in 200..302) {
+        System.err.println("Error: HTTP $status — ${conn.responseMessage}")
+        kotlin.system.exitProcess(1)
+    }
+    println("  Status: $status")
+    println("  Stop requested for build #$num. Check `builds` for the final result.")
+}
+
 // ── queue ───────────────────────────────────────────────────────────────────
 fun waitForQueuedBuild(queueRef: String, timeoutSec: Int) {
     val queueUrl = secureJenkinsUrl(
@@ -1210,6 +1231,7 @@ fun showSkill() {
           trigger <job-url> [key=value...]   POST buildWithParameters; prints the queue URL
           rebuild <job-url>                  Rebuild the last failed build with its same parameters
           queue <queue-url-or-id> [timeout]  Poll a queue item until the build starts (default 300s)
+          abort <build-url>                  Stop a running build; refuses if it already finished
           run-job <jobName> [key=value...]   Same, but resolves params from the jobs map
           run [<jobName>]                    Interactive param prompt
 
@@ -1345,6 +1367,10 @@ fun main(args: Array<String>) {
         "rebuild" -> {
             val ref = args.getOrNull(1) ?: error("Usage: jenkins-cli.main.kts rebuild <jobName-or-url>")
             rebuildLastFailed(ref)
+        }
+        "abort" -> {
+            val ref = args.getOrNull(1) ?: error("Usage: jenkins-cli.main.kts abort <build-url>")
+            abortBuild(ref)
         }
         "queue" -> {
             val ref = args.getOrNull(1) ?: error("Usage: jenkins-cli.main.kts queue <queue-url-or-id> [timeoutSec]")
