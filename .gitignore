@@ -11,6 +11,26 @@ bin/*
 ## Hold secret
 secrets
 secret_dir
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+secrets.*
+auth.json
+credentials.json
+.netrc
+.npmrc
+.pypirc
+.ssh/
+.aws/
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+!android/debug.keystore
 
 ## Secret Repo
 keepsecret
@@ -25,6 +45,9 @@ keepsecret
 .config/claude/settings.local.json
 .config/claude/*.local.json
 .config/claude/.credentials.json
+
+# Generated, account-specific sync buckets. Existing tracked skills stay tracked.
+.config/claude/skills/synced/
 
 ## Temporary configuration
 temp.sh

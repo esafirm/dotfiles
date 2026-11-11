@@ -2,18 +2,20 @@
 """Block pushes that add secrets or machine-specific absolute paths.
 
 Reads the ref lines git hands a pre-push hook on stdin (see githooks(5)) and
-scans only the files changed by the commits being pushed, so legacy paths in
-untouched files do not block unrelated work.
+scans committed blobs in every outgoing commit, not working-tree copies.
 
 Usage:
   verify-content            # pre-push mode, reads refs from stdin
   verify-content --all      # audit every tracked file
+  verify-content --history  # audit all locally reachable history
   verify-content --self-test
 
 A line can opt out with `content-check: ignore` when a match is deliberate.
 """
 from __future__ import annotations
 
+import argparse
+import os
 import re
 import subprocess
 import sys
@@ -36,12 +38,6 @@ PLACEHOLDER_USERS = {
     "shared",
 }
 
-# Files that are machine-specific by nature. Keep this list short and explained.
-ALLOWED_PATHS = {
-    # trustedWorkspaces only works with real absolute directories.
-    ".gemini/antigravity-cli/settings.json",
-}
-
 ABSOLUTE_PATH_PATTERNS = [
     re.compile(r"(?<![\w.])/(?:Users|home)/([A-Za-z0-9._-]+)/"),
     re.compile(r"(?i)\b[A-Za-z]:[\\/]Users[\\/]([A-Za-z0-9._-]+)[\\/]"),
@@ -51,7 +47,7 @@ SECRET_PATTERNS = [
     ("private key", re.compile(r"-----BEGIN (?:[A-Z0-9]+ )*PRIVATE KEY-----")),
     ("API key", re.compile(r"\bsk-(?:ant-)?[A-Za-z0-9_-]{20,}")),
     ("GitHub token", re.compile(r"\b(?:gh[pousr]|github_pat)_[A-Za-z0-9_]{20,}")),
-    ("AWS access key", re.compile(r"\bAKIA[0-9A-Z]{16}\b")),
+    ("AWS access key", re.compile(r"\b(?:AKIA|ASIA)[0-9A-Z]{16}\b")),
     ("Google API key", re.compile(r"\bAIza[0-9A-Za-z_-]{35}\b")),
     ("Slack token", re.compile(r"\bxox[baprs]-[A-Za-z0-9-]{10,}")),
     ("Stripe live key", re.compile(r"\b(?:sk|rk)_live_[A-Za-z0-9]{16,}")),
@@ -59,15 +55,24 @@ SECRET_PATTERNS = [
     (
         "credential assignment",
         re.compile(
-            r"(?i)\b(?:api[_-]?key|secret|token|password|passwd|client[_-]?secret)\b"
-            r"\s*[:=]\s*[\"']?([A-Za-z0-9_+/.-]{24,})"
+            r"(?i)\b(?:[a-z0-9]+[_-])*(?:api[_-]?key|secret|token|password|passwd|client[_-]?secret)\b"
+            r"[\"']?\s*[:=]\s*[\"']?([A-Za-z0-9_+/-]{24,})"
         ),
     ),
+    (
+        "quoted credential",
+        re.compile(
+            r"(?i)\b(?:[a-z0-9]+[_-])*(?:api[_-]?key|secret|token|password|passwd|client[_-]?secret)\b"
+            r"[\"']?\s*[:=]\s*([\"'])([^\"'\n]{8,})\1"
+        ),
+    ),
+    ("authorization header", re.compile(r"(?i)\b(?:Bearer|Basic)\s+[A-Za-z0-9_+/=-]{16,}")),
+    ("URL password", re.compile(r"[a-zA-Z][a-zA-Z0-9+.-]*://[^\s/:@]+:([^\s/@]+)@")),
 ]
 
 # Values that look like a credential but are documentation.
 SECRET_PLACEHOLDERS = re.compile(
-    r"(?i)your[-_]|example|placeholder|redacted|changeme|dummy|fake|xxxx|\.\.\.|<"
+    r"(?i)^(?:your[-_].*|example(?:[-_].*)?|placeholder|redacted|changeme|dummy|fake|x{4,}|<[^>]+>|\$.*|\{.*)$"
 )
 
 IGNORE_LINE = re.compile(r"content-check:\s*ignore")
@@ -92,38 +97,36 @@ def git_ok(*args: str) -> str | None:
     return result.stdout if result.returncode == 0 else None
 
 
-def diff_names(old: str, new: str) -> set[str]:
-    return {p for p in git("diff", "--name-only", "-z", old, new).split("\0") if p}
-
-
 def changed_in_commit(sha: str) -> set[str]:
     return {
         p
         for p in git(
-            "diff-tree", "-m", "-r", "--no-commit-id", "--name-only", "-z", sha
+            "diff-tree", "--root", "--no-renames", "-m", "-r", "--no-commit-id", "--name-only", "-z", sha
         ).split("\0")
         if p
     }
 
 
-def paths_for_push(ref_lines: str) -> set[str]:
-    """Files changed by the commits on their way to the remote."""
-    paths: set[str] = set()
+def commits_for_push(ref_lines: str) -> set[str]:
+    """Do not exclude other remotes: they may not share the destination's history."""
+    commits: set[str] = set()
     for line in ref_lines.splitlines():
         parts = line.split()
         if len(parts) != 4:
-            continue
+            raise ValueError("malformed pre-push ref input")
         _, local_sha, _, remote_sha = parts
+        if not all(re.fullmatch(r"(?:[0-9a-f]{40}|[0-9a-f]{64})", sha) for sha in (local_sha, remote_sha)):
+            raise ValueError("invalid object ID in pre-push input")
         if set(local_sha) == {ZERO[0]}:
             continue  # deleting a ref pushes no content
-        if set(remote_sha) == {ZERO[0]}:
-            # New branch: everything not already on a remote, plus the tip commit.
-            for sha in git("rev-list", local_sha, "--not", "--remotes").split():
-                paths |= changed_in_commit(sha)
-            paths |= changed_in_commit(local_sha)
-        else:
-            paths |= diff_names(remote_sha, local_sha)
-    return paths
+        # Tags pointing directly at blobs or trees cannot use the commit scanner.
+        git("cat-file", "-e", local_sha + "^{commit}")
+        args = ["rev-list", local_sha]
+        # A fresh branch or an unavailable remote object needs a full-history scan.
+        if set(remote_sha) != {ZERO[0]} and git_ok("cat-file", "-e", remote_sha + "^{commit}") is not None:
+            args.append("^" + remote_sha)
+        commits.update(git(*args).split())
+    return commits
 
 
 def all_tracked_paths() -> set[str]:
@@ -141,31 +144,77 @@ def check_text(relpath: str, text: str) -> list[str]:
                     continue
                 issues.append(
                     f"{relpath}:{lineno}: absolute home path "
-                    f"({match.group(0).strip()}) - use ~ or $HOME"
+                    "- use ~ or $HOME"
                 )
         for name, pattern in SECRET_PATTERNS:
             for match in pattern.finditer(line):
-                if name == "credential assignment" and SECRET_PLACEHOLDERS.search(
-                    match.group(1)
-                ):
+                if name == "quoted credential":
+                    value = match.group(2)
+                elif name in {"credential assignment", "URL password"}:
+                    value = match.group(1)
+                else:
+                    value = match.group(0)
+                if SECRET_PLACEHOLDERS.fullmatch(value):
                     continue
                 # Never echo the value itself.
                 issues.append(f"{relpath}:{lineno}: possible {name}")
     return issues
 
 
+def check_data(relpath: str, data: bytes) -> list[str]:
+    path = Path(relpath)
+    sensitive = (
+        path.name in {"secrets", ".env", "auth.json", "credentials.json", ".netrc", ".npmrc", ".pypirc", "id_rsa", "id_ed25519"}
+        or path.name.startswith(".env.") and path.name not in {".env.example", ".env.sample", ".env.template"}
+        or path.suffix.lower() in {".pem", ".key", ".p12", ".pfx", ".jks", ".keystore"}
+        or bool({"secret_dir", "keepsecret", ".ssh", ".aws"} & set(path.parts))
+    )
+    # Android's shared debug key is deliberately public, never a release key.
+    if sensitive and relpath != "android/debug.keystore":
+        return [f"{relpath}: sensitive filename must not be tracked"]
+    if b"\0" in data[:8000]:
+        return []
+    return check_text(relpath, data.decode("utf-8", "replace"))
+
+
 def check_files(paths: set[str]) -> list[str]:
     issues: list[str] = []
     for relpath in sorted(paths):
-        if relpath in ALLOWED_PATHS:
-            continue
         path = ROOT / relpath
+        if path.is_symlink():
+            issues.extend(check_text(relpath, os.readlink(path)))
+            continue
         if not path.is_file():
             continue
-        data = path.read_bytes()
-        if b"\0" in data[:8000]:
-            continue  # binary
-        issues.extend(check_text(relpath, data.decode("utf-8", "replace")))
+        issues.extend(check_data(relpath, path.read_bytes()))
+    return issues
+
+
+def check_commits(commits: set[str]) -> list[str]:
+    issues: list[str] = []
+    seen: set[tuple[str, str]] = set()
+    for sha in sorted(commits):
+        paths = changed_in_commit(sha)
+        for entry in git("ls-tree", "-r", "-z", sha).split("\0"):
+            if not entry:
+                continue
+            metadata, relpath = entry.split("\t", 1)
+            mode, kind, blob = metadata.split()
+            if relpath not in paths or (relpath, blob) in seen:
+                continue
+            seen.add((relpath, blob))
+            if kind != "blob":
+                issues.append(f"{relpath} [{sha[:12]}]: cannot scan submodule content")
+                continue
+            data = subprocess.run(
+                ["git", "-C", str(ROOT), "cat-file", "blob", blob],
+                check=True, capture_output=True,
+            ).stdout
+            if mode == "120000":
+                found = check_text(relpath, data.decode("utf-8", "replace"))
+            else:
+                found = check_data(relpath, data)
+            issues.extend(f"{issue} [commit {sha[:12]}]" for issue in found)
     return issues
 
 
@@ -195,13 +244,25 @@ def self_test() -> None:
 
 
 def main() -> int:
-    args = sys.argv[1:]
-    if "--self-test" in args:
+    parser = argparse.ArgumentParser(description=__doc__)
+    modes = parser.add_mutually_exclusive_group()
+    modes.add_argument("--all", action="store_true")
+    modes.add_argument("--history", action="store_true")
+    modes.add_argument("--self-test", action="store_true")
+    args = parser.parse_args()
+    if args.self_test:
         self_test()
         return 0
 
-    paths = all_tracked_paths() if "--all" in args else paths_for_push(sys.stdin.read())
-    issues = check_files(paths)
+    try:
+        if args.all:
+            issues = check_files(all_tracked_paths())
+        else:
+            commits = set(git("rev-list", "--all").split()) if args.history else commits_for_push(sys.stdin.read())
+            issues = check_commits(commits)
+    except (OSError, ValueError, subprocess.CalledProcessError):
+        print("verify-content: unable to complete scan, push blocked", file=sys.stderr)
+        return 1
 
     if not issues:
         return 0

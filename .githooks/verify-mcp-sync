@@ -6,9 +6,11 @@ Checks:
   - MCP permissions in .config/claude/settings.json match opencode `permissions`
   - Claude MCP_TIMEOUT covers the largest opencode startup timeout
 """
+import argparse
 import json
 import re
 import shlex
+import subprocess
 import sys
 from pathlib import Path
 
@@ -16,10 +18,20 @@ ROOT = Path(__file__).resolve().parent.parent
 OPENCODE = ROOT / "opencode.jsonc"
 SETUP = ROOT / "setup-symlink.sh"
 CLAUDE_SETTINGS = ROOT / ".config/claude/settings.json"
+REF = None
+
+
+def read_config(path):
+    if REF is None:
+        return path.read_text()
+    return subprocess.run(
+        ["git", "-C", str(ROOT), "show", f"{REF}:{path.relative_to(ROOT).as_posix()}"],
+        check=True, capture_output=True, text=True,
+    ).stdout
 
 
 def load_jsonc(path):
-    text = path.read_text()
+    text = read_config(path)
     out, i, in_str = [], 0, False
     while i < len(text):
         c = text[i]
@@ -59,7 +71,7 @@ def opencode_to_claude(server):
 
 def claude_servers():
     servers = {}
-    for line in SETUP.read_text().splitlines():
+    for line in read_config(SETUP).splitlines():
         parts = shlex.split(line, comments=True)
         if len(parts) == 3 and parts[0] == "claude_mcp":
             spec = json.loads(parts[2])
@@ -71,9 +83,13 @@ def claude_servers():
 
 
 def main():
+    global REF
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--ref", help="check committed files instead of the working tree")
+    REF = parser.parse_args().ref
     errors = []
     opencode = load_jsonc(OPENCODE)
-    settings = json.loads(CLAUDE_SETTINGS.read_text())
+    settings = json.loads(read_config(CLAUDE_SETTINGS))
 
     oc_servers = {
         name: s
@@ -90,7 +106,7 @@ def main():
     for name in sorted(expected.keys() & actual.keys()):
         if expected[name] != actual[name]:
             errors.append(
-                f"server '{name}' differs\n    opencode: {json.dumps(expected[name])}\n    claude:   {json.dumps(actual[name])}"
+                f"server '{name}' differs (values redacted)"
             )
 
     # opencode `<server>_*` / `<server>_<tool>` -> claude `mcp__<server>` / `mcp__<server>__<tool>`
@@ -128,4 +144,8 @@ def main():
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except (OSError, ValueError, KeyError, IndexError, TypeError, subprocess.CalledProcessError):
+        print("verify-mcp-sync: unable to check configuration, push blocked (values redacted)", file=sys.stderr)
+        sys.exit(1)

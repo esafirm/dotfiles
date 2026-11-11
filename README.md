@@ -80,6 +80,18 @@ For plugin we use [vim-plug](https://github.com/junegunn/vim-plug) and the setup
 
 `.githooks/pre-push` runs `.githooks/verify-mcp-sync` to block pushes when the two drift. `setup-symlink.sh` enables it with `git config core.hooksPath .githooks`.
 
+## Secret checks
+
+The pre-push hook scans committed content in every outgoing commit, including values later deleted or replaced. It checks MCP sync at each pushed tip, independently of uncommitted changes. New branches and unknown remote baselines scan their full reachable history, so old leaks can block them too.
+
+- `python3 -I .githooks/verify-content --all` checks tracked working files.
+- `python3 -I .githooks/verify-content --history` checks all locally reachable Git history.
+- `python3 -m unittest discover -s tests` runs the regression tests.
+
+Checks cover common token formats, credential fields, sensitive filenames (including binary key containers), and absolute home paths. Tracked symlinks are checked as links, not followed into private local files. Reports never print credential values. A deliberate text match can use `content-check: ignore` on that line. The shared Android debug keystore is intentionally public and is the only key-container filename exception.
+
+Keep workspace trust records and credentials local. If a real secret was committed, revoke or rotate it first. Deleting the current value does not remove it from history. These checks are a safety net, not proof that every possible secret format is absent, and local hooks can be bypassed.
+
 ## Manual Setup
 
 Currently, we still need to manually setup this because we haven't found a way to automate it.
