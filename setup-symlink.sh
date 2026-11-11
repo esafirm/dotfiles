@@ -39,6 +39,7 @@ setup_link "$SETUP_ROOT/opencode.jsonc" "$HOME/.config/opencode/opencode.jsonc"
 setup_link "$SETUP_ROOT/.agents/AGENTS.md" "$HOME/.config/opencode/AGENTS.md"
 setup_link "$SETUP_ROOT/.config/opencode/cli.json" "$HOME/.config/opencode/cli.json"
 setup_link "$SETUP_ROOT/.config/opencode/plugins/auto-mode" "$HOME/.config/opencode/plugins/auto-mode"
+setup_link "$SETUP_ROOT/.config/opencode/plugins/claude-profile" "$HOME/.config/opencode/plugins/claude-profile"
 setup_link "$SETUP_ROOT/.config/opencode/package.json" "$HOME/.config/opencode/package.json"
 setup_link "$SETUP_ROOT/.config/opencode/package-lock.json" "$HOME/.config/opencode/package-lock.json"
 setup_link "$SETUP_ROOT/.config/opencode/.gitignore" "$HOME/.config/opencode/.gitignore"
@@ -61,6 +62,7 @@ setup_link "$SETUP_ROOT/.agents/.skill-lock.json" "$HOME/.agents/.skill-lock.jso
 
 ## CLI tools
 setup_link "$SETUP_ROOT/kotlin/kscripts/jenkins-cli.main.kts" "$HOME/scripts/jenkins-cli.main.kts"
+setup_link "$SETUP_ROOT/bin/opencode-claude" "$HOME/.local/bin/opencode-claude"
 setup_link "$SETUP_ROOT/bin/llm-wiki-mcp" "$HOME/.local/bin/llm-wiki-mcp"
 setup_link "$SETUP_ROOT/bin/play-store-mcp" "$HOME/.local/bin/play-store-mcp"
 setup_link "$SETUP_ROOT/kotlin/kscripts/jenkins" "$SETUP_ROOT/bin/jenkins"

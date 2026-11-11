@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# OpenCode's Claude executable. Account selection is shared by all new processes.
+state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/opencode"
+state_file="$state_dir/claude-profile"
+profile=work
+if [[ -f "$state_file" ]]; then
+  profile=$(cat "$state_file")
+fi
+
+if [[ "${1:-}" == --profile ]]; then
+  if [[ $# != 2 ]]; then
+    echo 'Usage: opencode-claude --profile work|personal|status' >&2
+    exit 2
+  fi
+  case "$2" in
+    work|personal) profile=$2 ;;
+    status) ;;
+    *) echo 'Unknown profile. Choose work or personal.' >&2; exit 2 ;;
+  esac
+fi
+
+case "$profile" in
+  work) config_dir="$HOME/.claude" ;;
+  personal) config_dir="$HOME/.claude-personal" ;;
+  *) echo "Invalid Claude profile in $state_file" >&2; exit 2 ;;
+esac
+if [[ ! -d "$config_dir" ]]; then
+  echo "Claude config directory does not exist: $config_dir" >&2
+  exit 1
+fi
+
+if [[ "${1:-}" == --profile ]]; then
+  if [[ "$2" != status ]]; then
+    mkdir -p "$state_dir"
+    # Atomic replacement keeps concurrent Claude launches from reading a partial name.
+    temporary=$(mktemp "$state_file.XXXXXX")
+    printf '%s\n' "$profile" > "$temporary"
+    mv "$temporary" "$state_file"
+  fi
+  printf '%s (%s)\n' "$profile" "$config_dir"
+  exit 0
+fi
+
+export PATH="$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
+if [[ "$profile" == work ]]; then
+  # Even setting ~/.claude explicitly selects a different macOS Keychain entry.
+  unset CLAUDE_CONFIG_DIR
+else
+  export CLAUDE_CONFIG_DIR="$config_dir"
+fi
+exec claude "$@"

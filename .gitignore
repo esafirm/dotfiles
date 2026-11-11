@@ -6,6 +6,7 @@ bin/*
 !bin/herdr-presentation-status
 !bin/llm-wiki-mcp
 !bin/play-store-mcp
+!bin/opencode-claude
 
 ## Hold secret
 secrets
@@ -19,6 +20,11 @@ keepsecret
 .claude/sessions/
 .claude/settings.local.json
 .claude/*.local.json
+.config/claude/memory/
+.config/claude/sessions/
+.config/claude/settings.local.json
+.config/claude/*.local.json
+.config/claude/.credentials.json
 
 ## Temporary configuration
 temp.sh

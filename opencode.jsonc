@@ -1,6 +1,12 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "enabled_providers": ["opencode", "opencode-go", "openai"],
+  "policies": [
+    { "action": "provider.use", "resource": "*", "effect": "deny" },
+    { "action": "provider.use", "resource": "opencode", "effect": "allow" },
+    { "action": "provider.use", "resource": "opencode-go", "effect": "allow" },
+    { "action": "provider.use", "resource": "openai", "effect": "allow" },
+    { "action": "provider.use", "resource": "claude-agent", "effect": "allow" }
+  ],
   "mcp": {
     "servers": {
       "android-studio": {
