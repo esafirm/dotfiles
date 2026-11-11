@@ -100,9 +100,5 @@
     "command": "",
     "enabled": true
   },
-  "trustedWorkspaces": [
-    "/Users/esafirm/Documents/bandlab/bandlab-android",
-    "/Users/esafirm/.herdr/worktrees/bandlab-android/secondhand",
-    "/Users/esafirm/Documents/OSS/figma-extractor"
-  ]
+  "trustedWorkspaces": []
 }
