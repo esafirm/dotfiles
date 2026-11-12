@@ -7,10 +7,12 @@
 #   git reports [text...]           interactive picker (fzf) in a terminal, plain list when piped
 #       type to filter by text      enter  open in Chrome and mark read (the picker stays open)
 #       ctrl-u unread only          ctrl-r read only          ctrl-a all
-#       ctrl-t toggle read/unread   ctrl-p show or hide the preview        esc  quit
+#       ctrl-t toggle read/unread   ctrl-d delete (asks first)   ctrl-p preview
+#       esc  quit
 #   git reports -l [text...]        plain list, newest first. -u unread only, -r read only
 #   git reports open <n|name>       open an html report in Chrome and mark it read
 #   git reports read <n|name|all>   mark read          git reports unread <n|name>   mark unread
+#   git reports rm <n|name> [-y]    delete a report, a run folder goes with its contents. Asks unless -y
 #   git reports path                print the directory (created if missing)
 #
 # In the plain list <n> is the row number, stable under any filter. A name may be a unique substring. The "Mark as
@@ -103,6 +105,28 @@ mark() {  # mark read|unread <name>
   cat "$tmp" > "$READ"
 }
 
+remove() {  # remove <name>: delete the report and forget its read state
+  local name=$1
+  if [[ -d "$R/$name" ]]; then rm -rf "${R:?}/$name"; else rm -f "${R:?}/$name"; fi
+  mark unread "$name"
+}
+
+confirm_remove() {  # confirm_remove <name>: say exactly what goes, delete only on an explicit yes
+  local name=$1 what
+  if [[ -d "$R/$name" ]]; then
+    what="run folder $name with $(ls -1 "$R/$name" | grep -c .) files"
+  else
+    what="report $name"
+  fi
+  printf 'delete %s? [y/N] ' "$what"
+  local answer=""
+  if [[ -t 0 ]]; then read -r answer || true; fi
+  case "$answer" in
+    y|Y|yes|YES) remove "$name"; echo "deleted: $name"; sleep 0.4 ;;
+    *)           echo "kept: $name"; sleep 0.4 ;;
+  esac
+}
+
 # rows <state> <mode> [terms...]: mode "fzf" prefixes each row with the file name and a tab.
 # Columns: title, state, age, kind, file, row number. Unread titles are bold, read rows are dimmed.
 rows() {
@@ -181,10 +205,11 @@ pick() {  # interactive picker
   rows "$initial" fzf | fzf --ansi --reverse --height=85% --border=none --no-sort \
     --delimiter=$'\t' --with-nth=2 --nth=1.. --query="$query" \
     --prompt="$initial> " --info=inline-right \
-    --header=$'enter open · ctrl-u unread · ctrl-r read · ctrl-a all · ctrl-t toggle read · ctrl-p preview · esc quit' \
+    --header=$'enter open · ctrl-u unread · ctrl-r read · ctrl-a all · ctrl-t toggle read · ctrl-d delete · ctrl-p preview · esc quit' \
     --preview="$SELF --preview {1}" --preview-window='right,45%,wrap,hidden' \
     --bind="enter:execute-silent($SELF open {1})+$reload" \
     --bind="ctrl-t:execute-silent($SELF toggle {1})+$reload" \
+    --bind="ctrl-d:execute($SELF delete {1})+$reload+refresh-preview" \
     --bind="ctrl-u:execute-silent(echo unread > \$REPORTS_STATE)+$reload+transform-prompt(echo 'unread> ')" \
     --bind="ctrl-r:execute-silent(echo read > \$REPORTS_STATE)+$reload+transform-prompt(echo 'read> ')" \
     --bind="ctrl-a:execute-silent(echo all > \$REPORTS_STATE)+$reload+transform-prompt(echo 'all> ')" \
@@ -209,7 +234,11 @@ case "$cmd" in
     name=$(resolve "${2:?name or number}"); mark read "$name"; echo "read: $name" ;;
   unread)
     name=$(resolve "${2:?name or number}"); mark unread "$name"; echo "unread: $name" ;;
-  -h|--help|help) sed -n '2,18p' "$0" ;;
+  rm|delete)
+    name=$(resolve "${2:?name or number}")
+    if [[ "${3:-}" == -y || "${3:-}" == --yes ]]; then remove "$name"; echo "deleted: $name"
+    else confirm_remove "$name"; fi ;;
+  -h|--help|help) sed -n '2,20p' "$0" ;;
   *)
     want=all; plain=0; terms=()
     for a in "$@"; do
