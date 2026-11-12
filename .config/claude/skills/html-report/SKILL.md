@@ -24,7 +24,18 @@ What the template gives every report:
 - Muted greys, syntax colours and links are tuned to at least 4.5:1 contrast in both themes. Keep that when
   adding colours to the template.
 - Wide tables scroll inside a frame, a back-to-top button, print styles, and links to a collapsed
-  `<details id>` open it.
+  `<details id>`, or to anything inside one, open it.
+- **Reading aids**: a progress bar under the top bar, a reading-time estimate beside "Contents" (prose only,
+  collapsed diffs are not counted), and the report title in the top bar once the `<h1>` has scrolled away.
+- **Section links**: hovering an `<h2>` or `<h3>` shows a `#` that copies the link to that section.
+- **Copy button** on every `<pre>` block.
+- **Keyboard**: `T` theme, `R` reader mode, `[` and `]` previous and next section, `Esc` closes the drawer.
+- Prose directly under `<main>` (`p`, `ul`, `ol`, `blockquote`) is capped at 760 px for line length. Tables,
+  tiles, cards, callouts and code use the full column, so put wide content in those and not in a paragraph.
+- Off-screen diffs are not laid out until scrolled near (`content-visibility`), so opening every commit in a
+  large report stays fast. The page height is an estimate until they render.
+- Chrome added by the script (section links, copy buttons) carries no text nodes. Keep it that way: inline
+  comments are anchored by text offset, and extra text would shift them.
 
 ## Workflow
 

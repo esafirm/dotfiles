@@ -72,6 +72,11 @@
   }
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { transition: none !important; }
+  }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
   body {
     margin: 0;
     background: var(--page);
@@ -91,7 +96,10 @@
     -webkit-backdrop-filter: saturate(1.4) blur(10px);
     border-bottom: 1px solid var(--border);
   }
-  .topbar-title { font-weight: 600; font-size: 14.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
+  /* The title only appears once the page's own h1 has scrolled away, so it is never shown twice. */
+  .topbar-title { font-weight: 600; font-size: 14.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; opacity: 0; transition: opacity 0.15s; }
+  body.past-title .topbar-title { opacity: 1; }
+  .progress { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--accent); transform: scaleX(0); transform-origin: 0 50%; pointer-events: none; }
   .controls { display: flex; gap: 8px; }
   .btn {
     display: inline-flex; align-items: center; gap: 6px;
@@ -100,6 +108,7 @@
     background: var(--surface); border: 1px solid var(--border-strong); border-radius: 8px;
     cursor: pointer;
   }
+  .btn[hidden] { display: none; }
   .btn:hover { color: var(--ink); border-color: var(--muted); }
   .btn[aria-pressed="true"] { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
   .btn svg { width: 15px; height: 15px; }
@@ -126,6 +135,9 @@
     font-size: 13.5px;
   }
   .toc-title { font-size: 11.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px 12px; }
+  .toc-meta { font-weight: 500; letter-spacing: 0; text-transform: none; }
+  .toc-meta::before { content: "\00b7"; margin: 0 6px; }
+  .toc-meta:empty { display: none; }
   .toc ol { list-style: none; margin: 0; padding: 0; }
   .toc ol ol { margin: 2px 0 6px; }
   .toc a {
@@ -147,6 +159,16 @@
     border-top: 1px solid var(--border);
   }
   h3 { font-size: 17px; margin: 32px 0 10px; }
+  h1, h2, h3 { text-wrap: balance; }
+  p, li { text-wrap: pretty; }
+  /* Prose keeps a readable line length. Tables, tiles, cards and code use the full column. */
+  main > :is(p, ul, ol, blockquote) { max-width: 760px; }
+  /* Section link: the glyph is generated content, so it adds no text to headings, comments or copies. */
+  .anchor { margin-left: 8px; color: var(--muted); font-weight: 400; text-decoration: none; opacity: 0; transition: opacity 0.12s; }
+  .anchor::before { content: "#"; }
+  .anchor.copied::before { content: "\2713"; color: var(--good); }
+  :is(h2, h3):hover .anchor, .anchor:focus-visible, .anchor.copied { opacity: 1; }
+  @media (hover: none) { .anchor { opacity: 0.55; } }
   h2, h3, details { scroll-margin-top: calc(var(--topbar-h) + 16px); }
   p { margin: 0 0 14px; }
   ul, ol { margin: 0 0 16px; padding-left: 22px; }
@@ -163,6 +185,14 @@
   code { font: 0.92em/1.5 var(--mono); background: var(--code-bg); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
   td.num code, th code { overflow-wrap: normal; }
   pre { background: var(--code-bg); border-radius: 10px; padding: 14px 16px; overflow-x: auto; margin: 0 0 16px; }
+  .pre-wrap { position: relative; }
+  .copy-btn { position: absolute; top: 8px; right: 8px; width: 30px; height: 30px; padding: 0; display: grid; place-items: center; color: var(--ink-2); background: var(--surface); border: 1px solid var(--border-strong); border-radius: 7px; cursor: pointer; opacity: 0; transition: opacity 0.12s; }
+  .copy-btn svg { width: 15px; height: 15px; }
+  .pre-wrap:hover .copy-btn, .copy-btn:focus-visible, .copy-btn.copied { opacity: 1; }
+  .copy-btn.copied { color: var(--good); border-color: var(--good); }
+  .copy-btn .i-done, .copy-btn.copied .i-copy { display: none; }
+  .copy-btn.copied .i-done { display: block; }
+  @media (hover: none) { .copy-btn { opacity: 1; } }
   pre code { background: none; padding: 0; }
   blockquote { margin: 0 0 16px; padding: 4px 16px; border-left: 3px solid var(--border-strong); color: var(--ink-2); }
 
@@ -174,6 +204,8 @@
   .tile .n .from { color: var(--muted); font-weight: 450; }
   .tile .sub { color: var(--ink-2); font-size: 13.5px; margin-top: 2px; }
   .tile .sub.good { color: var(--good); }
+  .tile .sub.warn { color: var(--warn); }
+  .tile .sub.critical { color: var(--critical); }
 
   /* Cards and callouts */
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 22px 6px; margin: 0 0 18px; box-shadow: var(--shadow); }
@@ -189,6 +221,7 @@
   tr:last-child td { border-bottom: 0; }
   th { color: var(--ink-2); font-weight: 600; font-size: 13px; background: var(--surface-2); }
   td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .table-wrap tr:hover > td { background: color-mix(in srgb, var(--surface-2) 55%, transparent); }
 
   /* Bars */
   .bars { margin: 0 0 18px; }
@@ -219,7 +252,8 @@
   details.commit .stat { display: block; margin-top: 3px; color: var(--muted); font-weight: 400; font-size: 13px; }
   details.commit > p.note { margin: 0 0 14px; line-height: 1.6; }
   details.commit > p.note + p.note { margin-top: -4px; }
-  .file { margin: 0 0 16px; border: 1px solid var(--border); border-radius: 8px; overflow-x: auto; }
+  /* Off-screen diffs skip layout and paint until they are scrolled near. Find-in-page still reaches them. */
+  .file { margin: 0 0 16px; border: 1px solid var(--border); border-radius: 8px; overflow-x: auto; content-visibility: auto; contain-intrinsic-size: auto 320px; }
   .file .path { font: 600 13.5px/1.4 var(--mono); padding: 8px 10px; background: var(--code-bg); border-bottom: 1px solid var(--border); position: sticky; left: 0; }
   table.diff { margin: 0; font: 13.5px/1.5 var(--mono); border-collapse: collapse; width: max-content; min-width: 100%; }
   table.diff td { border: 0; padding: 0 8px; white-space: pre; vertical-align: top; }
@@ -247,6 +281,7 @@
   html.reader .toc, html.reader .menu-btn { display: none; }
   html.reader .layout { max-width: 920px; }
   html.reader main { max-width: 820px; margin: 0 auto; padding-top: 56px; font-family: var(--serif); font-size: 22px; line-height: 1.75; }
+  html.reader main > :is(p, ul, ol, blockquote) { max-width: none; }
   html.reader main h1, html.reader main h2, html.reader main h3 { font-family: var(--sans); }
   html.reader main h1 { font-size: 40px; }
   html.reader main h2 { font-size: 29px; }
@@ -289,13 +324,16 @@
   mark.cmt:hover, mark.cmt.cmt-open { background: rgba(240, 190, 40, 0.6); }
   .cmt-pop { position: absolute; z-index: 60; background: var(--surface); border: 1px solid var(--border-strong); border-radius: 10px; box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18); padding: 8px; font: 13px/1.4 var(--sans); color: var(--ink); }
   .cmt-pop[hidden] { display: none; }
-  .cmt-pop textarea { display: block; width: 280px; max-width: 70vw; min-height: 76px; resize: vertical; box-sizing: border-box; padding: 8px; font: 14px/1.4 var(--sans); color: var(--ink); background: var(--bg); border: 1px solid var(--border-strong); border-radius: 6px; }
+  .cmt-pop textarea { display: block; width: 280px; max-width: 70vw; min-height: 76px; resize: vertical; box-sizing: border-box; padding: 8px; font: 14px/1.4 var(--sans); color: var(--ink); background: var(--page); border: 1px solid var(--border-strong); border-radius: 6px; }
   .cmt-pop .row { display: flex; gap: 6px; margin-top: 8px; justify-content: flex-end; }
   .cmt-pop .btn { height: 28px; }
   .cmt-pop .quote { max-width: 280px; margin: 0 0 8px; color: var(--muted); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
   @media print {
-    .topbar, .toc, .scrim, .to-top, .cmt-pop { display: none !important; }
+    .topbar, .toc, .scrim, .to-top, .cmt-pop, .anchor, .copy-btn { display: none !important; }
+    main > :is(p, ul, ol, blockquote) { max-width: none; }
+    .table-wrap { overflow: visible; }
+    .file { content-visibility: visible; }
     mark.cmt { background: none; }
     .layout { display: block; max-width: none; padding: 0; }
     main { max-width: none; padding: 0; }
@@ -306,7 +344,7 @@
 </head>
 <body>
 <header class="topbar">
-  <button class="btn menu-btn" type="button" aria-label="Contents" aria-controls="toc">
+  <button class="btn menu-btn" type="button" aria-label="Contents" aria-controls="toc" aria-expanded="false">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
   </button>
   <span class="topbar-title">{{TITLE}}</span>
@@ -319,19 +357,20 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
       <span class="label-text" id="read-label">Mark as read</span>
     </button>
-    <button class="btn" id="theme-toggle" type="button" title="Switch theme">
+    <button class="btn" id="theme-toggle" type="button" title="Switch theme (T)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
       <span class="label-text" id="theme-label">Light</span>
     </button>
-    <button class="btn" id="reader-toggle" type="button" aria-pressed="false" title="Reader mode (full screen)">
+    <button class="btn" id="reader-toggle" type="button" aria-pressed="false" title="Reader mode, full screen (R)">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H2zM22 5h-7a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h8z"/></svg>
       <span class="label-text">Reader</span>
     </button>
   </div>
+  <div class="progress" id="progress"></div>
 </header>
 <div class="layout">
   <nav class="toc" id="toc" aria-label="Contents">
-    <div class="toc-title">Contents</div>
+    <div class="toc-title">Contents<span class="toc-meta" id="toc-meta"></span></div>
     <ol id="toc-list"></ol>
   </nav>
   <main id="content">
@@ -386,7 +425,7 @@
     }
     readerBtn.addEventListener("click", function () {
       var on = !root.classList.contains("reader");
-      var anchor = links.filter(function (l) { return l.link.classList.contains("active"); })[0];
+      var anchor = links.filter(function (l) { return l.link === activeLink; })[0];
       applyReader(on);
       if (on && !isFullscreen()) {
         var request = root.requestFullscreen || root.webkitRequestFullscreen;
@@ -396,7 +435,7 @@
         if (exit) { try { var q = exit.call(document); if (q && q.catch) q.catch(function () {}); } catch (e) {} }
       }
       // Keep the reader at the same section after the type size changes.
-      if (anchor && window.scrollY > 200) requestAnimationFrame(function () { anchor.heading.scrollIntoView({ block: "start" }); });
+      if (anchor && window.scrollY > 200) requestAnimationFrame(function () { anchor.heading.scrollIntoView({ block: "start", behavior: "instant" }); });
     });
     function onFullscreenChange() { if (!isFullscreen() && root.classList.contains("reader")) applyReader(false); }
     document.addEventListener("fullscreenchange", onFullscreenChange);
@@ -409,6 +448,30 @@
       wrap.className = "table-wrap";
       table.parentNode.insertBefore(wrap, table);
       wrap.appendChild(table);
+    });
+
+    // Code blocks get a copy button. It is icon-only so it adds no text to the page.
+    function copyText(text, done) {
+      function fallback() {
+        var ta = document.createElement("textarea"); ta.value = text; document.body.appendChild(ta); ta.select();
+        try { document.execCommand("copy"); } catch (e) {}
+        ta.remove(); done();
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback); else fallback();
+    }
+    function flash(el) { el.classList.add("copied"); setTimeout(function () { el.classList.remove("copied"); }, 1200); }
+    var ICONS = '<svg class="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>'
+      + '<svg class="i-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+    Array.prototype.forEach.call(main.querySelectorAll("pre"), function (pre) {
+      var wrap = document.createElement("div");
+      wrap.className = "pre-wrap";
+      pre.parentNode.insertBefore(wrap, pre);
+      wrap.appendChild(pre);
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "copy-btn"; b.title = "Copy"; b.setAttribute("aria-label", "Copy code");
+      b.innerHTML = ICONS;
+      b.addEventListener("click", function () { copyText(pre.textContent, function () { flash(b); }); });
+      wrap.appendChild(b);
     });
 
     // Contents from h2/h3, with ids generated where missing.
@@ -440,35 +503,85 @@
         (currentSub || list).appendChild(li);
       }
       links.push({ heading: h, link: a });
+      var anchor = document.createElement("a");
+      anchor.className = "anchor"; anchor.href = "#" + h.id;
+      anchor.title = "Copy link to this section"; anchor.setAttribute("aria-label", "Link to this section");
+      anchor.addEventListener("click", function () {
+        copyText(location.href.split("#")[0] + "#" + h.id, function () { flash(anchor); });
+      });
+      h.appendChild(anchor);
     });
+
+    // Reading time, counting prose only: collapsed diffs would swamp the estimate.
+    var chars = main.textContent.length;
+    Array.prototype.forEach.call(main.querySelectorAll("details"), function (d) { if (!d.parentElement.closest("details")) chars -= d.textContent.length; });
+    document.getElementById("toc-meta").textContent = Math.max(1, Math.round(chars / 6 / 220)) + " min read";
     Array.prototype.forEach.call(list.querySelectorAll("ol"), function (ol) { if (!ol.children.length) ol.remove(); });
 
-    // Highlight the section being read.
+    // Highlight the section being read, and drive the progress bar. Work happens at most once per frame,
+    // finds the section by binary search (headings are in document order) and touches the DOM only on change.
+    var tocEl = document.getElementById("toc");
+    var toTop = document.querySelector(".to-top");
+    var progress = document.getElementById("progress");
+    var h1 = main.querySelector("h1");
+    var topbarH = parseInt(getComputedStyle(root).getPropertyValue("--topbar-h"), 10) || 56;
+    var activeLink = null, ticking = false, lastProgress = -1;
     function setActive(link) {
-      links.forEach(function (l) { l.link.classList.toggle("active", l.link === link); });
-      if (link) {
-        var r = link.getBoundingClientRect(), t = document.getElementById("toc").getBoundingClientRect();
-        if (r.top < t.top || r.bottom > t.bottom) link.scrollIntoView({ block: "nearest" });
-      }
+      if (link === activeLink) return;
+      if (activeLink) { activeLink.classList.remove("active"); activeLink.removeAttribute("aria-current"); }
+      activeLink = link;
+      if (!link) return;
+      link.classList.add("active");
+      link.setAttribute("aria-current", "location");
+      var r = link.getBoundingClientRect(), t = tocEl.getBoundingClientRect();
+      if (r.top < t.top || r.bottom > t.bottom) link.scrollIntoView({ block: "nearest", behavior: "instant" });
     }
-    function onScroll() {
-      var offset = parseInt(getComputedStyle(root).getPropertyValue("--topbar-h"), 10) + 40;
-      var active = null;
-      for (var i = 0; i < links.length; i++) {
-        if (links[i].heading.getBoundingClientRect().top - offset <= 0) active = links[i].link; else break;
+    function activeIndex() {
+      var offset = topbarH + 40, lo = 0, hi = links.length - 1, found = 0;
+      while (lo <= hi) {
+        var mid = (lo + hi) >> 1;
+        if (links[mid].heading.getBoundingClientRect().top - offset <= 0) { found = mid; lo = mid + 1; } else hi = mid - 1;
       }
-      setActive(active || (links[0] && links[0].link));
-      document.querySelector(".to-top").classList.toggle("visible", window.scrollY > 800);
+      return found;
     }
+    function update() {
+      ticking = false;
+      var y = window.scrollY, max = root.scrollHeight - window.innerHeight;
+      var pastTitle = h1 ? h1.getBoundingClientRect().bottom < topbarH : true;
+      var index = links.length ? activeIndex() : -1;
+      var done = max > 0 ? Math.min(1, y / max) : 0;
+      setActive(index < 0 ? null : links[index].link);
+      if (Math.abs(done - lastProgress) > 0.001) { lastProgress = done; progress.style.transform = "scaleX(" + done.toFixed(4) + ")"; }
+      toTop.classList.toggle("visible", y > 800);
+      document.body.classList.toggle("past-title", pastTitle);
+    }
+    function onScroll() { if (!ticking) { ticking = true; requestAnimationFrame(update); } }
     window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
+    window.addEventListener("resize", onScroll, { passive: true });
+    update();
+
+    // Keyboard: T theme, R reader, [ and ] previous and next section. Ignored while typing or with a modifier.
+    document.addEventListener("keydown", function (e) {
+      if (e.metaKey || e.ctrlKey || e.altKey || e.defaultPrevented) return;
+      var el = e.target;
+      if (el && (el.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName))) return;
+      if (e.key === "t" || e.key === "T") document.getElementById("theme-toggle").click();
+      else if (e.key === "r" || e.key === "R") readerBtn.click();
+      else if ((e.key === "[" || e.key === "]") && links.length) {
+        var next = Math.min(links.length - 1, Math.max(0, activeIndex() + (e.key === "]" ? 1 : -1)));
+        links[next].heading.scrollIntoView({ block: "start" });
+      }
+    });
 
     // Drawer on narrow screens.
-    document.querySelector(".menu-btn").addEventListener("click", function () { document.body.classList.toggle("toc-open"); });
-    document.querySelector(".scrim").addEventListener("click", function () { document.body.classList.remove("toc-open"); });
-    list.addEventListener("click", function (e) { if (e.target.tagName === "A") document.body.classList.remove("toc-open"); });
+    var menuBtn = document.querySelector(".menu-btn");
+    function setDrawer(open) { document.body.classList.toggle("toc-open", open); menuBtn.setAttribute("aria-expanded", open ? "true" : "false"); }
+    menuBtn.addEventListener("click", function () { setDrawer(!document.body.classList.contains("toc-open")); });
+    document.querySelector(".scrim").addEventListener("click", function () { setDrawer(false); });
+    list.addEventListener("click", function (e) { if (e.target.tagName === "A") setDrawer(false); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") setDrawer(false); });
 
-    document.querySelector(".to-top").addEventListener("click", function () { window.scrollTo({ top: 0 }); });
+    toTop.addEventListener("click", function () { window.scrollTo({ top: 0 }); });
 
     // Inline comments: select text, add a note. Kept in localStorage per report file; "Copy comments" exports them.
     var pop = document.getElementById("cmt-pop");
@@ -603,19 +716,17 @@
         var where = m ? sectionOf(m) : "";
         return (where ? "[" + where + "]\n" : "") + "> " + c.quote.replace(/\s+/g, " ") + "\n" + c.note;
       }).join("\n\n");
-      function done() { copyLabel.textContent = "Copied"; setTimeout(saveComments, 1200); }
-      function fallback() {
-        var ta = document.createElement("textarea"); ta.value = text; document.body.appendChild(ta); ta.select();
-        try { document.execCommand("copy"); } catch (e) {}
-        ta.remove(); done();
-      }
-      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback); else fallback();
+      copyText(text, function () { copyLabel.textContent = "Copied"; setTimeout(saveComments, 1200); });
     });
 
     // Opening a link to a collapsed section expands it.
     function openTargetCommit() {
       var target = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
-      if (target && target.tagName === "DETAILS") target.open = true;
+      var box = target && target.closest("details");
+      if (!box) return;
+      // Also covers a link to something inside a collapsed section.
+      for (var d = box; d; d = d.parentElement && d.parentElement.closest("details")) d.open = true;
+      if (box !== target) target.scrollIntoView({ block: "start", behavior: "instant" });
     }
     addEventListener("hashchange", openTargetCommit);
     openTargetCommit();
