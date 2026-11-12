@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Reports shared by every worktree of a repo: <git-common-dir>/reports. It sits inside .git, so it is never tracked
-# and never shows in git status. Works in any local repo. Only .md and .html files count as reports.
+# and never shows in git status. Works in any local repo. Loose .md and .html files count as reports, and so does a
+# run folder: a directory with a report.html (plus optional README.md, data/, scripts/). Run folders are listed as
+# one entry (kind "run"), open their report.html, and preview their README and contents.
 #
 #   git reports [text...]           interactive picker (fzf) in a terminal, plain list when piped
 #       type to filter by text      enter  open in Chrome and mark read (the picker stays open)
@@ -27,21 +29,39 @@ export REPORTS_DIR="$R"
 READ="$R/.read"
 touch "$READ"
 
-names() {
-  ls -t "$R" | grep -E '\.(md|html)$' | while IFS= read -r n; do [[ -f "$R/$n" ]] && echo "$n"; done || true
+# An entry is a loose .md/.html file, or a run folder: a directory holding a report.html (plus any README.md, data/,
+# scripts/). Folders without a report.html (raw tool output, *_data dirs) are not entries.
+target_of() {  # target_of <name> -> the file to open, read or time
+  if [[ -d "$R/$1" ]]; then echo "$R/$1/report.html"; else echo "$R/$1"; fi
+}
+
+names() {  # newest first, by the mtime of the entry's own file
+  local p n m
+  for p in "$R"/*; do
+    n=${p##*/}
+    if [[ -f "$p" ]]; then
+      case "$n" in *.md|*.html) ;; *) continue ;; esac
+    elif [[ ! -f "$p/report.html" ]]; then
+      continue
+    fi
+    m=$(stat -f %m "$(target_of "$n")")
+    printf '%s\t%s\n' "$m" "$n"
+  done | sort -rn | cut -f2-
 }
 is_read() { grep -qxF "$1" "$READ"; }
 
 title_of() {
-  local p="$R/$1" t=""
-  case "$1" in
-    *.html) t=$(grep -m1 -o '<title>[^<]*' "$p" | sed 's/<title>//' || true) ;;
-    *.md)   t=$(grep -m1 '^# ' "$p" | sed 's/^# //' || true) ;;
+  local f t=""
+  f=$(target_of "$1")
+  case "$f" in
+    *.html) t=$(grep -m1 -o '<title>[^<]*' "$f" | sed 's/<title>//' || true) ;;
+    *.md)   t=$(grep -m1 '^# ' "$f" | sed 's/^# //' || true) ;;
   esac
   echo "${t:-$1}"
 }
 
 kind_of() {
+  if [[ -d "$R/$1" ]]; then echo "run"; return; fi
   case "$1" in
     handsoff_*) echo "handoff" ;;
     *.html)     echo "html" ;;
@@ -110,7 +130,7 @@ rows() {
         [[ "$hay" == *"$(printf '%s' "$t" | tr '[:upper:]' '[:lower:]')"* ]] || continue 2
       done
     fi
-    age=$(age_of "$(stat -f %m "$R/$n")")
+    age=$(age_of "$(stat -f %m "$(target_of "$n")")")
     kind=$(kind_of "$n")
     lead=""; [[ "$mode" == fzf ]] && lead="$n"$'\t'
     num=""; [[ "$mode" == fzf ]] || num=$(printf ' %3d' "$i")
@@ -133,8 +153,14 @@ summary() {  # summary <state> [terms...]
   printf '%d unread of %d reports%s   %s\n' "$unread" "$total" "$filt" "$R"
 }
 
-preview() {  # preview <name>: readable text of a report
-  local p="$R/$1"
+preview() {  # preview <name>: readable text of a report. A run folder shows its README, then its contents.
+  local p
+  if [[ -d "$R/$1" ]]; then
+    if [[ -f "$R/$1/README.md" ]]; then head -60 "$R/$1/README.md"; echo; fi
+    echo "contents:"; ls -1 "$R/$1" | sed 's/^/  /'
+    return
+  fi
+  p="$R/$1"
   case "$1" in
     *.html) sed -n '/<main/,/<\/main>/p' "$p" | sed -e 's/<\/\(p\|h[1-6]\|li\|tr\|div\|pre\)>/&\n/g' -e 's/<[^>]*>//g' \
               -e 's/&lt;/</g; s/&gt;/>/g; s/&amp;/\&/g; s/&nbsp;/ /g' | grep -v '^[[:space:]]*$' | head -120 ;;
@@ -177,13 +203,13 @@ case "$cmd" in
   path) echo "$R" ;;
   open)
     name=$(resolve "${2:?name or number}")
-    open -a "Google Chrome" "$R/$name"; mark read "$name"; echo "opened and marked read: $name" ;;
+    open -a "Google Chrome" "$(target_of "$name")"; mark read "$name"; echo "opened and marked read: $name" ;;
   read)
     if [[ "${2:-}" == all ]]; then names > "$READ"; echo "all marked read"; exit 0; fi
     name=$(resolve "${2:?name or number}"); mark read "$name"; echo "read: $name" ;;
   unread)
     name=$(resolve "${2:?name or number}"); mark unread "$name"; echo "unread: $name" ;;
-  -h|--help|help) sed -n '2,19p' "$0" ;;
+  -h|--help|help) sed -n '2,18p' "$0" ;;
   *)
     want=all; plain=0; terms=()
     for a in "$@"; do
