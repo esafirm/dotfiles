@@ -23,8 +23,8 @@ export default Plugin.define({
               title: `Global Claude profile: ${current}`,
               current: current.split(" ")[0],
               options: [
-                { title: "Work", value: "work", description: "~/.claude" },
-                { title: "Personal", value: "personal", description: "~/.claude-personal" },
+                { title: "Personal", value: "personal", description: "~/.claude" },
+                { title: "Work", value: "work", description: "~/.claude-work" },
               ],
             })
             if (!profile) return

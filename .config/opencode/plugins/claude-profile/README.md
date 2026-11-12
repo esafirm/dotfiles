@@ -3,8 +3,8 @@
 `/claude-profile` opens a picker without calling a model. It also accepts
 `work`, `personal`, or `status`. The command palette has **Switch global Claude profile**.
 
-- `work` uses `~/.claude` (the default).
-- `personal` uses `~/.claude-personal`.
+- `personal` uses `~/.claude` (the default).
+- `work` uses `~/.claude-work`.
 
 Both profiles keep their existing shared dotfiles symlinks. This changes the
 Claude Agent login, not OpenCode's skills or configuration. It does not create
@@ -19,10 +19,10 @@ Enable the wrapper once, when it is safe to restart the OpenCode service:
 opencode service set env OPENCODE_CLAUDE_PATH "$HOME/.local/bin/opencode-claude"
 ```
 
-Sign in to the personal profile interactively if needed:
+Sign in to the work profile interactively if needed:
 
 ```sh
-CLAUDE_CONFIG_DIR="$HOME/.claude-personal" claude auth login
+CLAUDE_CONFIG_DIR="$HOME/.claude-work" claude auth login
 ```
 
 After activation, switching does not restart OpenCode. Selection is stored in

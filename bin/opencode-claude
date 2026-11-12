@@ -4,7 +4,7 @@ set -euo pipefail
 # OpenCode's Claude executable. Account selection is shared by all new processes.
 state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/opencode"
 state_file="$state_dir/claude-profile"
-profile=work
+profile=personal
 if [[ -f "$state_file" ]]; then
   profile=$(cat "$state_file")
 fi
@@ -22,8 +22,8 @@ if [[ "${1:-}" == --profile ]]; then
 fi
 
 case "$profile" in
-  work) config_dir="$HOME/.claude" ;;
-  personal) config_dir="$HOME/.claude-personal" ;;
+  personal) config_dir="$HOME/.claude" ;;
+  work) config_dir="$HOME/.claude-work" ;;
   *) echo "Invalid Claude profile in $state_file" >&2; exit 2 ;;
 esac
 if [[ ! -d "$config_dir" ]]; then
@@ -44,7 +44,7 @@ if [[ "${1:-}" == --profile ]]; then
 fi
 
 export PATH="$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
-if [[ "$profile" == work ]]; then
+if [[ "$profile" == personal ]]; then
   # Even setting ~/.claude explicitly selects a different macOS Keychain entry.
   unset CLAUDE_CONFIG_DIR
 else

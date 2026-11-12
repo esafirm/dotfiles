@@ -3,7 +3,10 @@
   "cleanupPeriodDays": 36500,
   "env": {
     "API_TIMEOUT_MS": "3000000",
-    "MCP_TIMEOUT": "60000"
+    "MCP_TIMEOUT": "60000",
+    "ANTHROPIC_CUSTOM_MODEL_OPTION": "claude-fable-5-2",
+    "ANTHROPIC_CUSTOM_MODEL_OPTION_NAME": "Fable 5.2",
+    "ANTHROPIC_CUSTOM_MODEL_OPTION_DESCRIPTION": "Fable 5.2 · Most capable for your hardest and longest-running tasks"
   },
   "permissions": {
     "allow": [
@@ -59,7 +62,7 @@
       "mcp__android-studio__replace_text_in_file"
     ]
   },
-  "model": "fable",
+  "model": "claude-fable-5-2",
   "hooks": {
     "SessionStart": [
       {
@@ -259,7 +262,8 @@
   "effortLevel": "xhigh",
   "modelSettings": {
     "claude-opus-5-5": {
-      "effortLevel": "high"
+      "effortLevel": "medium",
+      "autoCompactWindow": 400000
     },
     "claude-sonnet-5-5": {
       "effortLevel": "medium"
