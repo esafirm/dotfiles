@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo.png" alt="Esa's Dotfiles logo" width="160">
+  <img src="assets/logo.png" alt="Esa's Dotfiles logo" width="160">
 </p>
 
 ## Esa's Dotfiles
