@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="logo.png" alt="Esa's Dotfiles logo" width="160">
+</p>
+
 ## Esa's Dotfiles
 
 > This is a readme directed mainly for me.
