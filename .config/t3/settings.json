@@ -1,0 +1,7 @@
+{
+  "idleCompaction": "onReturn",
+  "favorites": [
+    {"provider": "opencode", "model": "opencode-go/deepseek-v4.1-flash"},
+    {"provider": "opencode", "model": "claude-agent/opus"}
+  ]
+}

@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = (
     "setup.sh", "setup-common.sh", "setup-symlink.sh", "setup-t3.sh", "setup-brew.sh",
     "themes/setup.sh", ".config/herdr/setup.sh",
+    ".config/t3/settings.json", ".config/t3/client-settings.json",
 )
 
 
@@ -310,6 +311,21 @@ PY
         self.assertIn("Configure T3 Code providers", output)
         self.assertEqual(settings.read_text(), original)
         self.assertFalse((self.home / ".dotfiles-backups").exists())
+
+    def test_t3_merges_shared_preferences_without_copying_local_state(self):
+        settings = self.t3_settings('{"localOnly": true}\n')
+        client = settings.parent / "client-settings.json"
+        original = '{"fontSizeInterface": 12, "browserProfiles": [{"id": "local"}]}\n'
+        client.write_text(original)
+        self.run_setup("--only", "t3", "--dry-run")
+        self.assertEqual(client.read_text(), original)
+        self.run_setup("--only", "t3", "--yes")
+        self.assertTrue(json.loads(settings.read_text())["localOnly"])
+        self.assertEqual(json.loads(settings.read_text())["idleCompaction"], "onReturn")
+        updated = json.loads(client.read_text())
+        self.assertEqual(updated["fontSizeInterface"], 17)
+        self.assertEqual(updated["browserProfiles"], [{"id": "local"}])
+        self.assertEqual(self.backup_for(client).read_text(), original)
 
     def test_missing_plugin_is_installed_only_during_apply(self):
         self.run_setup("--only", "plugins", "--yes")

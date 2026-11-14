@@ -28,6 +28,7 @@ work_config="$HOME/.claude-work"
 
 updated="$(
   jq \
+    --slurpfile shared "$(dirname -- "${BASH_SOURCE[0]}")/.config/t3/settings.json" \
     --arg opencodeBin "$opencode_bin" \
     --arg claudeBin "$claude_bin" \
     --arg codexBin "$codex_bin" \
@@ -47,7 +48,8 @@ updated="$(
         | .displayName = $name
         | .config = ((.config // {}) + $config);
 
-      .providerInstances = (.providerInstances // {})
+      . * $shared[0]
+      | .providerInstances = (.providerInstances // {})
       | .providerInstances.opencode =
           configure(.providerInstances.opencode; "opencode"; "OpenCode"; {"binaryPath": $opencodeBin})
       | .providerInstances.codex =
@@ -59,6 +61,21 @@ updated="$(
            | .config |= del(.homePath))
     ' "$settings"
 )"
+
+client_settings="$(dirname -- "$settings")/client-settings.json"
+if [[ -f "$client_settings" ]]; then
+  client_updated="$(jq --slurpfile shared "$(dirname -- "${BASH_SOURCE[0]}")/.config/t3/client-settings.json" '. * $shared[0]' "$client_settings")"
+  if [[ "$client_updated" != "$(cat -- "$client_settings")" ]]; then
+    setup_backup "$client_settings" copy
+    printf '  Configure T3 Code client preferences in %s\n' "$client_settings"
+    if [[ "$SETUP_DRY_RUN" != 1 ]]; then
+      client_temp="$client_settings.$$.tmp"
+      printf '%s\n' "$client_updated" > "$client_temp"
+      chmod "$(stat -f %Lp "$client_settings" 2>/dev/null || stat -c %a "$client_settings" 2>/dev/null || echo 600)" "$client_temp"
+      mv -- "$client_temp" "$client_settings"
+    fi
+  fi
+fi
 
 if [[ "$updated" == "$(cat -- "$settings")" ]]; then
   printf '  Already configured: %s\n' "$settings"

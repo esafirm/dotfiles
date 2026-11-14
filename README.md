@@ -83,7 +83,8 @@ For plugin we use [vim-plug](https://github.com/junegunn/vim-plug) and the setup
 
 `setup-t3.sh` writes T3 Code's provider instances into
 `$T3CODE_HOME/userdata/settings.json` (default `~/.t3/userdata/settings.json`).
-It keeps every other setting and copies the previous file to the backup directory
+It merges shared preferences from `.config/t3/settings.json` and
+`.config/t3/client-settings.json`, keeps other settings, and copies previous files to the backup directory
 first. The step needs `jq` and is skipped when the settings file does not exist.
 
 - `opencode` uses `~/.local/bin/opencode-profile`, so servers that T3 spawns
@@ -101,6 +102,23 @@ first. The step needs `jq` and is skipped when the settings file does not exist.
   `claude auth login` (with `CLAUDE_CONFIG_DIR=~/.claude-work` for work).
 
 Restart T3 Code if a provider instance does not show up after setup.
+
+### Sync between machines
+
+Quit T3 Code, pull this repo, then run `./setup.sh --only t3 --yes` on each
+machine. Launch T3 Code once before initial setup so its settings files exist.
+Restart it afterwards. This is an explicit apply, not live or two-way sync.
+Edit the shared files above to change defaults across machines. App UI changes
+stay local until you copy the relevant preference into those files.
+
+The files are merged rather than symlinked because T3 writes its own settings
+and provider paths differ between machines. Logins, browser profiles, onboarding,
+project overrides, desktop state, and caches are not shared. Hidden-model lists
+remain local because installed providers and available models can differ.
+Install Fira Code separately if you want the same code font.
+
+Upstream documents [server model preferences](https://github.com/pingdotgg/t3code/blob/main/docs/user/composer.md)
+and [shared theme files](https://github.com/pingdotgg/t3code/blob/main/docs/user/appearance.md).
 
 ## MCP Sync
 
