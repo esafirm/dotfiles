@@ -19,6 +19,7 @@ Run `./setup.sh`. It previews the changes and asks before applying them (default
 ```sh
 ./setup.sh --dry-run          # Preview only. No file changes or installs.
 ./setup.sh --only links       # Config links, Claude MCP, Git hooks, and Ghostex include.
+./setup.sh --only t3          # T3 Code provider instances for OpenCode and both Claude profiles.
 ./setup.sh --only brew        # Just missing Homebrew packages and apps.
 ./setup.sh --yes              # Apply all steps without the setup prompt.
 ./setup.sh --help
@@ -73,6 +74,22 @@ For plugin we use [vim-plug](https://github.com/junegunn/vim-plug) and the setup
 ## Agent instructions
 
 `.agents/AGENTS.md` is the single shared instruction file. `setup-symlink.sh` links it to `~/.claude/CLAUDE.md`, `~/.gemini/GEMINI.md`, and `~/.config/opencode/AGENTS.md`. Claude Code only reads `AGENTS.md` at project level, so the user-level `~/.claude/CLAUDE.md` link is still required.
+
+## T3 Code
+
+`setup-t3.sh` writes T3 Code's provider instances into
+`$T3CODE_HOME/userdata/settings.json` (default `~/.t3/userdata/settings.json`).
+It keeps every other setting and copies the previous file to the backup directory
+first. The step needs `jq` and is skipped when the settings file does not exist.
+
+- `opencode` uses `~/.local/bin/opencode-profile`, so servers that T3 spawns
+  honor the global Claude profile.
+- `claudeAgent` ("Claude Work") uses `~/.claude-work` as its
+  `CLAUDE_CONFIG_DIR`, and `claudeAgentPersonal` ("Claude Personal") uses
+  `~/.claude`. Both instances are always available, so the profile picker does
+  not change which Claude accounts T3 can use.
+
+Restart T3 Code if a provider instance does not show up after setup.
 
 ## MCP Sync
 

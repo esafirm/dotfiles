@@ -13,7 +13,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = (
-    "setup.sh", "setup-common.sh", "setup-symlink.sh", "setup-brew.sh",
+    "setup.sh", "setup-common.sh", "setup-symlink.sh", "setup-t3.sh", "setup-brew.sh",
     "themes/setup.sh", ".config/herdr/setup.sh",
 )
 
@@ -256,6 +256,52 @@ PY
         self.assertNotIn("uninstall", self.calls())
         self.assertIn("reload-config", self.calls())
 
+    def t3_settings(self, content):
+        settings = self.home / ".t3/userdata/settings.json"
+        settings.parent.mkdir(parents=True)
+        settings.write_text(content)
+        return settings
+
+    def test_t3_configures_opencode_and_both_claude_profiles(self):
+        original = json.dumps({
+            "providerInstances": {
+                "claudeAgent": {
+                    "driver": "claudeAgent",
+                    "enabled": True,
+                    "config": {"homePath": "/old/work", "launchArgs": "--chrome"},
+                },
+                "codex": {"driver": "codex", "enabled": False},
+            }
+        }, indent=2) + "\n"
+        settings = self.t3_settings(original)
+        self.run_setup("--only", "t3", "--yes")
+        configured = json.loads(settings.read_text())["providerInstances"]
+        self.assertEqual(configured["opencode"]["config"]["binaryPath"],
+                         str(self.home / ".local/bin/opencode-profile"))
+        self.assertTrue(configured["opencode"]["enabled"])
+        work = configured["claudeAgent"]
+        self.assertEqual(work["displayName"], "Claude Work")
+        self.assertEqual(work["config"], {"homePath": str(self.home / ".claude-work"), "launchArgs": "--chrome"})
+        personal = configured["claudeAgentPersonal"]
+        self.assertEqual(personal["driver"], "claudeAgent")
+        self.assertEqual(personal["displayName"], "Claude Personal")
+        self.assertEqual(personal["config"], {"homePath": str(self.home / ".claude")})
+        self.assertEqual(configured["codex"], {"driver": "codex", "enabled": False})
+        self.assertEqual(self.backup_for(settings).read_text(), original)
+
+        after_first = settings.read_text()
+        output = self.run_setup("--only", "t3", "--yes")
+        self.assertIn("Already configured", output)
+        self.assertEqual(settings.read_text(), after_first)
+
+    def test_t3_dry_run_does_not_write(self):
+        original = '{"providerInstances": {"codex": {"driver": "codex", "enabled": false}}}\n'
+        settings = self.t3_settings(original)
+        output = self.run_setup("--only", "t3", "--dry-run")
+        self.assertIn("Configure T3 Code providers", output)
+        self.assertEqual(settings.read_text(), original)
+        self.assertFalse((self.home / ".dotfiles-backups").exists())
+
     def test_missing_plugin_is_installed_only_during_apply(self):
         self.run_setup("--only", "plugins", "--yes")
         self.assertEqual(self.calls().count("herdr plugin install esafirm/herdr-all-hands --yes"), 1)
@@ -285,9 +331,10 @@ PY
         self.assertEqual(list(self.home.iterdir()), [])
 
     def test_only_prints_warnings_for_selected_steps(self):
-        for step in ("links", "theme", "brew", "plugins"):
+        for step in ("links", "t3", "theme", "brew", "plugins"):
             output = self.run_setup("--only", step, "--dry-run")
             self.assertEqual("Claude MCP entries" in output, step == "links")
+            self.assertEqual("T3 Code provider settings" in output, step == "t3")
             self.assertEqual("Plugins may download" in output, step == "plugins")
 
     def test_absent_mcp_removals_are_quiet(self):

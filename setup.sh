@@ -5,7 +5,7 @@ source "$(dirname -- "${BASH_SOURCE[0]}")/setup-common.sh"
 
 usage() {
   cat <<'EOF'
-Usage: ./setup.sh [--dry-run] [--yes] [--only links|theme|brew|plugins]
+Usage: ./setup.sh [--dry-run] [--yes] [--only links|t3|theme|brew|plugins]
 
 Preview changes, then ask before applying them. Existing configs are backed up.
 
@@ -31,7 +31,7 @@ while [[ $# -gt 0 ]]; do
       [[ $# -gt 1 ]] || { usage >&2; exit 2; }
       only="$2"
       case "$only" in
-        links|theme|brew|plugins) ;;
+        links|t3|theme|brew|plugins) ;;
         *) printf 'Unknown step: %s\n' "$only" >&2; exit 2 ;;
       esac
       shift
@@ -42,11 +42,12 @@ while [[ $# -gt 0 ]]; do
   shift
 done
 
-steps=(links theme brew plugins)
+steps=(links t3 theme brew plugins)
 [[ -z "$only" ]] || steps=("$only")
 step_script() {
   case "$1" in
     links) printf '%s/setup-symlink.sh' "$SETUP_ROOT" ;;
+    t3) printf '%s/setup-t3.sh' "$SETUP_ROOT" ;;
     theme) printf '%s/themes/setup.sh' "$SETUP_ROOT" ;;
     brew) printf '%s/setup-brew.sh' "$SETUP_ROOT" ;;
     plugins) printf '%s/.config/herdr/setup.sh' "$SETUP_ROOT" ;;
@@ -75,6 +76,7 @@ printf 'No bulk package upgrades, cleanup, or recursive deletion. Conflicts are 
 for step in "${steps[@]}"; do
   case "$step" in
     links) printf 'Claude MCP entries and this repo\047s hooks path will be configured in the links step.\n' ;;
+    t3) printf 'T3 Code provider settings are written into its user settings file.\n' ;;
     plugins) printf 'Plugins may download and execute third-party code. Existing plugins are kept.\n' ;;
   esac
 done
