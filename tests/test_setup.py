@@ -292,7 +292,10 @@ PY
         self.assertTrue(personal["enabled"])
         self.assertEqual(personal["displayName"], "Claude Personal")
         self.assertEqual(personal["config"], {})
-        self.assertEqual(configured["codex"], {"driver": "codex", "enabled": False})
+        self.assertEqual(configured["codex"]["driver"], "codex")
+        self.assertTrue(configured["codex"]["enabled"])
+        self.assertEqual(configured["codex"]["displayName"], "Codex")
+        self.assertEqual(configured["codex"]["config"], {"setupMode": "existing"})
         self.assertEqual(self.backup_for(settings).read_text(), original)
 
         after_first = settings.read_text()

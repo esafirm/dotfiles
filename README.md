@@ -84,6 +84,9 @@ first. The step needs `jq` and is skipped when the settings file does not exist.
 
 - `opencode` uses `~/.local/bin/opencode-profile`, so servers that T3 spawns
   honor the global Claude profile.
+- `codex` ("Codex") uses the existing CLI at `~/.local/bin/codex` with
+  `setupMode: existing`, so it keeps your `~/.codex` login and config instead of
+  installing a managed copy.
 - `claudeAgent` ("Claude Work") uses `~/.claude-work` as its
   `CLAUDE_CONFIG_DIR`.
 - `claudeAgentPersonal` ("Claude Personal") leaves `CLAUDE_CONFIG_DIR` unset,
