@@ -41,6 +41,31 @@ val jenkinsBaseUrl = try {
     error("${e.message}. Run `jenkins init` or edit ${configFile.absolutePath}")
 }
 
+// Host rewrite rules: one `from.host = to.host` per line, `#` for comments. Links from other
+// systems can point at a retired host that redirects to the live one, and the redirect drops the
+// Authorization header, so requests to it come back 403. Rewriting before the request avoids that.
+val hostRewritesFile = File(configFile.parentFile, "host-rewrites")
+
+val hostRewrites: Map<String, String> by lazy {
+    hostRewritesFile.takeIf { it.isFile }?.readLines().orEmpty()
+        .map { it.substringBefore('#').trim() }
+        .filter { it.isNotEmpty() }
+        .associate { line ->
+            val from = line.substringBefore('=', missingDelimiterValue = "").trim().lowercase()
+            val to = line.substringAfter('=', missingDelimiterValue = "").trim()
+            require(from.isNotEmpty() && to.isNotEmpty()) {
+                "Invalid rule '$line' in ${hostRewritesFile.absolutePath}, expected `from.host = to.host`"
+            }
+            from to to
+        }
+}
+
+fun rewriteHost(url: String): String {
+    val match = Regex("^(https?://)([^/:?#]+)", RegexOption.IGNORE_CASE).find(url) ?: return url
+    val to = hostRewrites[match.groupValues[2].lowercase()] ?: return url
+    return match.groupValues[1] + to + url.substring(match.range.last + 1)
+}
+
 // Credentials stay in the environment so they never end up in a dotfile.
 val user = System.getenv("JENKINS_USER")
 val auth: String by lazy {
@@ -119,6 +144,8 @@ fun printUsage() {
 
         Config:
           ~/.config/jenkins-cli/config   Set with `init`, overridden by JENKINS_URL
+          ~/.config/jenkins-cli/host-rewrites
+                                         `from.host = to.host` per line, applied to every URL
 
         Examples:
           jenkins-cli.main.kts init https://jenkins.example.com
@@ -165,7 +192,8 @@ fun JsonObject?.double(key: String): Double? = this.str(key)?.toDoubleOrNull()
 
 fun JsonObject?.long(key: String): Long? = this.str(key)?.toLongOrNull()
 
-fun secureJenkinsUrl(url: String): String {
+fun secureJenkinsUrl(rawUrl: String): String {
+    val url = rewriteHost(rawUrl)
     val uri = URI(url)
     val base = URI(jenkinsBaseUrl)
     return if (
@@ -1191,6 +1219,10 @@ fun showSkill() {
             2. ~/.config/jenkins-cli/config (write it with `init [url]`)
             3. built-in default
 
+        Host rewrites: ~/.config/jenkins-cli/host-rewrites maps retired hosts to
+        live ones (`from.host = to.host` per line), so links copied from PR checks
+        or Slack work as-is. A 403 on a host that redirects usually means a rule is missing.
+
         Job references: every command accepts either a job NAME from the
         `jobs` map below or a full https:// URL. Use the URL when the job is
         not in the map — name-only lookup fails with "Unknown job".
@@ -1414,4 +1446,4 @@ fun main(args: Array<String>) {
     }
 }
 
-main(args)
+main(args.map(::rewriteHost).toTypedArray())
