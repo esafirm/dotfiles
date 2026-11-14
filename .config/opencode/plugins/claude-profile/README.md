@@ -36,6 +36,18 @@ From a terminal, use `opencode-claude --profile work|personal|status`.
 To stop using the wrapper, run
 `opencode service unset env OPENCODE_CLAUDE_PATH` (also restarts the service).
 
+## Clients that spawn their own server
+
+T3 Code starts its own `opencode serve` process, so it does not inherit the
+service environment and the setting above has no effect there. Set T3 Code's
+OpenCode **Binary path** to `~/.local/bin/opencode-profile`. That launcher
+exports `OPENCODE_CLAUDE_PATH` before starting OpenCode, which makes the Claude
+Agent provider honor the selected profile. Start a new thread after switching.
+
+T3 Code's native Claude provider is separate. Set its **CLAUDE_CONFIG_DIR path**
+to the profile directory (`~/.claude-work` for work). Unlike the OpenCode
+provider, that field is static, so update it after switching profiles.
+
 ## Verify
 
 ```sh

@@ -63,6 +63,7 @@ setup_link "$SETUP_ROOT/.agents/.skill-lock.json" "$HOME/.agents/.skill-lock.jso
 ## CLI tools
 setup_link "$SETUP_ROOT/kotlin/kscripts/jenkins-cli.main.kts" "$HOME/scripts/jenkins-cli.main.kts"
 setup_link "$SETUP_ROOT/bin/opencode-claude" "$HOME/.local/bin/opencode-claude"
+setup_link "$SETUP_ROOT/bin/opencode-profile" "$HOME/.local/bin/opencode-profile"
 setup_link "$SETUP_ROOT/bin/llm-wiki-mcp" "$HOME/.local/bin/llm-wiki-mcp"
 setup_link "$SETUP_ROOT/bin/play-store-mcp" "$HOME/.local/bin/play-store-mcp"
 setup_link "$SETUP_ROOT/kotlin/kscripts/jenkins" "$SETUP_ROOT/bin/jenkins"

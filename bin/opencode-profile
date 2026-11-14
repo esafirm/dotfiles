@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# OpenCode binary for clients that spawn their own server, such as T3 Code.
+# Those servers don't inherit `opencode service set env`, so the Claude Agent
+# provider would otherwise resolve plain `claude` and always use ~/.claude.
+# Point the client's OpenCode binary path at this launcher.
+export OPENCODE_CLAUDE_PATH="${OPENCODE_CLAUDE_PATH:-$HOME/.local/bin/opencode-claude}"
+exec opencode "$@"
