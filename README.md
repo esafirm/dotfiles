@@ -86,8 +86,9 @@ first. The step needs `jq` and is skipped when the settings file does not exist.
   honor the global Claude profile.
 - `claudeAgent` ("Claude Work") uses `~/.claude-work` as its
   `CLAUDE_CONFIG_DIR`, and `claudeAgentPersonal` ("Claude Personal") uses
-  `~/.claude`. Both instances are always available, so the profile picker does
-  not change which Claude accounts T3 can use.
+  `~/.claude`. Both instances are configured, but each needs its own
+  `claude auth login` before T3 can start sessions with it. T3 hides instances
+  that cannot authenticate.
 
 Restart T3 Code if a provider instance does not show up after setup.
 
