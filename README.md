@@ -85,10 +85,13 @@ first. The step needs `jq` and is skipped when the settings file does not exist.
 - `opencode` uses `~/.local/bin/opencode-profile`, so servers that T3 spawns
   honor the global Claude profile.
 - `claudeAgent` ("Claude Work") uses `~/.claude-work` as its
-  `CLAUDE_CONFIG_DIR`, and `claudeAgentPersonal` ("Claude Personal") uses
-  `~/.claude`. Both instances are configured, but each needs its own
-  `claude auth login` before T3 can start sessions with it. T3 hides instances
-  that cannot authenticate.
+  `CLAUDE_CONFIG_DIR`.
+- `claudeAgentPersonal` ("Claude Personal") leaves `CLAUDE_CONFIG_DIR` unset,
+  so it uses the default `~/.claude.json` and its Keychain entry. Setting
+  `~/.claude` explicitly selects a different Keychain entry and appears signed
+  out.
+- T3 hides an instance until its account is signed in. Each profile needs one
+  `claude auth login` (with `CLAUDE_CONFIG_DIR=~/.claude-work` for work).
 
 Restart T3 Code if a provider instance does not show up after setup.
 

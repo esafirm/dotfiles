@@ -270,6 +270,11 @@ PY
                     "enabled": True,
                     "config": {"homePath": "/old/work", "launchArgs": "--chrome"},
                 },
+                "claudeAgentPersonal": {
+                    "driver": "claudeAgent",
+                    "enabled": False,
+                    "config": {"homePath": "/old/personal"},
+                },
                 "codex": {"driver": "codex", "enabled": False},
             }
         }, indent=2) + "\n"
@@ -284,8 +289,9 @@ PY
         self.assertEqual(work["config"], {"homePath": str(self.home / ".claude-work"), "launchArgs": "--chrome"})
         personal = configured["claudeAgentPersonal"]
         self.assertEqual(personal["driver"], "claudeAgent")
+        self.assertTrue(personal["enabled"])
         self.assertEqual(personal["displayName"], "Claude Personal")
-        self.assertEqual(personal["config"], {"homePath": str(self.home / ".claude")})
+        self.assertEqual(personal["config"], {})
         self.assertEqual(configured["codex"], {"driver": "codex", "enabled": False})
         self.assertEqual(self.backup_for(settings).read_text(), original)
 

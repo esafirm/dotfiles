@@ -18,7 +18,6 @@ fi
 opencode_bin="$HOME/.local/bin/opencode-profile"
 claude_bin="$HOME/.local/bin/claude"
 work_config="$HOME/.claude-work"
-personal_config="$HOME/.claude"
 
 [[ -x "$opencode_bin" ]] || printf '  Warning: %s is missing. Run --only links first.\n' "$opencode_bin"
 
@@ -30,11 +29,9 @@ updated="$(
     --arg opencodeBin "$opencode_bin" \
     --arg claudeBin "$claude_bin" \
     --arg workConfig "$work_config" \
-    --arg personalConfig "$personal_config" \
     '
-      def claudeConfig($home):
-        {"homePath": $home}
-        + (if $claudeBin == "" then {} else {"binaryPath": $claudeBin} end);
+      def claudeBinary:
+        if $claudeBin == "" then {} else {"binaryPath": $claudeBin} end;
 
       def configure($current; $driver; $name; $config):
         ($current // {"driver": $driver})
@@ -47,9 +44,10 @@ updated="$(
       | .providerInstances.opencode =
           configure(.providerInstances.opencode; "opencode"; "OpenCode"; {"binaryPath": $opencodeBin})
       | .providerInstances.claudeAgent =
-          configure(.providerInstances.claudeAgent; "claudeAgent"; "Claude Work"; claudeConfig($workConfig))
+          configure(.providerInstances.claudeAgent; "claudeAgent"; "Claude Work"; ({"homePath": $workConfig} + claudeBinary))
       | .providerInstances.claudeAgentPersonal =
-          configure(.providerInstances.claudeAgentPersonal; "claudeAgent"; "Claude Personal"; claudeConfig($personalConfig))
+          (configure(.providerInstances.claudeAgentPersonal; "claudeAgent"; "Claude Personal"; claudeBinary)
+           | .config |= del(.homePath))
     ' "$settings"
 )"
 
@@ -61,7 +59,7 @@ fi
 printf '  Configure T3 Code providers in %s\n' "$settings"
 printf '    opencode -> %s\n' "$opencode_bin"
 printf '    Claude Work -> %s\n' "$work_config"
-printf '    Claude Personal -> %s\n' "$personal_config"
+printf '    Claude Personal -> host default (no CLAUDE_CONFIG_DIR)\n'
 
 setup_backup "$settings" copy
 printf '  Write %s\n' "$settings"

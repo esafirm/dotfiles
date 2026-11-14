@@ -45,10 +45,10 @@ exports `OPENCODE_CLAUDE_PATH` before starting OpenCode, which makes the Claude
 Agent provider honor the selected profile. Start a new thread after switching.
 
 T3 Code's native Claude provider is separate. Add one Claude provider instance
-per profile instead of switching a single instance: Work uses `~/.claude-work`
-and Personal uses `~/.claude`, both as the **CLAUDE_CONFIG_DIR path**.
-`setup-t3.sh` configures both, so the profile picker does not change which
-Claude accounts T3 can use.
+per profile instead of switching a single instance: Work sets
+`CLAUDE_CONFIG_DIR` to `~/.claude-work`, and Personal leaves it unset so it
+keeps the default `~/.claude.json` and Keychain entry. `setup-t3.sh` configures
+both, so the profile picker does not change which Claude accounts T3 can use.
 
 ## Verify
 
