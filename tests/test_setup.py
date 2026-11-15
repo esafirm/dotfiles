@@ -297,12 +297,30 @@ PY
         self.assertTrue(configured["codex"]["enabled"])
         self.assertEqual(configured["codex"]["displayName"], "Codex")
         self.assertEqual(configured["codex"]["config"], {"setupMode": "existing"})
+        self.assertNotIn("antigravity", configured)
         self.assertEqual(self.backup_for(settings).read_text(), original)
 
         after_first = settings.read_text()
         output = self.run_setup("--only", "t3", "--yes")
         self.assertIn("Already configured", output)
         self.assertEqual(settings.read_text(), after_first)
+
+    def test_t3_enables_antigravity_with_local_agy(self):
+        agy = self.home / ".local/bin/agy"
+        agy.parent.mkdir(parents=True)
+        agy.write_text("#!/bin/sh\n")
+        agy.chmod(0o755)
+        settings = self.t3_settings(json.dumps({
+            "providerInstances": {
+                "antigravity": {"driver": "antigravity", "enabled": False, "config": {"authMethod": "oauth-personal"}},
+            }
+        }))
+        self.run_setup("--only", "t3", "--yes")
+        antigravity = json.loads(settings.read_text())["providerInstances"]["antigravity"]
+        self.assertTrue(antigravity["enabled"])
+        self.assertEqual(antigravity["driver"], "antigravity")
+        self.assertEqual(antigravity["displayName"], "Antigravity")
+        self.assertEqual(antigravity["config"], {"authMethod": "oauth-personal", "binaryPath": str(agy)})
 
     def test_t3_dry_run_does_not_write(self):
         original = '{"providerInstances": {"codex": {"driver": "codex", "enabled": false}}}\n'

@@ -18,6 +18,7 @@ fi
 opencode_bin="$HOME/.local/bin/opencode-profile"
 claude_bin="$HOME/.local/bin/claude"
 codex_bin="$HOME/.local/bin/codex"
+agy_bin="$HOME/.local/bin/agy"
 work_config="$HOME/.claude-work"
 
 [[ -x "$opencode_bin" ]] || printf '  Warning: %s is missing. Run --only links first.\n' "$opencode_bin"
@@ -25,6 +26,8 @@ work_config="$HOME/.claude-work"
 # Keep the Claude and Codex instances on PATH lookup when the local binary is absent.
 [[ -x "$claude_bin" ]] || claude_bin=""
 [[ -x "$codex_bin" ]] || codex_bin=""
+# T3 only auto-detects agy_acp_server.par, so Antigravity needs the agy path. Leave it alone without one.
+[[ -x "$agy_bin" ]] || agy_bin=""
 
 updated="$(
   jq \
@@ -32,6 +35,7 @@ updated="$(
     --arg opencodeBin "$opencode_bin" \
     --arg claudeBin "$claude_bin" \
     --arg codexBin "$codex_bin" \
+    --arg agyBin "$agy_bin" \
     --arg workConfig "$work_config" \
     '
       def claudeBinary:
@@ -54,6 +58,10 @@ updated="$(
           configure(.providerInstances.opencode; "opencode"; "OpenCode"; {"binaryPath": $opencodeBin})
       | .providerInstances.codex =
           configure(.providerInstances.codex; "codex"; "Codex"; codexConfig)
+      | if $agyBin == "" then . else
+          .providerInstances.antigravity =
+            configure(.providerInstances.antigravity; "antigravity"; "Antigravity"; {"binaryPath": $agyBin})
+        end
       | .providerInstances.claudeAgent =
           configure(.providerInstances.claudeAgent; "claudeAgent"; "Claude Work"; ({"homePath": $workConfig} + claudeBinary))
       | .providerInstances.claudeAgentPersonal =
@@ -85,6 +93,7 @@ fi
 printf '  Configure T3 Code providers in %s\n' "$settings"
 printf '    opencode -> %s\n' "$opencode_bin"
 printf '    Codex -> %s\n' "${codex_bin:-codex from PATH}"
+printf '    Antigravity -> %s\n' "${agy_bin:-unchanged (no ~/.local/bin/agy)}"
 printf '    Claude Work -> %s\n' "$work_config"
 printf '    Claude Personal -> host default (no CLAUDE_CONFIG_DIR)\n'
 

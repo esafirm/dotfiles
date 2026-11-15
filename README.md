@@ -23,7 +23,7 @@ Run `./setup.sh`. It previews the changes and asks before applying them (default
 ```sh
 ./setup.sh --dry-run          # Preview only. No file changes or installs.
 ./setup.sh --only links       # Config links, Claude MCP, Git hooks, and Ghostex include.
-./setup.sh --only t3          # T3 Code provider instances for OpenCode and both Claude profiles.
+./setup.sh --only t3          # T3 Code provider instances for OpenCode, Codex, Antigravity, and both Claude profiles.
 ./setup.sh --only brew        # Just missing Homebrew packages and apps.
 ./setup.sh --yes              # Apply all steps without the setup prompt.
 ./setup.sh --help
@@ -92,6 +92,12 @@ first. The step needs `jq` and is skipped when the settings file does not exist.
 - `codex` ("Codex") uses the existing CLI at `~/.local/bin/codex` with
   `setupMode: existing`, so it keeps your `~/.codex` login and config instead of
   installing a managed copy.
+- `antigravity` ("Antigravity") uses the agy CLI at `~/.local/bin/agy`, which
+  serves ACP itself (`agy acp`). T3 only auto-detects its managed
+  `agy_acp_server.par`, so the path is set explicitly. The instance is left
+  unchanged when agy is not installed. T3 does not reuse the `agy` login. It
+  runs agy with its own `GEMINI_HOME` per instance, so sign in once from
+  Settings > Providers > Antigravity on each machine.
 - `claudeAgent` ("Claude Work") uses `~/.claude-work` as its
   `CLAUDE_CONFIG_DIR`.
 - `claudeAgentPersonal` ("Claude Personal") leaves `CLAUDE_CONFIG_DIR` unset,
