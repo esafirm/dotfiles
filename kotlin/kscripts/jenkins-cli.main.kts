@@ -221,6 +221,23 @@ fun fetchUrl(
 fun fetchJson(url: String): JsonElement =
     Json.parseToJsonElement(fetchUrl(url).inputStream.bufferedReader().readText())
 
+// A pipeline exposes an interim `result` (e.g. SUCCESS) while still running, before post steps such as
+// `junit` can turn it UNSTABLE. Only a finished build's result is final.
+fun buildResult(build: JsonObject): String {
+    val result = build.str("result")
+    return when {
+        build.str("building") == "true" -> if (result == null) "BUILDING" else "BUILDING (interim: $result)"
+        else -> result ?: "?"
+    }
+}
+
+// Values carry JSON (run_ui_tests `targets`, `devices`) and `&`/`=`/`+`, so every key and value is
+// percent-encoded. Spaces become %20, not `+`, so the value means the same in any query parser.
+fun buildQuery(params: List<Pair<String, String>>): String {
+    fun enc(text: String) = java.net.URLEncoder.encode(text, "UTF-8").replace("+", "%20")
+    return params.joinToString("&") { "${enc(it.first)}=${enc(it.second)}" }
+}
+
 // ── run-job (non-interactive) ─────────────────────────────────────────────
 fun runJob(jobName: String, args: List<String>) {
     val def = jobs[jobName] ?: error("Unknown job '$jobName'. Available: ${jobs.keys.joinToString(", ")}")
@@ -269,7 +286,7 @@ fun interactiveRun(jobName: String?) {
 fun runJobInternal(jobName: String, def: JobDef, resolved: List<Pair<String, String>>) {
     val jobUrl = secureJenkinsUrl(def.url.trimEnd('/'))
     val buildUrl = "${jobUrl}/buildWithParameters"
-    val query = resolved.joinToString("&") { "${it.first}=${URI(it.second).toASCIIString()}" }
+    val query = buildQuery(resolved)
 
     println("─── Triggering build ───────────────────────")
     println("  Job: $jobName ($jobUrl)")
@@ -336,7 +353,14 @@ fun testReport(url: String) {
 
     // Test report (summary + suites) — use errorStackTrace (Jenkins field name)
     val reportApiUrl = "$testReportUrl/api/json?tree=totalCount,failCount,skipCount,duration,suites[cases[className,name,status,errorDetails,errorStackTrace]]"
-    val json = fetchJson(reportApiUrl).jsonObject
+    val json = try {
+        fetchJson(reportApiUrl).jsonObject
+    } catch (_: java.io.FileNotFoundException) {
+        val result = buildResult(fetchJson("$buildUrl/api/json?tree=result,building").jsonObject)
+        println("No test report on this build (result: $result).")
+        if (result.startsWith("BUILDING")) println("JUnit results are recorded near the end of the run. Retry once it finishes.")
+        return
+    }
 
     // Count cases directly for an accurate total
     val suites = json["suites"]?.jsonArray ?: emptyList()
@@ -660,7 +684,7 @@ fun showBuildInfo(ref: String) {
     println("─── Build Info ────────────────────────────")
     val root = fetchJson(apiUrl).jsonObject
     val num = root.int("number")
-    val result = root.str("result") ?: (if (root["building"]?.jsonPrimitive?.content == "true") "BUILDING" else "?")
+    val result = buildResult(root)
     val display = root.str("displayName")
     val ts = root.long("timestamp")
     val durMs = root.long("duration")
@@ -705,7 +729,7 @@ fun showBuilds(ref: String, limit: Int) {
     for (b in builds.take(limit)) {
         val obj = b.jsonObject
         val num = obj.int("number")
-        val result = obj.str("result") ?: (if (obj["building"]?.jsonPrimitive?.content == "true") "BUILDING" else "?")
+        val result = buildResult(obj)
         val ts = obj.long("timestamp")
         val durMs = obj.long("duration")
         val started = ts?.let { java.time.Instant.ofEpochMilli(it).toString() } ?: "?"
@@ -733,8 +757,7 @@ fun triggerBuild(ref: String, args: List<String>) {
         if (eq <= 0) error("Invalid param format '$p' — use key=value")
         p.substring(0, eq) to p.substring(eq + 1)
     }
-    fun enc(text: String) = java.net.URLEncoder.encode(text, "UTF-8")
-    val query = cliParams.entries.joinToString("&") { "${enc(it.key)}=${enc(it.value)}" }
+    val query = buildQuery(cliParams.toList())
 
     println("─── Triggering build ───────────────────────")
     println("  Job: $jobUrl")
@@ -769,7 +792,7 @@ fun rebuildLastFailed(ref: String) {
             val name = obj.str("name") ?: return@mapNotNull null
             name to (obj.str("value") ?: "")
         } ?: emptyList()
-    val query = params.joinToString("&") { "${it.first}=${URI(it.second).toASCIIString()}" }
+    val query = buildQuery(params)
 
     println("─── Rebuilding ────────────────────────────")
     println("  Job: $jobUrl")
@@ -1266,6 +1289,7 @@ fun showSkill() {
           abort <build-url>                  Stop a running build; refuses if it already finished
           run-job <jobName> [key=value...]   Same, but resolves params from the jobs map
           run [<jobName>]                    Interactive param prompt
+          Parameter values are URL-encoded by the CLI: pass JSON (e.g. targets=["class a.b.FooTest"]) raw.
 
         Download:
           download <artifact-url> [outPath]                Direct artifact download
