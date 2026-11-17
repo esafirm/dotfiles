@@ -46,7 +46,7 @@ keepsecret
 .config/claude/*.local.json
 .config/claude/.credentials.json
 
-# Generated, account-specific sync buckets. Existing tracked skills stay tracked.
+# Generated, account-specific sync buckets.
 .config/claude/skills/synced/
 
 ## Temporary configuration
