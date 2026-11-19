@@ -89,7 +89,19 @@ val jobs = mapOf(
             ParamDef("prId", "PR number, links statuses to the pull request", required = false),
             ParamDef("extraGradleFlags", "Gradle flags for the APK build, e.g. --rerun-tasks", required = false),
         )
-    )
+    ),
+    "wrong-installation-tests" to JobDef(
+        url = "$jenkinsBaseUrl/job/wrong-installation-tests",
+        params = listOf(
+            ParamDef("sha1", "ref in bandlab/bandlab-android, e.g. origin/master or origin/pr/<N>/head", default = "origin/master", required = false),
+        )
+    ),
+    "wrong-installation-tests-broken-engine" to JobDef(
+        url = "$jenkinsBaseUrl/job/wrong-installation-tests-broken-engine",
+        params = listOf(
+            ParamDef("sha1", "ref in bandlab/bandlab-android, e.g. origin/pr/<N>/head; runs only the broken-engine test, no notifications", default = "origin/master", required = false),
+        )
+    ),
 )
 
 data class ParamDef(val name: String, val desc: String, val default: String? = null, val required: Boolean = true)
@@ -111,6 +123,7 @@ fun printUsage() {
           get-job-config <name-or-url>         Print a job's config.xml
           update-job-config <name-or-url> <config-file>
                                                Update a job's config.xml (full replace)
+          create-job <new-name> <config-file>  Create a job from a config.xml (copy: get-job-config, edit, create-job)
           rename-job <name-or-url> <new-name>  Rename a job (build history and config are kept)
           failure-causes [filter]              List Build Failure Analyzer causes (id, name, categories)
           failure-causes get <id>              Show a cause's description and indication patterns
@@ -507,6 +520,27 @@ fun updateJobConfig(ref: String, configFile: String) {
         kotlin.system.exitProcess(1)
     }
     println("  Status: $status")
+}
+
+// ── create-job ────────────────────────────────────────────────────────────
+fun createJob(name: String, configFile: String) {
+    require(name.isNotBlank() && '/' !in name) { "Invalid job name '$name'" }
+    val encoded = java.net.URLEncoder.encode(name, "UTF-8").replace("+", "%20")
+    val xml = File(configFile).readText()
+    println("─── Create Job ────────────────────────────")
+    println("  Job: $name")
+    println("  Sending ${xml.length} bytes from $configFile ...")
+    val conn = fetchUrl(secureJenkinsUrl("$jenkinsBaseUrl/createItem?name=$encoded"), method = "POST", followRedirects = false)
+    conn.setRequestProperty("Content-Type", "application/xml")
+    conn.doOutput = true
+    conn.outputStream.use { it.write(xml.toByteArray()) }
+    val status = conn.responseCode
+    if (status !in 200..302) {
+        System.err.println("Error: HTTP $status — ${conn.responseMessage}")
+        kotlin.system.exitProcess(1)
+    }
+    println("  Status: $status")
+    println("  URL: $jenkinsBaseUrl/job/$encoded/")
 }
 
 // ── rename-job ────────────────────────────────────────────────────────────
@@ -1273,6 +1307,7 @@ fun showSkill() {
                                         Pass a timestamp to also download that config.xml.
                                         Endpoint is /jobConfigHistory (NOT /configHistory).
           update-job-config <ref> <file>  POST a full replacement config.xml
+          create-job <name> <file>        Create a new job from a config.xml (write: needs approval)
           rename-job <ref> <new-name>     Rename a job in place (history kept; old URL stops working)
           validate <jenkinsfile> [url]    Check a declarative Jenkinsfile's syntax on the server
                                           (read-only; defaults to the configured server). Exit 1 on errors.
@@ -1381,6 +1416,11 @@ fun main(args: Array<String>) {
             val ref = args.getOrNull(1) ?: error("Usage: jenkins-cli.main.kts update-job-config <jobName-or-url> <config.xml>")
             val configFile = args.getOrNull(2) ?: error("Usage: jenkins-cli.main.kts update-job-config <jobName-or-url> <config.xml>")
             updateJobConfig(ref, configFile)
+        }
+        "create-job" -> {
+            val name = args.getOrNull(1) ?: error("Usage: jenkins-cli.main.kts create-job <new-name> <config.xml>")
+            val configFile = args.getOrNull(2) ?: error("Usage: jenkins-cli.main.kts create-job <new-name> <config.xml>")
+            createJob(name, configFile)
         }
         "rename-job" -> {
             val ref = args.getOrNull(1) ?: error("Usage: jenkins-cli.main.kts rename-job <jobName-or-url> <new-name>")
