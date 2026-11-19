@@ -73,7 +73,3 @@ Never add AI attribution, credits, signatures, badges, or promotional footers to
 
 Do not write or run ad-hoc Python scripts unless strictly necessary (e.g. complex data structures or logic that cannot be handled cleanly in shell). Prefer dedicated tools, standard CLI utilities, or bash pipelines (`grep`, `awk`, `sed`, `jq`) instead.
 
-## Second Brain
-
-The BandLab Android knowledge base is at `~/second-brain`, plain Markdown in its own git repo. Check its `index.md` and the folder indexes before answering questions about BandLab architecture, ANRs, players or past investigations, and before researching something from scratch. Follow the writing rules in `~/second-brain/AGENTS.md` when adding notes, update the indexes and research log, and pull before writing and commit after.
-
