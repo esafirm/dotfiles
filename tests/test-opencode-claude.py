@@ -16,7 +16,7 @@ class ClaudeProfileTest(unittest.TestCase):
         self.addCleanup(self.temporary.cleanup)
         self.home = Path(self.temporary.name) / "home with spaces"
         (self.home / ".claude").mkdir(parents=True)
-        (self.home / ".claude-personal").mkdir()
+        (self.home / ".claude-work").mkdir()
         (self.home / ".local/bin").mkdir(parents=True)
         claude = self.home / ".local/bin/claude"
         claude.write_text('#!/bin/sh\nprintf "%s\\n" "${CLAUDE_CONFIG_DIR:-default}" "$@"\n')
@@ -36,18 +36,18 @@ class ClaudeProfileTest(unittest.TestCase):
                          ["default", "--model", "opus", "two words"])
 
     def test_switch_is_persistent_and_status_does_not_change_it(self):
-        for profile, directory in [("personal", ".claude-personal"), ("work", ".claude")]:
+        for profile, directory in [("personal", ".claude"), ("work", ".claude-work")]:
             self.assertEqual(self.run_wrapper("--profile", profile).returncode, 0)
             status = self.run_wrapper("--profile", "status")
             self.assertEqual(status.stdout, f"{profile} ({self.home / directory})\n")
             self.assertEqual(self.run_wrapper("auth", "status").stdout.splitlines()[0],
-                             "default" if profile == "work" else str(self.home / directory))
+                             "default" if profile == "personal" else str(self.home / directory))
 
     def test_invalid_arguments_do_not_change_selection(self):
         for args in [("--profile",), ("--profile", "../../bad"),
                      ("--profile", "personal", "extra")]:
             self.assertNotEqual(self.run_wrapper(*args).returncode, 0)
-        self.assertTrue(self.run_wrapper("--profile", "status").stdout.startswith("work "))
+        self.assertTrue(self.run_wrapper("--profile", "status").stdout.startswith("personal "))
 
     def test_corrupt_state_fails_closed_and_can_be_repaired(self):
         state = self.home / "state/opencode/claude-profile"

@@ -3,7 +3,7 @@ import { beforeEach, expect, mock, test } from "bun:test"
 const calls: string[][] = []
 const execute = mock((_path: string, args: string[]) => {
   calls.push(args)
-  return args[1] === "personal" ? "personal (/fixture/.claude-personal)\n" : "work (/fixture/.claude)\n"
+  return args[1] === "personal" ? "personal (/fixture/.claude)\n" : "work (/fixture/.claude-work)\n"
 })
 mock.module("node:child_process", () => ({ execFileSync: execute }))
 mock.module("@opencode/plugin/tui", () => ({ Plugin: { define: (plugin: unknown) => plugin } }))
