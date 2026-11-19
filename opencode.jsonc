@@ -41,6 +41,14 @@
           "callback_port": 19876,
           "redirect_uri": "http://127.0.0.1:19876/mcp/oauth/callback"
         }
+      },
+      "atlassian": {
+        "type": "remote",
+        "url": "https://mcp.atlassian.com/v2/mcp",
+        "oauth": {
+          "callback_port": 19877,
+          "redirect_uri": "http://127.0.0.1:19877/mcp/oauth/callback"
+        }
       }
     }
   },
