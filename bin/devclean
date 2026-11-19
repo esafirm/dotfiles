@@ -1,0 +1,221 @@
+#!/bin/sh
+# devclean - find and remove stale dev caches and build artifacts
+#
+#   devclean                    report only (default, deletes nothing)
+#   devclean --apply            delete what the report listed
+#   devclean --older-than 30    only touch paths untouched for N days (default 14)
+#   devclean --root ~/code      add a project root to scan (repeatable)
+#   devclean --all              also list artifacts written to recently
+#
+# Everything it deletes is rebuildable. It never touches source, git history,
+# SDK installs or Android system images. Those are listed at the end with the
+# command to remove them yourself.
+
+set -u
+
+DAYS=14
+APPLY=0
+ALL=0
+ROOTS="$HOME/Documents/bandlab $HOME/Documents/oss $HOME/AndroidStudioProjects"
+MARKER=$(mktemp -t devclean) || exit 1
+LOG=$(mktemp -t devclean-log) || exit 1
+trap 'rm -f "$MARKER" "$LOG"' EXIT
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --apply) APPLY=1 ;;
+        --dry-run) APPLY=0 ;;
+        --all) ALL=1; DAYS=0 ;;
+        --older-than) shift; DAYS=${1:-14} ;;
+        --older-than=*) DAYS=${1#*=} ;;
+        --root) shift; ROOTS="$ROOTS ${1:-}" ;;
+        --root=*) ROOTS="$ROOTS ${1#*=}" ;;
+        -h|--help) sed -n '2,13p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+        *) echo "unknown option: $1 (try --help)" >&2; exit 1 ;;
+    esac
+    shift
+done
+
+case "$DAYS" in
+    ''|*[!0-9]*) echo "--older-than needs a number" >&2; exit 1 ;;
+esac
+
+if [ -t 1 ]; then
+    BOLD=$(printf '\033[1m'); OFF=$(printf '\033[0m')
+else
+    BOLD=''; OFF=''
+fi
+
+# marker at midnight N days ago; anything newer counts as "recent"
+if ! touch -t "$(date -v "-${DAYS}d" '+%Y%m%d0000' 2>/dev/null)" "$MARKER" 2>/dev/null; then
+    touch -t "$(date -d "$DAYS days ago" '+%Y%m%d0000')" "$MARKER"
+fi
+
+human() { du -h -d 0 "$1" 2>/dev/null | cut -f1; }
+kb() { du -sk "$1" 2>/dev/null | cut -f1; }
+fmt_kb() { awk -v k="$1" 'BEGIN { if (k >= 1048576) printf "%.1fG", k/1048576; else if (k >= 1024) printf "%.0fM", k/1024; else printf "%dK", k }'; }
+
+# stale DIR -> true when nothing inside is newer than the marker
+stale() {
+    [ "$ALL" = 1 ] && return 0
+    [ -z "$(find "$1" -type f -newer "$MARKER" 2>/dev/null | head -1)" ]
+}
+
+# report DIR LABEL -> record size, print a row, delete it when applying
+report() {
+    [ -e "$1" ] || return 0
+    size=$(kb "$1")
+    [ "${size:-0}" -ge 1024 ] || return 0
+    printf '%s\t%s\n' "$size" "$1" >> "$LOG"
+    printf '  %6s  %s\n' "$(human "$1")" "$2"
+    [ "$APPLY" = 1 ] && rm -rf "$1"
+    return 0
+}
+
+echo "${BOLD}devclean${OFF}  older-than ${DAYS}d  $([ "$APPLY" = 1 ] && echo APPLY || echo 'dry run')"
+
+# --- Gradle version caches -------------------------------------------------
+echo
+echo "${BOLD}gradle${OFF}"
+
+# a Gradle version is "in use" when a wrapper in one of the roots asks for it
+REFERENCED=$(find $ROOTS -maxdepth 7 -name gradle-wrapper.properties 2>/dev/null |
+    xargs grep -h '^distributionUrl' 2>/dev/null |
+    sed -E 's#.*gradle-([0-9]+(\.[0-9]+)+)-(bin|all)\.zip.*#\1#' | sort -u | tr '\n' ' ')
+# a daemon that is running right now is in use even if its wrapper is gone
+RUNNING=$(ps -axo command 2>/dev/null | grep -oE 'GradleDaemon [0-9]+(\.[0-9]+)+' | cut -d' ' -f2 | sort -u | tr '\n' ' ')
+
+if [ -z "$(printf '%s' "$REFERENCED" | tr -d ' ')" ]; then
+    echo "  no gradle-wrapper.properties found under the roots, skipping the cache check"
+    echo "  (pass --root to point at the right projects)"
+else
+
+for d in "$HOME"/.gradle/caches/[0-9]*; do
+    [ -d "$d" ] || continue
+    v=${d##*/}
+    case " $REFERENCED " in *" $v "*) continue ;; esac
+    case " $RUNNING " in
+        *" $v "*)
+            printf '  %6s  gradle %s cache, kept: a daemon is still using it (gradlew --stop)\n' "$(human "$d")" "$v" ;;
+        *)
+            report "$d" "gradle $v cache (no project uses it)" ;;
+    esac
+done
+for d in "$HOME"/.gradle/wrapper/dists/gradle-*; do
+    [ -d "$d" ] || continue
+    v=${d##*/gradle-}; v=${v%-bin}; v=${v%-all}
+    case " $REFERENCED " in *" $v "*) continue ;; esac
+    report "$d" "gradle $v distribution (no project uses it)"
+done
+
+# build cache: only entries past the window
+BC="$HOME/.gradle/caches/build-cache-1"
+if [ -d "$BC" ]; then
+    n=$(find "$BC" -type f -mtime +"$DAYS" 2>/dev/null | wc -l | tr -d ' ')
+    if [ "${n:-0}" -gt 0 ]; then
+        k=$(find "$BC" -type f -mtime +"$DAYS" -exec du -sk {} + 2>/dev/null | awk '{s+=$1} END {print s+0}')
+        printf '%s\t%s\n' "$k" "$BC" >> "$LOG"
+        printf '  %6s  build-cache-1 entries older than %sd (%s files)\n' "$(fmt_kb "$k")" "$DAYS" "$n"
+        [ "$APPLY" = 1 ] && find "$BC" -type f -mtime +"$DAYS" -delete 2>/dev/null
+    fi
+fi
+
+# downloaded JDK archives: redundant once Gradle has extracted them
+JDKS="$HOME/.gradle/jdks"
+if [ -d "$JDKS" ]; then
+    n=$(find "$JDKS" -maxdepth 1 -type f \( -name '*.tar.gz' -o -name '*.zip' \) 2>/dev/null | wc -l | tr -d ' ')
+    if [ "${n:-0}" -gt 0 ]; then
+        k=$(find "$JDKS" -maxdepth 1 -type f \( -name '*.tar.gz' -o -name '*.zip' \) -exec du -sk {} + 2>/dev/null | awk '{s+=$1} END {print s+0}')
+        printf '%s\t%s\n' "$k" "$JDKS" >> "$LOG"
+        printf '  %6s  jdk archives already extracted (%s files)\n' "$(fmt_kb "$k")" "$n"
+        [ "$APPLY" = 1 ] && find "$JDKS" -maxdepth 1 -type f \( -name '*.tar.gz' -o -name '*.zip' \) -delete 2>/dev/null
+    fi
+fi
+
+for d in "$HOME"/.gradle/daemon/[0-9]*; do
+    [ -d "$d" ] || continue
+    v=${d##*/}
+    case " $REFERENCED " in *" $v "*) continue ;; esac
+    [ -d "$HOME/.gradle/caches/$v" ] && continue
+    stale "$d" && report "$d" "gradle $v daemon logs"
+done
+fi
+
+# --- Project build output --------------------------------------------------
+echo
+echo "${BOLD}project artifacts${OFF}"
+for root in $ROOTS; do
+    [ -d "$root" ] || continue
+    find "$root" -maxdepth 4 -type d -name build -prune 2>/dev/null | while read -r d; do
+        case "$d" in */.git/*|*/src/*|*/node_modules/*) continue ;; esac
+        stale "$d" || continue
+        size=$(kb "$d")
+        [ "${size:-0}" -ge 10240 ] || continue
+        printf '%s\t%s\n' "$size" "$d" >> "$LOG"
+        printf '  %6s  %s\n' "$(human "$d")" "${d#$HOME/}"
+        [ "$APPLY" = 1 ] && rm -rf "$d"
+    done
+    find "$root" -maxdepth 4 -type d -name .gradle -prune 2>/dev/null | while read -r g; do
+        for sub in "$g"/configuration-cache "$g"/[0-9]*; do
+            [ -d "$sub" ] || continue
+            v=${sub##*/}
+            case " $REFERENCED " in *" $v "*) continue ;; esac
+            stale "$sub" || continue
+            size=$(kb "$sub")
+            [ "${size:-0}" -ge 10240 ] || continue
+            printf '%s\t%s\n' "$size" "$sub" >> "$LOG"
+            printf '  %6s  %s (project cache)\n' "$(human "$sub")" "${sub#$HOME/}"
+            [ "$APPLY" = 1 ] && rm -rf "$sub"
+        done
+    done
+done
+
+# --- Emulators and IDE -----------------------------------------------------
+echo
+echo "${BOLD}android${OFF}"
+for d in "$HOME"/.android/avd/*.avd/snapshots; do
+    [ -d "$d" ] || continue
+    stale "$d" || continue
+    report "$d" "${d#$HOME/} (cold boot recreates it)"
+done
+for d in "$HOME"/Library/Caches/Google/AndroidStudio* "$HOME"/Library/Logs/Google/AndroidStudio*; do
+    [ -e "$d" ] || continue
+    stale "$d" || continue
+    report "$d" "${d#$HOME/}"
+done
+
+# --- Generic caches --------------------------------------------------------
+echo
+echo "${BOLD}caches${OFF}"
+report "$HOME/Library/Developer/Xcode/DerivedData" "Xcode DerivedData"
+report "$HOME/.android/cache" "android sdk temp cache"
+
+# --- Report only -----------------------------------------------------------
+echo
+echo "${BOLD}report only${OFF}"
+[ -d "$HOME/Library/Caches/Homebrew" ] &&
+    printf '  %6s  homebrew downloads (run: brew cleanup -s)\n' "$(human "$HOME/Library/Caches/Homebrew")"
+SDK="$HOME/Library/Android/sdk/system-images"
+if [ -d "$SDK" ]; then
+    for img in "$SDK"/*/*/*; do
+        [ -d "$img" ] || continue
+        rel=${img#$SDK/}
+        used=0
+        for cfg in "$HOME"/.android/avd/*.avd/config.ini; do
+            [ -f "$cfg" ] && grep -q "$rel" "$cfg" 2>/dev/null && used=1
+        done
+        [ "$used" = 1 ] && continue
+        [ "$(kb "$img")" -ge 1024 ] || continue
+        printf '  %6s  system image %s\n' "$(human "$img")" "$rel"
+        printf '           sdkmanager --uninstall "system-images;%s"\n' "$(echo "$rel" | tr '/' ';')"
+    done
+fi
+for vol in /Volumes/*; do
+    mount | grep -q "on $vol (.*read-only" || continue
+    printf '  %6s  mounted image %s  (hdiutil detach %s)\n' "$(human "$vol")" "${vol##*/}" "'$vol'"
+done
+
+echo
+awk -F'\t' '{s+=$1} END {printf "%.1f GB\n", s/1048576}' "$LOG" |
+    sed "s/^/${BOLD}total reclaimable${OFF}: /"
+[ "$APPLY" = 1 ] || printf 'nothing deleted. rerun with %s--apply%s to remove the items above.\n' "$BOLD" "$OFF"
