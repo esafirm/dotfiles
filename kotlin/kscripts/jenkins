@@ -5,6 +5,19 @@
 # The serialization jars are passed via -cp: on kotlin 2.4.x, main-kts
 # DependsOn resolution no longer lands resolved jars on the script
 # classpath (KT-82109), so the imports fail at compile time.
+# Non-interactive shells (agents, cron) never source .zshrc, so load the
+# credentials from the git-ignored secrets file when they are not already set.
+SECRETS_FILE="${DOTFILES_SECRETS:-${DOT:-$HOME/dotfiles}/secrets}"
+if [ -f "$SECRETS_FILE" ]; then
+    for VAR in JENKINS_USER JENKINS_TOKEN; do
+        eval "CURRENT=\${$VAR:-}"
+        if [ -z "$CURRENT" ]; then
+            LINE=$(grep -E "^[[:space:]]*(export[[:space:]]+)?$VAR=" "$SECRETS_FILE" | tail -n 1)
+            [ -n "$LINE" ] && eval "$LINE" && export "$VAR"
+        fi
+    done
+fi
+
 KTS="${DOT:-$HOME/dotfiles}/kotlin/kscripts/jenkins-cli.main.kts"
 M2="${HOME}/.m2/repository/org/jetbrains/kotlinx"
 exec kotlin -cp "$M2/kotlinx-serialization-json-jvm/1.6.3/kotlinx-serialization-json-jvm-1.6.3.jar:$M2/kotlinx-serialization-core-jvm/1.6.3/kotlinx-serialization-core-jvm-1.6.3.jar" "$KTS" "$@"
