@@ -51,7 +51,6 @@
       "Bash(adb logcat:*)",
       "Bash(~/.config/opencode/scripts/ai-trash.sh:*)",
       "mcp__play-store",
-      "mcp__llm-wiki",
       "mcp__android-studio"
     ],
     "deny": [

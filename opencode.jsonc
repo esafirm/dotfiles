@@ -16,8 +16,7 @@
       "firebase": {
         "type": "local",
         "command": [
-          "firebase",
-          "mcp",
+          "firebase-mcp",
           "--only",
           "crashlytics",
           "--dir",
@@ -27,12 +26,6 @@
           "catalog": 60000,
           "startup": 60000
         }
-      },
-      "llm-wiki": {
-        "type": "local",
-        "command": [
-          "llm-wiki-mcp"
-        ]
       },
       "play-store": {
         "type": "local",
@@ -53,7 +46,6 @@
   },
   "permissions": [
     { "action": "play-store_*", "resource": "*", "effect": "allow" },
-    { "action": "llm-wiki_*", "resource": "*", "effect": "allow" },
     { "action": "android-studio_*", "resource": "*", "effect": "allow" },
     { "action": "android-studio_apply_patch", "resource": "*", "effect": "deny" },
     { "action": "android-studio_create_new_file", "resource": "*", "effect": "deny" },

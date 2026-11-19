@@ -64,7 +64,7 @@ setup_link "$SETUP_ROOT/.agents/.skill-lock.json" "$HOME/.agents/.skill-lock.jso
 setup_link "$SETUP_ROOT/kotlin/kscripts/jenkins-cli.main.kts" "$HOME/scripts/jenkins-cli.main.kts"
 setup_link "$SETUP_ROOT/bin/opencode-claude" "$HOME/.local/bin/opencode-claude"
 setup_link "$SETUP_ROOT/bin/opencode-profile" "$HOME/.local/bin/opencode-profile"
-setup_link "$SETUP_ROOT/bin/llm-wiki-mcp" "$HOME/.local/bin/llm-wiki-mcp"
+setup_link "$SETUP_ROOT/bin/firebase-mcp" "$HOME/.local/bin/firebase-mcp"
 setup_link "$SETUP_ROOT/bin/play-store-mcp" "$HOME/.local/bin/play-store-mcp"
 setup_link "$SETUP_ROOT/kotlin/kscripts/jenkins" "$SETUP_ROOT/bin/jenkins"
 
@@ -104,8 +104,7 @@ if command -v claude >/dev/null 2>&1; then
     setup_run claude mcp add-json -s user "$1" "$2"
   }
   claude_mcp android-studio '{"type":"http","url":"http://127.0.0.1:64342/stream"}'
-  claude_mcp firebase '{"type":"stdio","command":"firebase","args":["mcp","--only","crashlytics","--dir","/tmp"]}'
-  claude_mcp llm-wiki '{"type":"stdio","command":"llm-wiki-mcp"}'
+  claude_mcp firebase '{"type":"stdio","command":"firebase-mcp","args":["--only","crashlytics","--dir","/tmp"]}'
   claude_mcp play-store '{"type":"stdio","command":"play-store-mcp"}'
   claude_mcp slack '{"type":"http","url":"https://mcp.slack.com/mcp"}'
 fi

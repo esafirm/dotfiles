@@ -85,9 +85,8 @@
       ]
     },
     "firebase": {
-      "command": "firebase",
+      "command": "firebase-mcp",
       "args": [
-        "mcp",
         "--only",
         "crashlytics"
       ],
@@ -96,9 +95,6 @@
         "crashlytics_get_issue",
         "crashlytics_list_events"
       ]
-    },
-    "llm-wiki": {
-      "command": "llm-wiki-mcp"
     },
     "play-store": {
       "command": "play-store-mcp"

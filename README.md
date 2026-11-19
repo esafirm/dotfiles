@@ -160,12 +160,12 @@ Currently, we still need to manually setup this because we haven't found a way t
 ## MCP & Secrets Conventions
 
 1. **No Tokens in Tracked Files**: Sensitive API tokens and credentials must always go into `secrets` (which is `.gitignore`d). Never hardcode tokens in git-tracked MCP JSON files (`mcp_config.json`, `settings.json`, `mcp.json`, `opencode.jsonc`).
-2. **No Absolute App Paths in Configs**: Avoid machine-specific paths like `/Applications/LLM Wiki.app/...` in tracked MCP configs.
-3. **Use `bin/` Executable Wrappers**: Place a launcher script in `bin/` (e.g. `bin/llm-wiki-mcp`) that:
+2. **No Absolute App Paths in Configs**: Avoid machine-specific paths like `/Applications/SomeApp.app/...` in tracked MCP configs.
+3. **Use `bin/` Executable Wrappers**: Place a launcher script in `bin/` (e.g. `bin/firebase-mcp`) that:
    - Bootstraps `$PATH` (e.g., includes `/opt/homebrew/bin`, `/usr/local/bin`, `~/.local/bin`).
-   - Reads the required token dynamically from `$LLM_WIKI_API_TOKEN` or `secrets`.
+   - Reads the required token dynamically from `secrets`.
    - Locates and `exec`s the target runtime.
-   - MCP configs can then simply declare `"command": "llm-wiki-mcp"`, keeping the repository safe, portable, and clean.
+   - MCP configs can then simply declare `"command": "firebase-mcp"`, keeping the repository safe, portable, and clean.
 
 
 ## Author

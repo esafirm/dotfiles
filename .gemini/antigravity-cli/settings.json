@@ -23,7 +23,6 @@
       "command(wc)",
       "mcp(android-studio/*)",
       "mcp(firebase/*)",
-      "mcp(llm-wiki/*)",
       "mcp(play-store/*)",
       "command(find)",
       "command(flutter --version)",

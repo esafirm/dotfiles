@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Ensure standard bin paths are in PATH (for firebase/node)
+for p in /opt/homebrew/bin /usr/local/bin "$HOME/.local/bin"; do
+  if [[ -d "$p" && ":$PATH:" != *":$p:"* ]]; then
+    PATH="$p:$PATH"
+  fi
+done
+
+# Use a service account so the MCP does not depend on the Workspace user
+# session, which expires every 24h under Google Cloud session control.
+SA_KEY="${FIREBASE_MCP_SA_KEY:-$HOME/dotfiles/secret_dir/firebase-crashlytics-sa.json}"
+if [[ ! -f "$SA_KEY" ]]; then
+  echo "Error: Firebase MCP service account key not found at: $SA_KEY" >&2
+  echo "Set FIREBASE_MCP_SA_KEY to a key with Firebase Crashlytics Viewer and Firebase Viewer roles." >&2
+  exit 1
+fi
+
+# Isolate the CLI config so cached user tokens don't take precedence over
+# GOOGLE_APPLICATION_CREDENTIALS.
+CONFIG_HOME="${FIREBASE_MCP_CONFIG_HOME:-$HOME/.cache/firebase-mcp/config}"
+mkdir -p "$CONFIG_HOME"
+
+export XDG_CONFIG_HOME="$CONFIG_HOME"
+export GOOGLE_APPLICATION_CREDENTIALS="$SA_KEY"
+
+FIREBASE_BIN="$(command -v firebase || true)"
+if [[ -z "$FIREBASE_BIN" ]]; then
+  echo "Error: firebase CLI not found in PATH." >&2
+  exit 1
+fi
+
+exec "$FIREBASE_BIN" mcp "$@"
