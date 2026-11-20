@@ -1,7 +1,7 @@
 ## Hold installation files
 .bin/
 bin/*
-!bin/devclean
+!bin/sweep
 !bin/firebase-mcp
 !bin/git-branch-label
 !bin/herdr-presentation

@@ -1,0 +1,433 @@
+#!/bin/sh
+# sweep - reclaim disk space from caches, logs and build artifacts
+#
+#   sweep                       report only (default, deletes nothing)
+#   sweep --apply               delete what the report listed
+#   sweep --older-than 30       only touch paths untouched for N days (default 14)
+#   sweep --root ~/code         add a project root to scan (repeatable)
+#   sweep --all                 also include recently written artifacts
+#   sweep --builds              include recent build output and Gradle caches
+#   sweep --downloads           include old installers from ~/Downloads
+#   sweep --containers          also scan sandboxed app caches (slow)
+#
+# Worktrees under ~/.t3, ~/.herdr, ~/.claude, ~/.codex and
+# ~/.local/share/opencode are scanned automatically, along with agent caches.
+# Everything it deletes regenerates: app and toolchain caches, logs, temporary
+# files, Trash and build output. Build output keeps the age cutoff unless
+# --builds is passed, so run that when no build is in progress. Source, config,
+# credentials, backups and system images are never touched. The report-only
+# section lists those with the command to remove them yourself.
+
+set -u
+
+DAYS=14
+APPLY=0
+ALL=0
+BUILDS=0
+DOWNLOAD_CLEAN=0
+CONTAINERS=0
+ROOTS="$HOME/Documents/bandlab $HOME/Documents/oss $HOME/AndroidStudioProjects"
+WORKTREE_ROOTS="$HOME/.t3/worktrees $HOME/.herdr/worktrees $HOME/.claude/worktrees $HOME/.codex/worktrees $HOME/.local/share/opencode/worktree"
+MARKER=$(mktemp -t sweep) || exit 1
+BUILD_MARKER="$MARKER"
+LOG=$(mktemp -t sweep-log) || exit 1
+trap 'rm -f "$MARKER" "$BUILD_MARKER" "$LOG"' EXIT
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --apply) APPLY=1 ;;
+        --dry-run) APPLY=0 ;;
+        --all) ALL=1; DAYS=0 ;;
+        --builds) BUILDS=1 ;;
+        --downloads) DOWNLOAD_CLEAN=1 ;;
+        --containers) CONTAINERS=1 ;;
+        --older-than) shift; DAYS=${1:-14} ;;
+        --older-than=*) DAYS=${1#*=} ;;
+        --root) shift; ROOTS="$ROOTS ${1:-}" ;;
+        --root=*) ROOTS="$ROOTS ${1#*=}" ;;
+        -h|--help) sed -n '2,19p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+        *) echo "unknown option: $1 (try --help)" >&2; exit 1 ;;
+    esac
+    shift
+done
+
+case "$DAYS" in
+    ''|*[!0-9]*) echo "--older-than needs a number" >&2; exit 1 ;;
+esac
+
+if [ -t 1 ]; then
+    BOLD=$(printf '\033[1m'); OFF=$(printf '\033[0m')
+else
+    BOLD=''; OFF=''
+fi
+
+# marker at midnight N days ago; anything newer counts as "recent"
+if ! touch -t "$(date -v "-${DAYS}d" '+%Y%m%d0000' 2>/dev/null)" "$MARKER" 2>/dev/null; then
+    touch -t "$(date -d "$DAYS days ago" '+%Y%m%d0000')" "$MARKER"
+fi
+[ "$ALL" = 1 ] && touch "$MARKER"
+if [ "$BUILDS" = 1 ]; then
+    BUILD_MARKER=$(mktemp -t sweep-builds) || exit 1
+    touch "$BUILD_MARKER"
+fi
+
+human() { du -h -d 0 "$1" 2>/dev/null | cut -f1; }
+kb() { du -sk "$1" 2>/dev/null | cut -f1; }
+fmt_kb() { awk -v k="$1" 'BEGIN { if (k >= 1048576) printf "%.1fG", k/1048576; else if (k >= 1024) printf "%.0fM", k/1024; else printf "%dK", k }'; }
+note() { printf '  %6s  %s\n' "" "$1"; }
+
+# stale DIR -> true when nothing inside is newer than the marker
+stale() {
+    [ "$ALL" = 1 ] && return 0
+    [ -z "$(find "$1" -type f -newer "$MARKER" 2>/dev/null | head -1)" ]
+}
+
+# stale_build DIR -> like stale, but respects --builds
+stale_build() {
+    [ "$ALL" = 1 ] && return 0
+    [ -z "$(find "$1" -type f -newer "$BUILD_MARKER" 2>/dev/null | head -1)" ]
+}
+
+# report DIR LABEL -> record size, print a row, delete it when applying
+report() {
+    [ -e "$1" ] || return 0
+    size=$(kb "$1")
+    [ "${size:-0}" -ge 1024 ] || return 0
+    printf '%s\t%s\n' "$size" "$1" >> "$LOG"
+    printf '  %6s  %s\n' "$(human "$1")" "$2"
+    [ "$APPLY" = 1 ] && rm -rf "$1"
+    return 0
+}
+
+# report_any PATH LABEL -> like report, but keeps small items (Trash)
+report_any() {
+    [ -e "$1" ] || return 0
+    size=$(kb "$1")
+    size=${size:-0}
+    printf '%s\t%s\n' "$size" "$1" >> "$LOG"
+    printf '  %6s  %s\n' "$(human "$1")" "$2"
+    [ "$APPLY" = 1 ] && rm -rf "$1"
+    return 0
+}
+
+# report_files DIR LABEL -> delete stale files inside DIR, aggregate the size
+report_files() {
+    [ -d "$1" ] || return 0
+    n=$(find "$1" -type f ! -newer "$MARKER" -print0 2>/dev/null | tr -cd '\0' | wc -c | tr -d ' ')
+    [ "${n:-0}" -gt 0 ] || return 0
+    k=$(find "$1" -type f ! -newer "$MARKER" -exec du -sk {} + 2>/dev/null | awk '{s+=$1} END {print s+0}')
+    [ "${k:-0}" -ge 1024 ] || return 0
+    printf '%s\t%s\n' "$k" "$1" >> "$LOG"
+    printf '  %6s  %s (%s files)\n' "$(fmt_kb "$k")" "$2" "$n"
+    [ "$APPLY" = 1 ] && find "$1" -type f ! -newer "$MARKER" -delete 2>/dev/null
+    return 0
+}
+
+# caches that are expensive to rebuild, hold model downloads or are backups
+skip_cache_name() {
+    case "$1" in
+        com.apple.Safari|com.apple.WebKit*) ;;
+        com.apple.*|CloudKit|Homebrew|Google) return 0 ;;
+        ms-playwright*|puppeteer*|huggingface*|ollama*|whisper*|torch*|lm-studio*|models) return 0 ;;
+        *[Bb]ackup*|*.bundle|*.bak|*.old) return 0 ;;
+    esac
+    return 1
+}
+
+# sweep_cache_root ROOT LABEL -> report stale top-level entries in a cache dir
+sweep_cache_root() {
+    [ -d "$1" ] || return 0
+    for d in "$1"/*; do
+        [ -d "$d" ] || continue
+        [ -L "$d" ] && continue
+        skip_cache_name "${d##*/}" && continue
+        stale "$d" || continue
+        report "$d" "$2: ${d##*/}"
+    done
+    return 0
+}
+
+# find_installers ACTION -> old installer files in ~/Downloads
+find_installers() {
+    find "$HOME/Downloads" -maxdepth 1 -type f \
+        \( -iname '*.dmg' -o -iname '*.pkg' -o -iname '*.iso' -o -iname '*.zip' \) \
+        ! -newer "$MARKER" "$@" 2>/dev/null
+}
+
+echo "${BOLD}sweep${OFF}  older-than ${DAYS}d  $([ "$APPLY" = 1 ] && echo APPLY || echo 'dry run')"
+
+# --- System and app caches -------------------------------------------------
+echo
+echo "${BOLD}system caches${OFF}"
+sweep_cache_root "$HOME/Library/Caches" "app cache"
+# Google holds Chrome and Android Studio side by side, so split it per app
+sweep_cache_root "$HOME/Library/Caches/Google" "app cache"
+sweep_cache_root "$HOME/.cache" "user cache"
+if [ "$CONTAINERS" = 1 ]; then
+    for c in "$HOME"/Library/Containers/*; do
+        [ -d "$c" ] || continue
+        case "${c##*/}" in
+            com.apple.*|com.docker.*) continue ;;
+        esac
+        cache="$c/Data/Library/Caches"
+        [ -d "$cache" ] || continue
+        [ -L "$cache" ] && continue
+        stale "$cache" || continue
+        report "$cache" "container cache: ${c##*/}"
+    done
+else
+    note "sandboxed app caches skipped (use --containers, slow)"
+fi
+
+# --- Logs and temporary files ----------------------------------------------
+echo
+echo "${BOLD}logs and temp${OFF}"
+report_files "$HOME/Library/Logs" "user logs older than ${DAYS}d"
+[ -n "${TMPDIR:-}" ] && report_files "${TMPDIR%/}" "temporary files older than ${DAYS}d"
+
+# --- Trash and installers --------------------------------------------------
+echo
+echo "${BOLD}trash and downloads${OFF}"
+if [ -d "$HOME/.Trash" ]; then
+    if command ls -A "$HOME/.Trash" >/dev/null 2>&1; then
+        for item in "$HOME/.Trash"/* "$HOME/.Trash"/.[!.]* "$HOME/.Trash"/..?*; do
+            [ -e "$item" ] || continue
+            report_any "$item" "Trash: ${item##*/}"
+        done
+    else
+        note "Trash not readable, grant Full Disk Access to your terminal"
+    fi
+fi
+
+if [ -d "$HOME/Downloads" ]; then
+    n=$(find_installers -print0 | tr -cd '\0' | wc -c | tr -d ' ')
+    if [ "${n:-0}" -gt 0 ]; then
+        k=$(find_installers -exec du -sk {} + | awk '{s+=$1} END {print s+0}')
+        if [ "$DOWNLOAD_CLEAN" = 1 ]; then
+            printf '%s\t%s\n' "$k" "$HOME/Downloads" >> "$LOG"
+            printf '  %6s  old installers in Downloads (%s files)\n' "$(fmt_kb "$k")" "$n"
+            [ "$APPLY" = 1 ] && find_installers -print0 | xargs -0 rm -f
+        else
+            printf '  %6s  old installers in Downloads (%s files, run: sweep --downloads)\n' "$(fmt_kb "$k")" "$n"
+        fi
+    fi
+fi
+
+# --- Gradle version caches -------------------------------------------------
+echo
+echo "${BOLD}gradle${OFF}"
+
+# a Gradle version is "in use" when a wrapper in one of the roots asks for it
+REFERENCED=$(find $ROOTS $WORKTREE_ROOTS -maxdepth 7 -name gradle-wrapper.properties 2>/dev/null |
+    xargs grep -h '^distributionUrl' 2>/dev/null |
+    sed -E 's#.*gradle-([0-9]+(\.[0-9]+)+)-(bin|all)\.zip.*#\1#' | sort -u | tr '\n' ' ')
+# a daemon that is running right now is in use even if its wrapper is gone
+RUNNING=$(ps -axo command 2>/dev/null | grep -oE 'GradleDaemon [0-9]+(\.[0-9]+)+' | cut -d' ' -f2 | sort -u | tr '\n' ' ')
+
+if [ -z "$(printf '%s' "$REFERENCED" | tr -d ' ')" ]; then
+    echo "  no gradle-wrapper.properties found under the roots, skipping the cache check"
+    echo "  (pass --root to point at the right projects)"
+else
+
+for d in "$HOME"/.gradle/caches/[0-9]*; do
+    [ -d "$d" ] || continue
+    v=${d##*/}
+    case " $REFERENCED " in *" $v "*) continue ;; esac
+    case " $RUNNING " in
+        *" $v "*)
+            printf '  %6s  gradle %s cache, kept: a daemon is still using it (gradlew --stop)\n' "$(human "$d")" "$v" ;;
+        *)
+            report "$d" "gradle $v cache (no project uses it)" ;;
+    esac
+done
+for d in "$HOME"/.gradle/wrapper/dists/gradle-*; do
+    [ -d "$d" ] || continue
+    v=${d##*/gradle-}; v=${v%-bin}; v=${v%-all}
+    case " $REFERENCED " in *" $v "*) continue ;; esac
+    case " $RUNNING " in
+        *" $v "*)
+            printf '  %6s  gradle %s distribution, kept: a daemon is still using it (gradlew --stop)\n' "$(human "$d")" "$v" ;;
+        *)
+            report "$d" "gradle $v distribution (no project uses it)" ;;
+    esac
+done
+
+# build cache: only entries past the window
+BC="$HOME/.gradle/caches/build-cache-1"
+if [ -d "$BC" ]; then
+    n=$(find "$BC" -type f ! -newer "$BUILD_MARKER" 2>/dev/null | wc -l | tr -d ' ')
+    if [ "${n:-0}" -gt 0 ]; then
+        k=$(find "$BC" -type f ! -newer "$BUILD_MARKER" -exec du -sk {} + 2>/dev/null | awk '{s+=$1} END {print s+0}')
+        printf '%s\t%s\n' "$k" "$BC" >> "$LOG"
+        printf '  %6s  build-cache-1 entries (%s files)\n' "$(fmt_kb "$k")" "$n"
+        [ "$APPLY" = 1 ] && find "$BC" -type f ! -newer "$BUILD_MARKER" -delete 2>/dev/null
+    fi
+fi
+
+# downloaded JDK archives: redundant once Gradle has extracted them
+JDKS="$HOME/.gradle/jdks"
+if [ -d "$JDKS" ]; then
+    n=$(find "$JDKS" -maxdepth 1 -type f \( -name '*.tar.gz' -o -name '*.zip' \) 2>/dev/null | wc -l | tr -d ' ')
+    if [ "${n:-0}" -gt 0 ]; then
+        k=$(find "$JDKS" -maxdepth 1 -type f \( -name '*.tar.gz' -o -name '*.zip' \) -exec du -sk {} + 2>/dev/null | awk '{s+=$1} END {print s+0}')
+        printf '%s\t%s\n' "$k" "$JDKS" >> "$LOG"
+        printf '  %6s  jdk archives already extracted (%s files)\n' "$(fmt_kb "$k")" "$n"
+        [ "$APPLY" = 1 ] && find "$JDKS" -maxdepth 1 -type f \( -name '*.tar.gz' -o -name '*.zip' \) -delete 2>/dev/null
+    fi
+fi
+
+for d in "$HOME"/.gradle/daemon/[0-9]*; do
+    [ -d "$d" ] || continue
+    v=${d##*/}
+    case " $REFERENCED " in *" $v "*) continue ;; esac
+    stale_build "$d" && report "$d" "gradle $v daemon logs"
+done
+fi
+
+# scan_project_root ROOT DEPTH -> report build output and project caches
+scan_project_root() {
+    [ -d "$1" ] || return 0
+    find "$1" -maxdepth "$2" -type d -name build -prune 2>/dev/null | while read -r d; do
+        case "$d" in */.git/*|*/src/*|*/node_modules/*) continue ;; esac
+        stale_build "$d" || continue
+        size=$(kb "$d")
+        [ "${size:-0}" -ge 10240 ] || continue
+        printf '%s\t%s\n' "$size" "$d" >> "$LOG"
+        printf '  %6s  %s\n' "$(human "$d")" "${d#$HOME/}"
+        [ "$APPLY" = 1 ] && rm -rf "$d"
+    done
+    find "$1" -maxdepth "$2" -type d -name .gradle -prune 2>/dev/null | while read -r g; do
+        for sub in "$g"/configuration-cache "$g"/[0-9]*; do
+            [ -d "$sub" ] || continue
+            v=${sub##*/}
+            case " $REFERENCED " in *" $v "*) continue ;; esac
+            stale_build "$sub" || continue
+            size=$(kb "$sub")
+            [ "${size:-0}" -ge 10240 ] || continue
+            printf '%s\t%s\n' "$size" "$sub" >> "$LOG"
+            printf '  %6s  %s (project cache)\n' "$(human "$sub")" "${sub#$HOME/}"
+            [ "$APPLY" = 1 ] && rm -rf "$sub"
+        done
+    done
+    return 0
+}
+
+# --- Project build output --------------------------------------------------
+echo
+echo "${BOLD}project artifacts${OFF}"
+for root in $ROOTS; do
+    scan_project_root "$root" 4
+done
+for root in $WORKTREE_ROOTS; do
+    scan_project_root "$root" 6
+done
+
+# --- Android ---------------------------------------------------------------
+echo
+echo "${BOLD}android${OFF}"
+for d in "$HOME"/.android/avd/*.avd/snapshots; do
+    [ -d "$d" ] || continue
+    stale_build "$d" || continue
+    report "$d" "${d#$HOME/} (cold boot recreates it)"
+done
+report "$HOME/.android/cache" "android sdk temp cache"
+
+# --- Toolchains ------------------------------------------------------------
+echo
+echo "${BOLD}toolchains${OFF}"
+report "$HOME/Library/Developer/Xcode/DerivedData" "Xcode DerivedData"
+for d in "$HOME"/Library/Developer/Xcode/iOS\ DeviceSupport/*; do
+    [ -d "$d" ] || continue
+    stale_build "$d" || continue
+    report "$d" "Xcode device support: ${d##*/}"
+done
+report "$HOME/Library/Developer/CoreSimulator/Caches" "CoreSimulator caches"
+
+report "$HOME/.npm/_cacache" "npm cache"
+report "$HOME/.bun/install/cache" "bun install cache"
+report "$HOME/go/pkg/mod/cache/download" "go module downloads"
+report "$HOME/.cargo/registry/cache" "cargo registry cache"
+
+# --- Agent caches ----------------------------------------------------------
+echo
+echo "${BOLD}agent caches${OFF}"
+if [ -d "$HOME/.codex/cache" ]; then
+    sweep_cache_root "$HOME/.codex/cache" "codex cache"
+fi
+if [ -d "$HOME/.claude/cache" ] && stale "$HOME/.claude/cache"; then
+    report "$HOME/.claude/cache" "claude cache"
+fi
+if [ -d "$HOME/.t3/caches" ]; then
+    sweep_cache_root "$HOME/.t3/caches" "t3 cache"
+fi
+report_files "$HOME/.local/share/opencode/log" "opencode logs older than ${DAYS}d"
+if [ -d "$HOME/.local/share/opencode/snapshot" ]; then
+    printf '  %6s  opencode snapshots (kept: used for revert)\n' "$(human "$HOME/.local/share/opencode/snapshot")"
+fi
+if [ -d "$HOME/.codex/packages" ]; then
+    printf '  %6s  codex packages (installed runtime, kept)\n' "$(human "$HOME/.codex/packages")"
+fi
+
+# --- Report only -----------------------------------------------------------
+echo
+echo "${BOLD}report only${OFF}"
+if [ -d "$HOME/Library/Caches/Homebrew" ]; then
+    printf '  %6s  homebrew downloads (run: brew cleanup -s)\n' "$(human "$HOME/Library/Caches/Homebrew")"
+fi
+for d in "$HOME/.cache/huggingface" "$HOME/.cache/whisper" "$HOME/.cache/torch" \
+         "$HOME/.cache/lm-studio" "$HOME/.ollama/models" \
+         "$HOME/Library/Caches/ms-playwright" "$HOME/Library/Caches/puppeteer"; do
+    [ -d "$d" ] || continue
+    printf '  %6s  %s, left alone: expensive to download again\n' "$(human "$d")" "${d#$HOME/}"
+done
+if command -v docker >/dev/null 2>&1; then
+    note "docker images and volumes (run: docker system prune -af --volumes)"
+fi
+if [ -d "$HOME/Library/Application Support/MobileSync/Backup" ]; then
+    printf '  %6s  iOS backups\n' "$(human "$HOME/Library/Application Support/MobileSync/Backup")"
+fi
+if [ -d "$HOME/Library/Containers/com.apple.mail/Data/Library/Mail Downloads" ]; then
+    printf '  %6s  Mail downloads\n' "$(human "$HOME/Library/Containers/com.apple.mail/Data/Library/Mail Downloads")"
+fi
+if [ -d "$HOME/Library/Developer/Xcode/Archives" ]; then
+    printf '  %6s  Xcode archives\n' "$(human "$HOME/Library/Developer/Xcode/Archives")"
+fi
+if command -v tmutil >/dev/null 2>&1; then
+    n=$(tmutil listlocalsnapshots / 2>/dev/null | grep -c '^com.apple' || true)
+    [ "${n:-0}" -gt 0 ] && note "local Time Machine snapshots: $n (run: sudo tmutil deletelocalsnapshots /)"
+fi
+if command -v xcrun >/dev/null 2>&1; then
+    n=$(xcrun simctl list devices unavailable 2>/dev/null | grep -c '^    ' || true)
+    [ "${n:-0}" -gt 0 ] && note "unavailable simulators: $n (run: xcrun simctl delete unavailable)"
+fi
+if [ -d /Library/Caches ]; then
+    printf '  %6s  system caches (run: sudo find /Library/Caches -mindepth 1 -maxdepth 1 -mtime +%s -exec rm -rf {} +)\n' \
+        "$(human /Library/Caches)" "$DAYS"
+fi
+SDK="$HOME/Library/Android/sdk/system-images"
+if [ -d "$SDK" ]; then
+    for img in "$SDK"/*/*/*; do
+        [ -d "$img" ] || continue
+        rel=${img#$SDK/}
+        used=0
+        for cfg in "$HOME"/.android/avd/*.avd/config.ini; do
+            [ -f "$cfg" ] && grep -q "$rel" "$cfg" 2>/dev/null && used=1
+        done
+        [ "$used" = 1 ] && continue
+        size=$(kb "$img")
+        [ "${size:-0}" -ge 1024 ] || continue
+        printf '  %6s  system image %s\n' "$(human "$img")" "$rel"
+        printf '           sdkmanager --uninstall "system-images;%s"\n' "$(echo "$rel" | tr '/' ';')"
+    done
+fi
+for vol in /Volumes/*; do
+    mount | grep -q "on $vol (.*read-only" || continue
+    printf '  %6s  mounted image %s  (hdiutil detach %s)\n' "$(human "$vol")" "${vol##*/}" "'$vol'"
+done
+
+echo
+awk -F'\t' '{s+=$1} END { if (s >= 1048576) printf "%.1f GB\n", s/1048576; else printf "%.0f MB\n", s/1024 }' "$LOG" |
+    sed "s/^/${BOLD}total reclaimable${OFF}: /"
+[ "$APPLY" = 1 ] || printf 'nothing deleted. rerun with %s--apply%s to remove the items above.\n' "$BOLD" "$OFF"
+[ "$BUILDS" = 1 ] || [ "$ALL" = 1 ] ||
+    printf 'recent build output is kept. rerun with %s--builds%s to include it.\n' "$BOLD" "$OFF"
