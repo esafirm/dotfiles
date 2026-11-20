@@ -5,13 +5,14 @@
 #   sweep --apply               delete what the report listed
 #   sweep --older-than 30       only touch paths untouched for N days (default 14)
 #   sweep --root ~/code         add a project root to scan (repeatable)
-#   sweep --all                 also include recently written artifacts
+#   sweep --all                 include recent artifacts, but not worktrees
 #   sweep --builds              include recent build output and Gradle caches
 #   sweep --downloads           include old installers from ~/Downloads
 #   sweep --containers          also scan sandboxed app caches (slow)
 #
 # Worktrees under ~/.t3, ~/.herdr, ~/.claude, ~/.codex and
 # ~/.local/share/opencode are scanned automatically, along with agent caches.
+# Worktree removal suggestions use --older-than and ignore --all.
 # Everything it deletes regenerates: app and toolchain caches, logs, temporary
 # files, Trash and build output. Build output keeps the age cutoff unless
 # --builds is passed, so run that when no build is in progress. Source, config,
@@ -21,17 +22,19 @@
 set -u
 
 DAYS=14
+WT_DAYS=14
 APPLY=0
 ALL=0
 BUILDS=0
 DOWNLOAD_CLEAN=0
 CONTAINERS=0
 ROOTS="$HOME/Documents/bandlab $HOME/Documents/oss $HOME/AndroidStudioProjects"
-WORKTREE_ROOTS="$HOME/.t3/worktrees $HOME/.herdr/worktrees $HOME/.claude/worktrees $HOME/.codex/worktrees $HOME/.local/share/opencode/worktree"
 MARKER=$(mktemp -t sweep) || exit 1
+WT_MARKER=$(mktemp -t sweep-wt) || exit 1
+WORKTREE_LIST=$(mktemp -t sweep-worktrees) || exit 1
 BUILD_MARKER="$MARKER"
 LOG=$(mktemp -t sweep-log) || exit 1
-trap 'rm -f "$MARKER" "$BUILD_MARKER" "$LOG"' EXIT
+trap 'rm -f "$MARKER" "$WT_MARKER" "$BUILD_MARKER" "$WORKTREE_LIST" "$LOG"' EXIT
 
 while [ $# -gt 0 ]; do
     case "$1" in
@@ -41,11 +44,11 @@ while [ $# -gt 0 ]; do
         --builds) BUILDS=1 ;;
         --downloads) DOWNLOAD_CLEAN=1 ;;
         --containers) CONTAINERS=1 ;;
-        --older-than) shift; DAYS=${1:-14} ;;
-        --older-than=*) DAYS=${1#*=} ;;
+        --older-than) shift; DAYS=${1:-14}; WT_DAYS=$DAYS ;;
+        --older-than=*) DAYS=${1#*=}; WT_DAYS=$DAYS ;;
         --root) shift; ROOTS="$ROOTS ${1:-}" ;;
         --root=*) ROOTS="$ROOTS ${1#*=}" ;;
-        -h|--help) sed -n '2,19p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+        -h|--help) sed -n '2,20p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
         *) echo "unknown option: $1 (try --help)" >&2; exit 1 ;;
     esac
     shift
@@ -62,14 +65,21 @@ else
 fi
 
 # marker at midnight N days ago; anything newer counts as "recent"
-if ! touch -t "$(date -v "-${DAYS}d" '+%Y%m%d0000' 2>/dev/null)" "$MARKER" 2>/dev/null; then
-    touch -t "$(date -d "$DAYS days ago" '+%Y%m%d0000')" "$MARKER"
-fi
+set_marker() {
+    if ! touch -t "$(date -v "-$1d" '+%Y%m%d0000' 2>/dev/null)" "$2" 2>/dev/null; then
+        touch -t "$(date -d "$1 days ago" '+%Y%m%d0000')" "$2"
+    fi
+}
+
+set_marker "$DAYS" "$MARKER"
+set_marker "$WT_DAYS" "$WT_MARKER"
 [ "$ALL" = 1 ] && touch "$MARKER"
 if [ "$BUILDS" = 1 ]; then
     BUILD_MARKER=$(mktemp -t sweep-builds) || exit 1
     touch "$BUILD_MARKER"
 fi
+
+HOME_REAL=$(cd -P "$HOME" >/dev/null 2>&1 && pwd -P)
 
 human() { du -h -d 0 "$1" 2>/dev/null | cut -f1; }
 kb() { du -sk "$1" 2>/dev/null | cut -f1; }
@@ -86,6 +96,18 @@ stale() {
 stale_build() {
     [ "$ALL" = 1 ] && return 0
     [ -z "$(find "$1" -type f -newer "$BUILD_MARKER" 2>/dev/null | head -1)" ]
+}
+
+# stale_worktree DIR -> ignores --all; checks checkout files, commits and index
+stale_worktree() {
+    newer=$(find "$1" -type f ! -name .git -newer "$WT_MARKER" -print -quit 2>/dev/null) || return 1
+    [ -z "$newer" ] || return 1
+    commit=$(git -C "$1" log -1 --since="$WT_DAYS days ago" --format=%H 2>/dev/null) || return 1
+    [ -z "$commit" ] || return 1
+    gitdir=$(git -C "$1" rev-parse --absolute-git-dir 2>/dev/null) || return 1
+    newer=$(find "$gitdir" -maxdepth 1 -type f \( -name index -o -name HEAD \) -newer "$WT_MARKER" -print -quit 2>/dev/null) || return 1
+    [ -z "$newer" ] || return 1
+    return 0
 }
 
 # report DIR LABEL -> record size, print a row, delete it when applying
@@ -154,6 +176,119 @@ find_installers() {
         ! -newer "$MARKER" "$@" 2>/dev/null
 }
 
+# tilde PATH -> show ~/... for paths under HOME, never a hardcoded user path
+tilde() {
+    if [ -n "$HOME" ]; then
+        case "$1" in
+            "$HOME") printf '~'; return 0 ;;
+            "$HOME"/*) printf '~/%s' "${1#"$HOME"/}"; return 0 ;;
+        esac
+    fi
+    if [ -n "$HOME_REAL" ]; then
+        case "$1" in
+            "$HOME_REAL") printf '~'; return 0 ;;
+            "$HOME_REAL"/*) printf '~/%s' "${1#"$HOME_REAL"/}"; return 0 ;;
+        esac
+    fi
+    printf '%s' "$1"
+}
+
+# shell_quote STRING -> safe to paste into a POSIX shell
+shell_quote() {
+    printf "'%s'" "$(printf '%s' "$1" | sed "s/'/'\\\\''/g")"
+}
+
+# path_arg PATH -> "$HOME"/'suffix' when possible, quoted absolute otherwise
+path_arg() {
+    if [ -n "$HOME" ]; then
+        case "$1" in
+            "$HOME") printf '"$HOME"'; return 0 ;;
+            "$HOME"/*) printf '"$HOME"/%s' "$(shell_quote "${1#"$HOME"/}")"; return 0 ;;
+        esac
+    fi
+    if [ -n "$HOME_REAL" ]; then
+        case "$1" in
+            "$HOME_REAL") printf '"$HOME"'; return 0 ;;
+            "$HOME_REAL"/*) printf '"$HOME"/%s' "$(shell_quote "${1#"$HOME_REAL"/}")"; return 0 ;;
+        esac
+    fi
+    shell_quote "$1"
+}
+
+# discover_worktrees -> exact, unlocked linked worktrees under the agent bases
+discover_worktrees() {
+    : > "$WORKTREE_LIST"
+    for base in \
+        "$HOME/.t3/worktrees" \
+        "$HOME/.herdr/worktrees" \
+        "$HOME/.claude/worktrees" \
+        "$HOME/.codex/worktrees" \
+        "$HOME/.local/share/opencode/worktree" \
+        "$HOME/.local/share/opencode/worktrees"; do
+        [ -d "$base" ] || continue
+        for wt in "$base"/* "$base"/*/*; do
+            [ -d "$wt" ] || continue
+            top=$(git -C "$wt" rev-parse --show-toplevel 2>/dev/null) || continue
+            wt_real=$(cd -P "$wt" 2>/dev/null && pwd -P) || continue
+            top_real=$(cd -P "$top" 2>/dev/null && pwd -P) || continue
+            [ "$wt_real" = "$top_real" ] || continue
+            gitdir=$(git -C "$wt" rev-parse --absolute-git-dir 2>/dev/null) || continue
+            [ -f "$gitdir/locked" ] && continue
+            printf '%s\n' "$wt_real" >> "$WORKTREE_LIST"
+        done
+    done
+    sort -u "$WORKTREE_LIST" -o "$WORKTREE_LIST" 2>/dev/null || true
+}
+
+# report_worktrees -> report-only list of agent worktrees and how to remove them
+report_worktrees() {
+    found=0
+    while IFS= read -r wt; do
+        [ -d "$wt" ] || continue
+        found=$((found + 1))
+        rel=$(tilde "$wt")
+        if ! stale_worktree "$wt"; then
+            printf '  %6s  %s (recent, kept)\n' "$(human "$wt")" "$rel"
+            continue
+        fi
+        if ! status=$(GIT_OPTIONAL_LOCKS=0 git -C "$wt" status --porcelain --untracked-files=all --ignore-submodules=none 2>/dev/null); then
+            printf '  %6s  %s (git status failed, kept)\n' "$(human "$wt")" "$rel"
+            continue
+        fi
+        dirty=$(printf '%s\n' "$status" | sed '/^$/d' | wc -l | tr -d ' ')
+        if [ "${dirty:-0}" -gt 0 ]; then
+            printf '  %6s  %s (%s changes, kept)\n' "$(human "$wt")" "$rel" "$dirty"
+            continue
+        fi
+        main=$(git -C "$wt" worktree list --porcelain 2>/dev/null | sed -n 's/^worktree //p' | head -1)
+        wt_real=$(cd -P "$wt" 2>/dev/null && pwd -P) || wt_real=$wt
+        main_real=""
+        if [ -n "$main" ] && [ -d "$main" ]; then
+            main_real=$(cd -P "$main" 2>/dev/null && pwd -P) || main_real=""
+        fi
+        if [ -z "$main_real" ] || [ "$main_real" = "$wt_real" ]; then
+            printf '  %6s  %s (clean, main checkout, kept)\n' "$(human "$wt")" "$rel"
+            continue
+        fi
+        head=$(git -C "$wt" rev-parse HEAD 2>/dev/null) || head=""
+        if [ -z "$head" ]; then
+            printf '  %6s  %s (clean, git failed, kept)\n' "$(human "$wt")" "$rel"
+            continue
+        fi
+        if [ -z "$(git -C "$wt" for-each-ref --contains "$head" --count=1 refs/heads refs/tags --format='%(refname)' 2>/dev/null)" ]; then
+            printf '  %6s  %s (clean, commits not on a branch, kept)\n' "$(human "$wt")" "$rel"
+            continue
+        fi
+        printf '  %6s  %s (clean)\n' "$(human "$wt")" "$rel"
+        printf '           remove: git -C %s worktree remove -- %s\n' \
+            "$(path_arg "$main")" "$(path_arg "$wt")"
+    done < "$WORKTREE_LIST"
+    [ "$found" -gt 0 ] || note "no agent worktrees found"
+    return 0
+}
+
+discover_worktrees
+
 echo "${BOLD}sweep${OFF}  older-than ${DAYS}d  $([ "$APPLY" = 1 ] && echo APPLY || echo 'dry run')"
 
 # --- System and app caches -------------------------------------------------
@@ -218,9 +353,15 @@ echo
 echo "${BOLD}gradle${OFF}"
 
 # a Gradle version is "in use" when a wrapper in one of the roots asks for it
-REFERENCED=$(find $ROOTS $WORKTREE_ROOTS -maxdepth 7 -name gradle-wrapper.properties 2>/dev/null |
-    xargs grep -h '^distributionUrl' 2>/dev/null |
-    sed -E 's#.*gradle-([0-9]+(\.[0-9]+)+)-(bin|all)\.zip.*#\1#' | sort -u | tr '\n' ' ')
+REFERENCED=$(
+    {
+        find $ROOTS -maxdepth 7 -name gradle-wrapper.properties 2>/dev/null
+        while IFS= read -r wt; do
+            find "$wt" -maxdepth 4 -name gradle-wrapper.properties 2>/dev/null
+        done < "$WORKTREE_LIST"
+    } | xargs grep -h '^distributionUrl' 2>/dev/null |
+        sed -E 's#.*gradle-([0-9]+(\.[0-9]+)+)-(bin|all)\.zip.*#\1#' | sort -u | tr '\n' ' '
+)
 # a daemon that is running right now is in use even if its wrapper is gone
 RUNNING=$(ps -axo command 2>/dev/null | grep -oE 'GradleDaemon [0-9]+(\.[0-9]+)+' | cut -d' ' -f2 | sort -u | tr '\n' ' ')
 
@@ -287,16 +428,20 @@ fi
 # scan_project_root ROOT DEPTH -> report build output and project caches
 scan_project_root() {
     [ -d "$1" ] || return 0
-    find "$1" -maxdepth "$2" -type d -name build -prune 2>/dev/null | while read -r d; do
+    find "$1" -mindepth 1 -maxdepth "$2" -type d -name build -prune 2>/dev/null | while read -r d; do
         case "$d" in */.git/*|*/src/*|*/node_modules/*) continue ;; esac
+        # never delete a checkout, even one that happens to be named build
+        if [ -e "$d/.git" ] || [ -n "$(find "$d" -maxdepth 2 -name .git -print -quit 2>/dev/null)" ]; then
+            continue
+        fi
         stale_build "$d" || continue
         size=$(kb "$d")
         [ "${size:-0}" -ge 10240 ] || continue
         printf '%s\t%s\n' "$size" "$d" >> "$LOG"
-        printf '  %6s  %s\n' "$(human "$d")" "${d#$HOME/}"
+        printf '  %6s  %s\n' "$(human "$d")" "$(tilde "$d")"
         [ "$APPLY" = 1 ] && rm -rf "$d"
     done
-    find "$1" -maxdepth "$2" -type d -name .gradle -prune 2>/dev/null | while read -r g; do
+    find "$1" -mindepth 1 -maxdepth "$2" -type d -name .gradle -prune 2>/dev/null | while read -r g; do
         for sub in "$g"/configuration-cache "$g"/[0-9]*; do
             [ -d "$sub" ] || continue
             v=${sub##*/}
@@ -305,7 +450,7 @@ scan_project_root() {
             size=$(kb "$sub")
             [ "${size:-0}" -ge 10240 ] || continue
             printf '%s\t%s\n' "$size" "$sub" >> "$LOG"
-            printf '  %6s  %s (project cache)\n' "$(human "$sub")" "${sub#$HOME/}"
+            printf '  %6s  %s (project cache)\n' "$(human "$sub")" "$(tilde "$sub")"
             [ "$APPLY" = 1 ] && rm -rf "$sub"
         done
     done
@@ -318,9 +463,9 @@ echo "${BOLD}project artifacts${OFF}"
 for root in $ROOTS; do
     scan_project_root "$root" 4
 done
-for root in $WORKTREE_ROOTS; do
-    scan_project_root "$root" 6
-done
+while IFS= read -r root; do
+    scan_project_root "$root" 4
+done < "$WORKTREE_LIST"
 
 # --- Android ---------------------------------------------------------------
 echo
@@ -328,7 +473,7 @@ echo "${BOLD}android${OFF}"
 for d in "$HOME"/.android/avd/*.avd/snapshots; do
     [ -d "$d" ] || continue
     stale_build "$d" || continue
-    report "$d" "${d#$HOME/} (cold boot recreates it)"
+    report "$d" "$(tilde "$d") (cold boot recreates it)"
 done
 report "$HOME/.android/cache" "android sdk temp cache"
 
@@ -368,6 +513,11 @@ if [ -d "$HOME/.codex/packages" ]; then
     printf '  %6s  codex packages (installed runtime, kept)\n' "$(human "$HOME/.codex/packages")"
 fi
 
+# --- Worktrees (report only) -----------------------------------------------
+echo
+echo "${BOLD}worktrees${OFF}"
+report_worktrees
+
 # --- Report only -----------------------------------------------------------
 echo
 echo "${BOLD}report only${OFF}"
@@ -378,7 +528,7 @@ for d in "$HOME/.cache/huggingface" "$HOME/.cache/whisper" "$HOME/.cache/torch" 
          "$HOME/.cache/lm-studio" "$HOME/.ollama/models" \
          "$HOME/Library/Caches/ms-playwright" "$HOME/Library/Caches/puppeteer"; do
     [ -d "$d" ] || continue
-    printf '  %6s  %s, left alone: expensive to download again\n' "$(human "$d")" "${d#$HOME/}"
+    printf '  %6s  %s, left alone: expensive to download again\n' "$(human "$d")" "$(tilde "$d")"
 done
 if command -v docker >/dev/null 2>&1; then
     note "docker images and volumes (run: docker system prune -af --volumes)"
