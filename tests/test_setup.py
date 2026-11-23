@@ -31,7 +31,10 @@ class SetupSafetyTest(unittest.TestCase):
             dest = self.repo / script
             dest.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(ROOT / script, dest)
-        for name in (".vimrc", ".zshrc", "themes/theme.sh", ".config/claude/skills/example/SKILL.md"):
+        for name in (
+            ".vimrc", ".zshrc", "themes/theme.sh", ".config/claude/skills/example/SKILL.md",
+            ".config/ghostty/config", ".config/ghostty/appearance",
+        ):
             path = self.repo / name
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text("managed\n")
@@ -164,6 +167,26 @@ PY
         self.assertEqual((self.repo / ".zshrc").read_bytes(), before)
         self.assertEqual(ghostex.read_text().count("config-file ="), 1)
         self.assertFalse((self.home / ".warprc").exists())
+
+    def test_ghostty_legacy_duplicate_links_are_backed_up(self):
+        support = self.home / "Library/Application Support/com.mitchellh.ghostty"
+        support.mkdir(parents=True)
+        legacy = {}
+        for name in ("config", "appearance"):
+            legacy[name] = support / name
+            legacy[name].symlink_to(self.repo / ".config/ghostty" / name)
+        user_link = support / "config.ghostty"
+        user_link.symlink_to(self.home / "somewhere-else")
+        self.run_setup("--only", "links", "--yes")
+        for name, path in legacy.items():
+            self.assertFalse(path.is_symlink(), path)
+            self.assertEqual(
+                os.readlink(self.backup_for(path)), str(self.repo / ".config/ghostty" / name)
+            )
+        self.assertEqual(
+            (self.home / ".config/ghostty/config").resolve(), self.repo / ".config/ghostty/config"
+        )
+        self.assertTrue(user_link.is_symlink())
 
     def test_linked_parent_does_not_move_repo_files(self):
         (self.home / ".claude").symlink_to(self.repo / ".config/claude", target_is_directory=True)

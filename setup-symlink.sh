@@ -77,8 +77,18 @@ setup_link "$SETUP_ROOT/bin/herdr-presentation-status" "$HOME/.local/bin/herdr-p
 ## Ghostty
 setup_link "$SETUP_ROOT/.config/ghostty/config" "$HOME/.config/ghostty/config"
 setup_link "$SETUP_ROOT/.config/ghostty/appearance" "$HOME/.config/ghostty/appearance"
-setup_link "$SETUP_ROOT/.config/ghostty/config" "$HOME/Library/Application Support/com.mitchellh.ghostty/config"
-setup_link "$SETUP_ROOT/.config/ghostty/appearance" "$HOME/Library/Application Support/com.mitchellh.ghostty/appearance"
+
+# Ghostty loads both ~/.config/ghostty and ~/Library/Application Support, so
+# linking the config into both places loads `config-file = appearance` twice
+# and Ghostty reports "cycle detected". Back up the old duplicate links when
+# they still point at this repo and keep the XDG location as the only one.
+ghostty_macos="$HOME/Library/Application Support/com.mitchellh.ghostty"
+for legacy in config appearance; do
+  if [[ -L "$ghostty_macos/$legacy" &&
+    "$ghostty_macos/$legacy" -ef "$SETUP_ROOT/.config/ghostty/$legacy" ]]; then
+    setup_backup "$ghostty_macos/$legacy"
+  fi
+done
 
 # Claude's config mixes MCP servers with runtime state, so register them via CLI.
 # Keep in sync with opencode.jsonc.
