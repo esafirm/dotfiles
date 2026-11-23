@@ -96,10 +96,10 @@ if [ -d "$DOT/keepsecret" ]; then
     source $DOT/keepsecret/secrets.sh
 fi
 
-# Same as above but for local only secrets that's not worth to be synced
-if [ -f "$DOT/secrets" ]; then
-    source $DOT/secrets
-fi
+# Local-only variables load from .zshenv so non-interactive shells get them too.
+# The PATH reset above would drop PATH entries set there, so keep those here.
+export PATH="$PATH:$HOME/Documents/bandlab/gradle-profiler/build/install/gradle-profiler/bin"
+bldir() { echo $BL_DIR; }
 
 # This for temporary configuration that still in evaluation
 if [ -f "$DOT/temp.sh" ]; then

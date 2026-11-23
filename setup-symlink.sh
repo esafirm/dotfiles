@@ -7,6 +7,7 @@ source "$(dirname -- "${BASH_SOURCE[0]}")/setup-common.sh"
 
 ## Shell and Git
 setup_link "$SETUP_ROOT/.vimrc" "$HOME/.vimrc"
+setup_link "$SETUP_ROOT/.zshenv" "$HOME/.zshenv"
 setup_link "$SETUP_ROOT/.zshrc" "$HOME/.zshrc"
 setup_link "$SETUP_ROOT/.warprc" "$HOME/.warprc"
 setup_link "$SETUP_ROOT/.gitconfig" "$HOME/.gitconfig"
