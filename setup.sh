@@ -76,7 +76,7 @@ printf 'No bulk package upgrades, cleanup, or recursive deletion. Conflicts are 
 for step in "${steps[@]}"; do
   case "$step" in
     links) printf 'Claude MCP entries and this repo\047s hooks path will be configured in the links step.\n' ;;
-    t3) printf 'T3 Code provider settings are written into its user settings file.\n' ;;
+    t3) printf 'T3 Code provider settings are written into its user settings file, and its theme is published.\n' ;;
     plugins) printf 'Plugins may download and execute third-party code. Existing plugins are kept.\n' ;;
   esac
 done

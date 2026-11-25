@@ -1,0 +1,15 @@
+{
+  "name": "Dotfiles",
+  "appearance": "dark",
+  "canvas": "#16181a",
+  "accent": "#7aa2f7",
+  "colors": {
+    "text": "#ffffff",
+    "error": "#ff6e5e",
+    "warning": "#ffcb6b",
+    "terminalBackground": "#16181a",
+    "terminalForeground": "#ffffff",
+    "terminalCursor": "#ffffff",
+    "terminalSelection": "#3c4048"
+  }
+}

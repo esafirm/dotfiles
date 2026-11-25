@@ -16,6 +16,7 @@ SCRIPTS = (
     "setup.sh", "setup-common.sh", "setup-symlink.sh", "setup-t3.sh", "setup-brew.sh",
     "themes/setup.sh", ".config/herdr/setup.sh",
     ".config/t3/settings.json", ".config/t3/client-settings.json",
+    ".config/t3/themes/dotfiles.json",
 )
 
 
@@ -368,6 +369,32 @@ PY
         self.assertEqual(updated["browserProfiles"], [{"id": "local"}])
         self.assertEqual(self.backup_for(client).read_text(), original)
 
+    def test_t3_publishes_theme_and_selects_it_once(self):
+        settings = self.t3_settings("{}\n")
+        theme = settings.parent / "themes/dotfiles.json"
+        self.stub("t3", '''
+printf 't3 %s\n' "$*" >> "$CALL_LOG"
+case "$1 $2" in
+  'theme show') [[ -f "$HOME/selected" ]] && printf 'Environment theme: "dotfiles".\n' || printf 'Environment theme: not set.\n' ;;
+  'theme set') touch "$HOME/selected" ;;
+  *) exit 99 ;;
+esac
+''')
+        self.run_setup("--only", "t3", "--dry-run")
+        self.assertFalse(theme.exists())
+        self.assertNotIn("t3 theme set", self.calls())
+        self.run_setup("--only", "t3", "--yes")
+        self.assertEqual(theme.read_text(), (self.repo / ".config/t3/themes/dotfiles.json").read_text())
+        output = self.run_setup("--only", "t3", "--yes")
+        self.assertIn("Already selected T3 Code theme", output)
+        self.assertEqual(self.calls().count("t3 theme set dotfiles"), 1)
+
+    def test_t3_theme_selection_skips_without_cli(self):
+        settings = self.t3_settings("{}\n")
+        output = self.run_setup("--only", "t3", "--yes")
+        self.assertIn("t3 CLI not found", output)
+        self.assertTrue((settings.parent / "themes/dotfiles.json").exists())
+
     def test_missing_plugin_is_installed_only_during_apply(self):
         self.run_setup("--only", "plugins", "--yes")
         self.assertEqual(self.calls().count("herdr plugin install esafirm/herdr-all-hands --yes"), 1)
@@ -491,7 +518,7 @@ PY
         self.assertEqual(self.calls(), "")
 
     def test_bash_syntax(self):
-        for script in SCRIPTS:
+        for script in (s for s in SCRIPTS if s.endswith(".sh")):
             subprocess.run(["/bin/bash", "-n", str(self.repo / script)], check=True)
 
 

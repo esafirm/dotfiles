@@ -85,6 +85,36 @@ if [[ -f "$client_settings" ]]; then
   fi
 fi
 
+# Publish shared themes by copy, then make ours the environment theme once.
+# Re-running `t3 theme set` would undo a theme picked in the app, so skip it when already set.
+themes_dir="$(dirname -- "$settings")/themes"
+for theme in "$(dirname -- "${BASH_SOURCE[0]}")"/.config/t3/themes/*.json; do
+  [[ -f "$theme" ]] || continue
+  target="$themes_dir/$(basename -- "$theme")"
+  if [[ -f "$target" ]] && cmp -s -- "$theme" "$target"; then
+    continue
+  fi
+  [[ ! -e "$target" ]] || setup_backup "$target" copy
+  printf '  Publish T3 Code theme %s\n' "$target"
+  if [[ "$SETUP_DRY_RUN" != 1 ]]; then
+    mkdir -p -- "$themes_dir"
+    # T3 reads published themes live, so rename into place to avoid a partial read.
+    cp -- "$theme" "$target.$$.tmp"
+    mv -- "$target.$$.tmp" "$target"
+  fi
+done
+
+t3_theme="dotfiles"
+t3_bin="$HOME/.local/bin/t3"
+[[ -x "$t3_bin" ]] || t3_bin="$(command -v t3 || true)"
+if [[ -z "$t3_bin" ]]; then
+  printf '  Skip T3 Code theme selection: t3 CLI not found\n'
+elif "$t3_bin" theme show 2>/dev/null | grep -Eq "^Environment theme: \"?${t3_theme}([^[:alnum:]_-]|$)"; then
+  printf '  Already selected T3 Code theme: %s\n' "$t3_theme"
+else
+  setup_run "$t3_bin" theme set "$t3_theme" || printf '  Warning: could not set the T3 Code theme. Pick %s in Settings > Appearance.\n' "$t3_theme"
+fi
+
 if [[ "$updated" == "$(cat -- "$settings")" ]]; then
   printf '  Already configured: %s\n' "$settings"
   exit 0

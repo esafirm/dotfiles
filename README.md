@@ -23,7 +23,7 @@ Run `./setup.sh`. It previews the changes and asks before applying them (default
 ```sh
 ./setup.sh --dry-run          # Preview only. No file changes or installs.
 ./setup.sh --only links       # Config links, Claude MCP, Git hooks, and Ghostex include.
-./setup.sh --only t3          # T3 Code provider instances for OpenCode, Codex, Antigravity, and both Claude profiles.
+./setup.sh --only t3          # T3 Code provider instances, shared preferences, theme, and typography.
 ./setup.sh --only brew        # Just missing Homebrew packages and apps.
 ./setup.sh --yes              # Apply all steps without the setup prompt.
 ./setup.sh --help
@@ -108,6 +108,22 @@ first. The step needs `jq` and is skipped when the settings file does not exist.
   `claude auth login` (with `CLAUDE_CONFIG_DIR=~/.claude-work` for work).
 
 Restart T3 Code if a provider instance does not show up after setup.
+
+### Theme and typography
+
+`.config/t3/themes/dotfiles.json` is a dark theme that matches the Ghostty
+palette in `.config/ghostty/appearance`: the `#16181a` canvas, the `#7aa2f7`
+accent, and the same terminal colors. Setup copies every file in
+`.config/t3/themes/` to `~/.t3/userdata/themes/`, which publishes it. Then it
+runs `t3 theme set dotfiles` once. It skips that when `t3 theme show` already
+reports `dotfiles`, so a theme you pick later in Settings > Appearance stays
+until the next `t3 theme set`. Without the `t3` CLI the theme is still
+published, and you can select it in the app.
+
+Typography lives in `.config/t3/client-settings.json`. Code and terminal use
+Fira Code. Interface and composer stay on the system font (empty
+`fontFamilySans` and `fontFamilyComposer`). Sizes are 17 for the interface, 14
+for the prompt and code, and 12 for the terminal, the same as Ghostty.
 
 ### Sync between machines
 
