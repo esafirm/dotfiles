@@ -48,7 +48,7 @@ keepsecret
 .config/claude/.credentials.json
 
 # Generated, account-specific sync buckets.
-.config/claude/skills/synced/
+.agents/skills/synced/
 
 ## Temporary configuration
 temp.sh
@@ -74,5 +74,3 @@ __pycache__/
 ## Agent skills installed outside the lock file
 .agents/skills/ghostex-*/
 .agents/skills/instabox*/
-.config/claude/skills/ghostex-*
-.config/claude/skills/instabox*

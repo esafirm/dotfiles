@@ -10,5 +10,6 @@ status=0
 while read -r local_ref local_sha remote_ref remote_sha; do
     [[ -n "$local_sha" && ! "$local_sha" =~ ^0+$ ]] || continue
     python3 -I "$hooks_dir/verify-mcp-sync" --ref "$local_sha" || status=1
+    bash "$hooks_dir/verify-skills" --ref "$local_sha" || status=1
 done <<< "$refs"
 exit "$status"

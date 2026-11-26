@@ -31,7 +31,6 @@ else
   printf '  Keeping existing ~/.claude/keybindings.json (not replacing it)\n'
 fi
 setup_link "$SETUP_ROOT/.agents/AGENTS.md" "$HOME/.claude/CLAUDE.md"
-setup_link "$SETUP_ROOT/.config/claude/skills" "$HOME/.claude/skills"
 setup_link "$SETUP_ROOT/.config/claude/hooks/herdr-agent-state.sh" "$HOME/.claude/hooks/herdr-agent-state.sh"
 setup_link "$SETUP_ROOT/.config/claude/statusline-command.sh" "$HOME/.claude/statusline-command.sh"
 
@@ -55,11 +54,20 @@ setup_link "$SETUP_ROOT/.config/opencode/commands/trash.md" "$HOME/.config/openc
 setup_link "$SETUP_ROOT/.config/opencode/scripts/workflow-audit.sh" "$HOME/.config/opencode/scripts/workflow-audit.sh"
 setup_link "$SETUP_ROOT/.config/opencode/scripts/review-pr.sh" "$HOME/.config/opencode/scripts/review-pr.sh"
 setup_link "$SETUP_ROOT/.config/opencode/scripts/ai-trash.sh" "$HOME/.config/opencode/scripts/ai-trash.sh"
-setup_link "$SETUP_ROOT/.config/claude/skills" "$HOME/.config/opencode/skills"
 
 ## Shared agent skills
+# .agents/skills is the only skill folder. Each agent gets the whole folder, and
+# .githooks/verify-skills blocks a push that drops one of these links.
+# Codex and opencode read ~/.agents/skills directly.
 setup_link "$SETUP_ROOT/.agents/skills" "$HOME/.agents/skills"
 setup_link "$SETUP_ROOT/.agents/.skill-lock.json" "$HOME/.agents/.skill-lock.json"
+# Claude Code, personal and work profiles.
+setup_link "$SETUP_ROOT/.agents/skills" "$HOME/.claude/skills"
+if [[ -d "$HOME/.claude-work" ]]; then
+  setup_link "$SETUP_ROOT/.agents/skills" "$HOME/.claude-work/skills"
+fi
+# Antigravity (agy).
+setup_link "$SETUP_ROOT/.agents/skills" "$HOME/.gemini/config/skills"
 
 ## CLI tools
 setup_link "$SETUP_ROOT/kotlin/kscripts/jenkins-cli.main.kts" "$HOME/scripts/jenkins-cli.main.kts"

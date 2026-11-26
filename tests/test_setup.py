@@ -33,7 +33,7 @@ class SetupSafetyTest(unittest.TestCase):
             dest.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(ROOT / script, dest)
         for name in (
-            ".vimrc", ".zshrc", "themes/theme.sh", ".config/claude/skills/example/SKILL.md",
+            ".vimrc", ".zshrc", "themes/theme.sh", ".agents/skills/example/SKILL.md",
             ".config/ghostty/config", ".config/ghostty/appearance",
         ):
             path = self.repo / name
@@ -190,11 +190,21 @@ PY
         self.assertTrue(user_link.is_symlink())
 
     def test_linked_parent_does_not_move_repo_files(self):
-        (self.home / ".claude").symlink_to(self.repo / ".config/claude", target_is_directory=True)
+        (self.home / ".agents").symlink_to(self.repo / ".agents", target_is_directory=True)
         self.run_setup("--only", "links", "--yes")
-        skills = self.repo / ".config/claude/skills"
+        skills = self.repo / ".agents/skills"
         self.assertFalse(skills.is_symlink())
         self.assertEqual((skills / "example/SKILL.md").read_text(), "managed\n")
+
+    def test_every_agent_gets_the_shared_skills_folder(self):
+        skills = self.repo / ".agents/skills"
+        self.run_setup("--only", "links", "--yes")
+        for target in (".agents/skills", ".claude/skills", ".gemini/config/skills"):
+            self.assertEqual((self.home / target).resolve(), skills, target)
+        self.assertFalse((self.home / ".claude-work").exists())
+        (self.home / ".claude-work").mkdir()
+        self.run_setup("--only", "links", "--yes")
+        self.assertEqual((self.home / ".claude-work/skills").resolve(), skills)
 
     def test_symlinked_backup_root_is_rejected_before_moving_conflict(self):
         outside = self.work / "outside"

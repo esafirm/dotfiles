@@ -1,3 +1,8 @@
+---
+name: workflow-audit-audit
+description: Validate the opencode workflow audit, analyze recent prompts, and update opencode configuration (permissions, tools, MCP servers, agents, commands) from real usage. Use after running /workflow-audit or when asked to tune opencode config from usage data.
+---
+
 # workflow-audit-audit
 
 Validates the workflow audit, analyzes recent prompts, and **initializes/updates opencode configuration** based on real usage data.

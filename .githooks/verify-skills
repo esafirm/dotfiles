@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+# Verify every skill is shared by Claude Code, Codex, opencode and Antigravity.
+#
+# Reads the given commit, not the worktree:
+#   - every skill lives at .agents/skills/<name>/SKILL.md, nowhere else
+#   - each SKILL.md has frontmatter with a name matching its folder and a description
+#   - setup-symlink.sh links .agents/skills into every agent's skill folder
+set -euo pipefail
+
+ref=HEAD
+if [[ "${1:-}" == --ref ]]; then
+  ref="${2:?--ref needs a commit}"
+fi
+root="$(cd -- "$(dirname -- "$0")/.." && pwd)"
+status=0
+
+fail() {
+  printf 'verify-skills: %s\n' "$1" >&2
+  status=1
+}
+
+check_frontmatter() {
+  awk -v want="$1" '
+    NR == 1 { if ($0 != "---") { print "missing frontmatter"; bad = 1; exit } next }
+    $0 == "---" { closed = 1; exit }
+    /^name:/ { name = $0; sub(/^name:[ \t]*/, "", name); gsub(/^["\x27]|["\x27]$/, "", name); block = 0; next }
+    /^description:/ {
+      text = $0; sub(/^description:[ \t]*/, "", text)
+      if (text ~ /^[>|][-+]?$/) block = 1; else if (text != "") described = 1
+      next
+    }
+    /^[^ \t]/ { block = 0 }
+    block && /^[ \t]+[^ \t]/ { described = 1 }
+    END {
+      if (bad) exit
+      if (!closed) { print "frontmatter is not closed"; exit }
+      if (name != want) printf "name is \"%s\" but the folder is \"%s\"\n", name, want
+      if (!described) print "description is empty"
+    }
+  '
+}
+
+# Skill folders other agents would read on their own. Skills here are invisible
+# to the rest, so they must move to .agents/skills.
+other_skill_dirs=(
+  .config/claude/skills/ .claude/skills/ .codex/skills/ .gemini/skills/
+  .gemini/config/skills/ .config/opencode/skills/ .config/opencode/skill/
+)
+
+while IFS= read -r -d '' path; do
+  for dir in "${other_skill_dirs[@]}"; do
+    if [[ "$path" == "$dir"* ]]; then
+      fail "$path: keep skills only in .agents/skills, which every agent links as a whole"
+      continue 2
+    fi
+  done
+  [[ "${path##*/}" == SKILL.md ]] || continue
+  name="${path#.agents/skills/}"
+  name="${name%/SKILL.md}"
+  if [[ "$path" != .agents/skills/*/SKILL.md || "$name" == */* ]]; then
+    fail "$path: skills belong at .agents/skills/<name>/SKILL.md"
+    continue
+  fi
+  while IFS= read -r problem; do
+    [[ -n "$problem" ]] && fail "$path: $problem"
+  done < <(git -C "$root" show "$ref:$path" | check_frontmatter "$name")
+done < <(git -C "$root" ls-tree -r -z --name-only "$ref")
+
+# Every agent must get the whole .agents/skills folder.
+if setup="$(git -C "$root" show "$ref:setup-symlink.sh" 2>/dev/null)"; then
+  setup="$(printf '%s\n' "$setup" | sed '/^[[:space:]]*#/d')"
+  for entry in \
+    'Codex and opencode:$HOME/.agents/skills' \
+    'Claude Code:$HOME/.claude/skills' \
+    'Claude Code work profile:$HOME/.claude-work/skills' \
+    'Antigravity:$HOME/.gemini/config/skills'; do
+    agent="${entry%%:*}"
+    target="${entry#*:}"
+    needle="setup_link \"\$SETUP_ROOT/.agents/skills\" \"$target\""
+    [[ "$setup" == *"$needle"* ]] || fail "setup-symlink.sh: $agent needs $needle"
+  done
+else
+  fail "setup-symlink.sh is missing in $ref"
+fi
+
+if [[ "$status" != 0 ]]; then
+  printf 'verify-skills: skills must stay shared by Claude Code, Codex, opencode and Antigravity.\n' >&2
+fi
+exit "$status"

@@ -14,6 +14,14 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 ZERO = "0" * 40
 TOKEN = "ghp_" + "a" * 36
+SKILL_LINKS = "".join(
+    f'setup_link "$SETUP_ROOT/.agents/skills" "$HOME/{target}"\n'
+    for target in (".agents/skills", ".claude/skills", ".claude-work/skills", ".gemini/config/skills")
+)
+
+
+def skill(name, description="Use for tests."):
+    return f"---\nname: {name}\ndescription: {description}\n---\n\n# {name}\n"
 
 
 class ContentPatternsTest(unittest.TestCase):
@@ -71,7 +79,8 @@ class PushHookTest(unittest.TestCase):
         shutil.copytree(ROOT / ".githooks", self.repo / ".githooks")
         self.write("opencode.jsonc", '{"mcp":{"servers":{}}}')
         self.write(".config/claude/settings.json", "{}")
-        self.write("setup-symlink.sh", "# no MCP servers\n")
+        self.write("setup-symlink.sh", SKILL_LINKS)
+        self.write(".agents/skills/example/SKILL.md", skill("example"))
         self.write("config", "safe\n")
         self.base = self.commit()
 
@@ -236,6 +245,65 @@ class PushHookTest(unittest.TestCase):
         bad = self.commit()
         refs = f"a {self.base} b {self.base}\nc {bad} d {self.base}\n"
         self.scan(refs=refs, hook="pre-push", expected=1)
+
+    def skills(self, ref="HEAD", expected=0):
+        result = subprocess.run(
+            ["bash", str(self.repo / ".githooks/verify-skills"), "--ref", ref],
+            cwd=self.repo, env=self.env, capture_output=True, text=True, timeout=30,
+        )
+        self.assertEqual(result.returncode, expected, result.stdout + result.stderr)
+        return result.stderr
+
+    def test_shared_skills_pass(self):
+        self.write(".agents/skills/folded/SKILL.md", "---\nname: folded\ndescription: >-\n  Folded text.\n---\n")
+        self.commit()
+        self.skills()
+
+    def test_skill_outside_shared_folder_is_blocked(self):
+        for path in (".config/claude/skills/solo/SKILL.md", ".codex/skills/solo/SKILL.md", "tools/solo/SKILL.md"):
+            with self.subTest(path=path):
+                self.write(path, skill("solo"))
+                tip = self.commit()
+                self.assertIn(path, self.skills(tip, expected=1))
+                (self.repo / path).unlink()
+                self.commit()
+
+    def test_link_into_another_skill_folder_is_blocked(self):
+        (self.repo / ".config/claude/skills").mkdir(parents=True)
+        (self.repo / ".config/claude/skills/example").symlink_to("../../../.agents/skills/example")
+        self.commit()
+        self.assertIn(".config/claude/skills/example", self.skills(expected=1))
+
+    def test_bad_frontmatter_is_blocked(self):
+        cases = {
+            "nofront": "# nofront\n",
+            "wrongname": skill("other"),
+            "nodesc": "---\nname: nodesc\ndescription:\n---\n",
+            "unclosed": "---\nname: unclosed\ndescription: text\n",
+        }
+        for name, text in cases.items():
+            self.write(f".agents/skills/{name}/SKILL.md", text)
+        self.commit()
+        output = self.skills(expected=1)
+        for name in cases:
+            self.assertIn(f".agents/skills/{name}/SKILL.md", output)
+
+    def test_missing_agent_link_is_blocked(self):
+        for target in (".claude/skills", ".claude-work/skills", ".gemini/config/skills", ".agents/skills"):
+            with self.subTest(target=target):
+                line = f'setup_link "$SETUP_ROOT/.agents/skills" "$HOME/{target}"\n'
+                self.write("setup-symlink.sh", SKILL_LINKS.replace(line, "# " + line))
+                tip = self.commit()
+                self.assertIn(target, self.skills(tip, expected=1))
+        self.write("setup-symlink.sh", SKILL_LINKS)
+        self.commit()
+        self.skills()
+
+    def test_skills_use_pushed_tip_not_worktree(self):
+        self.write(".agents/skills/example/SKILL.md", "# broken\n")
+        tip = self.commit()
+        self.write(".agents/skills/example/SKILL.md", skill("example"))
+        self.assertIn("example", self.scan(tip, hook="pre-push", expected=1))
 
 
 if __name__ == "__main__":
