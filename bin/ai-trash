@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# ai-trash.sh — sanctioned deletion path for agents.
+# ai-trash — sanctioned deletion path for every AI agent (Claude Code, Codex,
+# opencode, Antigravity).
 # `rm` on repo files is denied by tool permissions, so agents NEVER delete
 # in place. This script stages doomed files in a per-repo trash dir under
 # $TMPDIR preserving repo-relative paths — restorable with --restore until
@@ -7,10 +8,10 @@
 # the trash dir.
 #
 # Usage:
-#   ai-trash.sh [--dry-run] <repo-relative-path>...   stage files for deletion
-#   ai-trash.sh --list                                show trash contents
-#   ai-trash.sh --restore [--dry-run] <path>...       restore staged files
-#   ai-trash.sh --empty [--dry-run]                   permanently empty the trash
+#   ai-trash [--dry-run] <repo-relative-path>...   stage files for deletion
+#   ai-trash --list                                show trash contents
+#   ai-trash --restore [--dry-run] <path>...       restore staged files
+#   ai-trash --empty [--dry-run]                   permanently empty the trash
 #
 # Guards:
 #   - rejects absolute paths and `..` components
@@ -26,7 +27,7 @@ ROOT="$(git rev-parse --show-toplevel 2>/dev/null || true)"
 REPO="$(basename "$ROOT")"
 ROOT_REAL="$(cd -P "$ROOT" >/dev/null && pwd -P)"
 TMP_BASE="${TMPDIR:-/tmp}"
-TRASH_BASE="${TMP_BASE%/}/opencode-trash"
+TRASH_BASE="${TMP_BASE%/}/ai-trash"
 TRASH="$TRASH_BASE/$REPO"
 
 fail() { echo "Error: $*" >&2; exit 1; }
@@ -69,7 +70,7 @@ cmd_list() {
 cmd_restore() {
   local dry=0
   if [[ "${1:-}" == "--dry-run" ]]; then dry=1; shift; fi
-  [[ $# -gt 0 ]] || fail "Usage: ai-trash.sh --restore [--dry-run] <repo-relative-path>..."
+  [[ $# -gt 0 ]] || fail "Usage: ai-trash --restore [--dry-run] <repo-relative-path>..."
   for raw in "$@"; do
     abs="$(resolve "$raw")"
     rel="${abs#$ROOT_REAL/}"
@@ -92,7 +93,7 @@ cmd_restore() {
 cmd_trash() {
   local dry=0
   if [[ "${1:-}" == "--dry-run" ]]; then dry=1; shift; fi
-  [[ $# -gt 0 ]] || fail "Usage: ai-trash.sh [--dry-run] <repo-relative-path>..."
+  [[ $# -gt 0 ]] || fail "Usage: ai-trash [--dry-run] <repo-relative-path>..."
   for raw in "$@"; do
     abs="$(resolve "$raw")"
     rel="${abs#$ROOT_REAL/}"
@@ -109,8 +110,8 @@ cmd_trash() {
   echo "=== git status --short ==="
   git -C "$ROOT" status --short || true
   echo ""
-  echo "Trash: $TRASH — restorable via 'ai-trash.sh --restore <path>';"
-  echo "permanent: 'ai-trash.sh --empty' (rm scoped to the trash dir only)."
+  echo "Trash: $TRASH — restorable via 'ai-trash --restore <path>';"
+  echo "permanent: 'ai-trash --empty' (rm scoped to the trash dir only)."
 }
 
 cmd_empty() {

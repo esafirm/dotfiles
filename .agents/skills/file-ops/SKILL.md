@@ -24,21 +24,21 @@ end.
    modified.
 4. **Stage via the trash script** (preserves repo-relative paths for restore):
    ```bash
-   ~/.config/opencode/scripts/ai-trash.sh --dry-run <paths...>
-   ~/.config/opencode/scripts/ai-trash.sh <paths...>
+   ai-trash --dry-run <paths...>
+   ai-trash <paths...>
    ```
-   Trash lives at `$TMPDIR/opencode-trash/<repo>/`.
+   Trash lives at `$TMPDIR/ai-trash/<repo>/`.
 5. **Compile / test the affected modules after staging.** If something was
    wrongly trashed, restore it:
    ```bash
-   ~/.config/opencode/scripts/ai-trash.sh --restore <paths...>
-   ~/.config/opencode/scripts/ai-trash.sh --list
+   ai-trash --restore <paths...>
+   ai-trash --list
    ```
 6. **Only empty the trash once the batch is confirmed right.** The ONE place
    `rm` ever runs is scoped inside the trash dir:
    ```bash
-   ~/.config/opencode/scripts/ai-trash.sh --empty --dry-run   # preview
-   ~/.config/opencode/scripts/ai-trash.sh --empty             # permanent
+   ai-trash --empty --dry-run   # preview
+   ai-trash --empty             # permanent
    ```
    Until `--empty`, everything staged is restorable. The OS also clears the
    trash on reboot.

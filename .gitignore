@@ -1,6 +1,7 @@
 ## Hold installation files
 .bin/
 bin/*
+!bin/ai-trash
 !bin/sweep
 !bin/firebase-mcp
 !bin/git-branch-label

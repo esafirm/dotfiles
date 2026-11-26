@@ -67,7 +67,7 @@
     { "action": "grep", "resource": "*", "effect": "allow" },
     { "action": "read", "resource": "*", "effect": "allow" },
     { "action": "shell", "resource": "*", "effect": "ask" },
-    { "action": "shell", "resource": "*ai-trash.sh*", "effect": "allow" },
+    { "action": "shell", "resource": "*ai-trash*", "effect": "allow" },
     { "action": "shell", "resource": "*review-pr.sh*", "effect": "allow" },
     { "action": "shell", "resource": "adb devices", "effect": "allow" },
     { "action": "shell", "resource": "adb logcat*", "effect": "allow" },

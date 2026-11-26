@@ -53,7 +53,6 @@ setup_link "$SETUP_ROOT/.config/opencode/commands/verify.md" "$HOME/.config/open
 setup_link "$SETUP_ROOT/.config/opencode/commands/trash.md" "$HOME/.config/opencode/commands/trash.md"
 setup_link "$SETUP_ROOT/.config/opencode/scripts/workflow-audit.sh" "$HOME/.config/opencode/scripts/workflow-audit.sh"
 setup_link "$SETUP_ROOT/.config/opencode/scripts/review-pr.sh" "$HOME/.config/opencode/scripts/review-pr.sh"
-setup_link "$SETUP_ROOT/.config/opencode/scripts/ai-trash.sh" "$HOME/.config/opencode/scripts/ai-trash.sh"
 
 ## Shared agent skills
 # .agents/skills is the only skill folder. Each agent gets the whole folder, and
@@ -71,6 +70,7 @@ setup_link "$SETUP_ROOT/.agents/skills" "$HOME/.gemini/config/skills"
 
 ## CLI tools
 setup_link "$SETUP_ROOT/kotlin/kscripts/jenkins-cli.main.kts" "$HOME/scripts/jenkins-cli.main.kts"
+setup_link "$SETUP_ROOT/bin/ai-trash" "$HOME/.local/bin/ai-trash"
 setup_link "$SETUP_ROOT/bin/opencode-claude" "$HOME/.local/bin/opencode-claude"
 setup_link "$SETUP_ROOT/bin/opencode-profile" "$HOME/.local/bin/opencode-profile"
 setup_link "$SETUP_ROOT/bin/firebase-mcp" "$HOME/.local/bin/firebase-mcp"

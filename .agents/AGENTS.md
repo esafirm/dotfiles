@@ -6,12 +6,13 @@ Deletion is always the **last task in every execution**: finish all edits,
 moves, and renames first, then batch removals at the end.
 
 Removals are staged soft-deletes: move files with
-`~/.config/opencode/scripts/ai-trash.sh <repo-relative-path>...` into
-`$TMPDIR/opencode-trash/<repo>/`, which preserves repo-relative paths and is
-restorable via `ai-trash.sh --restore` and `--list`. Only once the staged
+`ai-trash <repo-relative-path>...` into
+`$TMPDIR/ai-trash/<repo>/`, which preserves repo-relative paths and is
+restorable via `ai-trash --restore` and `--list`. Only once the staged
 batch is verified correct, empty it permanently with
-`ai-trash.sh --empty` — the single sanctioned `rm`, scoped strictly inside
-the trash dir. See the `file-ops` skill and the `/trash` command.
+`ai-trash --empty` — the single sanctioned `rm`, scoped strictly inside
+the trash dir. `ai-trash` is on PATH for every agent (`bin/ai-trash`, linked
+into `~/.local/bin`). See the `file-ops` skill, and `/trash` in opencode.
 
 When a plan pivots mid-session, regenerate the removal list from
 `git status` at cleanup time — never carry a hand-maintained list across

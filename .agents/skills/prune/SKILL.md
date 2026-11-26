@@ -90,7 +90,7 @@ claims they disprove.
 ## Acting on the user's picks
 
 Once the user picks items, do exactly those. Deletions follow the `file-ops`
-skill: stage them with `ai-trash.sh` as the last step. Commit only when asked,
+skill: stage them with `ai-trash` as the last step. Commit only when asked,
 with the user's signature commit format. Leave other people's uncommitted
 changes alone.
 
