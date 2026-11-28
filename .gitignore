@@ -74,4 +74,3 @@ __pycache__/
 
 ## Agent skills installed outside the lock file
 .agents/skills/ghostex-*/
-.agents/skills/instabox*/
