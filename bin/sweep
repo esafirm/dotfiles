@@ -11,9 +11,10 @@
 #   sweep --containers          also scan sandboxed app caches (slow)
 #
 # Worktrees under ~/.t3, ~/.herdr, ~/.claude, ~/.codex and
-# ~/.local/share/opencode are scanned automatically, along with agent caches.
-# Worktree removal suggestions use --older-than and ignore --all.
-# Everything it deletes regenerates: app and toolchain caches, logs, temporary
+# ~/.local/share/opencode are scanned too. --apply removes clean ones whose
+# commits are on a branch. On GitHub the latest commit must be a PR head: merged
+# or closed goes now, ready for review after --older-than days, drafts stay.
+# Everything else it deletes regenerates: app and toolchain caches, logs, temporary
 # files, Trash and build output. Build output keeps the age cutoff unless
 # --builds is passed, so run that when no build is in progress. Source, config,
 # credentials, backups and system images are never touched. The report-only
@@ -32,9 +33,13 @@ ROOTS="$HOME/Documents/bandlab $HOME/Documents/oss $HOME/AndroidStudioProjects"
 MARKER=$(mktemp -t sweep) || exit 1
 WT_MARKER=$(mktemp -t sweep-wt) || exit 1
 WORKTREE_LIST=$(mktemp -t sweep-worktrees) || exit 1
+WT_ROWS=$(mktemp -t sweep-wt-rows) || exit 1
+WT_REMOVE=$(mktemp -t sweep-wt-remove) || exit 1
+WT_KEPT=$(mktemp -t sweep-wt-kept) || exit 1
+WT_SIZES=$(mktemp -t sweep-wt-sizes) || exit 1
 BUILD_MARKER="$MARKER"
 LOG=$(mktemp -t sweep-log) || exit 1
-trap 'rm -f "$MARKER" "$WT_MARKER" "$BUILD_MARKER" "$WORKTREE_LIST" "$LOG"' EXIT
+trap 'rm -f "$MARKER" "$WT_MARKER" "$BUILD_MARKER" "$WORKTREE_LIST" "$WT_ROWS" "$WT_REMOVE" "$WT_KEPT" "$WT_SIZES" "$LOG"' EXIT
 
 while [ $# -gt 0 ]; do
     case "$1" in
@@ -48,7 +53,7 @@ while [ $# -gt 0 ]; do
         --older-than=*) DAYS=${1#*=}; WT_DAYS=$DAYS ;;
         --root) shift; ROOTS="$ROOTS ${1:-}" ;;
         --root=*) ROOTS="$ROOTS ${1#*=}" ;;
-        -h|--help) sed -n '2,20p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+        -h|--help) sed -n '2,21p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
         *) echo "unknown option: $1 (try --help)" >&2; exit 1 ;;
     esac
     shift
@@ -89,13 +94,13 @@ note() { printf '  %6s  %s\n' "" "$1"; }
 # stale DIR -> true when nothing inside is newer than the marker
 stale() {
     [ "$ALL" = 1 ] && return 0
-    [ -z "$(find "$1" -type f -newer "$MARKER" 2>/dev/null | head -1)" ]
+    [ -z "$(find "$1" -type f -newer "$MARKER" -print -quit 2>/dev/null)" ]
 }
 
 # stale_build DIR -> like stale, but respects --builds
 stale_build() {
     [ "$ALL" = 1 ] && return 0
-    [ -z "$(find "$1" -type f -newer "$BUILD_MARKER" 2>/dev/null | head -1)" ]
+    [ -z "$(find "$1" -type f -newer "$BUILD_MARKER" -print -quit 2>/dev/null)" ]
 }
 
 # stale_worktree DIR -> ignores --all; checks checkout files, commits and index
@@ -116,7 +121,7 @@ report() {
     size=$(kb "$1")
     [ "${size:-0}" -ge 1024 ] || return 0
     printf '%s\t%s\n' "$size" "$1" >> "$LOG"
-    printf '  %6s  %s\n' "$(human "$1")" "$2"
+    printf '  %6s  %s\n' "$(fmt_kb "$size")" "$2"
     [ "$APPLY" = 1 ] && rm -rf "$1"
     return 0
 }
@@ -127,7 +132,7 @@ report_any() {
     size=$(kb "$1")
     size=${size:-0}
     printf '%s\t%s\n' "$size" "$1" >> "$LOG"
-    printf '  %6s  %s\n' "$(human "$1")" "$2"
+    printf '  %6s  %s\n' "$(fmt_kb "$size")" "$2"
     [ "$APPLY" = 1 ] && rm -rf "$1"
     return 0
 }
@@ -240,56 +245,109 @@ discover_worktrees() {
     sort -u "$WORKTREE_LIST" -o "$WORKTREE_LIST" 2>/dev/null || true
 }
 
-# report_worktrees -> report-only list of agent worktrees and how to remove them
-report_worktrees() {
-    found=0
-    while IFS= read -r wt; do
-        [ -d "$wt" ] || continue
-        found=$((found + 1))
-        rel=$(tilde "$wt")
-        if ! stale_worktree "$wt"; then
-            printf '  %6s  %s (recent, kept)\n' "$(human "$wt")" "$rel"
-            continue
-        fi
-        if ! status=$(GIT_OPTIONAL_LOCKS=0 git -C "$wt" status --porcelain --untracked-files=all --ignore-submodules=none 2>/dev/null); then
-            printf '  %6s  %s (git status failed, kept)\n' "$(human "$wt")" "$rel"
-            continue
-        fi
-        dirty=$(printf '%s\n' "$status" | sed '/^$/d' | wc -l | tr -d ' ')
-        if [ "${dirty:-0}" -gt 0 ]; then
-            printf '  %6s  %s (%s changes, kept)\n' "$(human "$wt")" "$rel" "$dirty"
-            continue
-        fi
-        main=$(git -C "$wt" worktree list --porcelain 2>/dev/null | sed -n 's/^worktree //p' | head -1)
-        wt_real=$(cd -P "$wt" 2>/dev/null && pwd -P) || wt_real=$wt
-        main_real=""
-        if [ -n "$main" ] && [ -d "$main" ]; then
-            main_real=$(cd -P "$main" 2>/dev/null && pwd -P) || main_real=""
-        fi
-        if [ -z "$main_real" ] || [ "$main_real" = "$wt_real" ]; then
-            printf '  %6s  %s (clean, main checkout, kept)\n' "$(human "$wt")" "$rel"
-            continue
-        fi
-        head=$(git -C "$wt" rev-parse HEAD 2>/dev/null) || head=""
-        if [ -z "$head" ]; then
-            printf '  %6s  %s (clean, git failed, kept)\n' "$(human "$wt")" "$rel"
-            continue
-        fi
-        if [ -z "$(git -C "$wt" for-each-ref --contains "$head" --count=1 refs/heads refs/tags --format='%(refname)' 2>/dev/null)" ]; then
-            printf '  %6s  %s (clean, commits not on a branch, kept)\n' "$(human "$wt")" "$rel"
-            continue
-        fi
-        printf '  %6s  %s (clean)\n' "$(human "$wt")" "$rel"
-        printf '           remove: git -C %s worktree remove -- %s\n' \
-            "$(path_arg "$main")" "$(path_arg "$wt")"
-    done < "$WORKTREE_LIST"
-    [ "$found" -gt 0 ] || note "no agent worktrees found"
+# pr_check WT HEAD -> on GitHub repos, the PR whose head is HEAD decides.
+# Sets PR_NOTE, and PR_DONE=1 for a merged or closed PR. Returns 1 to keep
+# the worktree: a draft, a commit that is not a PR head, or no answer from gh.
+# Repos not on GitHub return 0 with an empty note.
+pr_check() {
+    PR_NOTE=""; PR_DONE=0
+    url=$(git -C "$1" remote get-url origin 2>/dev/null) || return 0
+    case "$url" in *github.com[:/]*) ;; *) return 0 ;; esac
+    if ! command -v gh >/dev/null 2>&1; then
+        PR_NOTE="gh not installed"; return 1
+    fi
+    repo=$(printf '%s' "$url" | sed -E 's#^.*github\.com[:/]##; s#\.git$##; s#/$##')
+    pr=$(gh api "repos/$repo/commits/$2/pulls" --jq \
+        "[.[] | select(.head.sha == \"$2\")][0] | select(. != null) | \"\(.number) \(.state) \(.draft) \(.merged_at != null)\"" \
+        2>/dev/null) || { PR_NOTE="PR lookup failed, latest commit may not be pushed"; return 1; }
+    [ -n "$pr" ] || { PR_NOTE="latest commit is not the head of a PR"; return 1; }
+    set -- $pr
+    if [ "$4" = true ]; then PR_NOTE="PR #$1 merged"; PR_DONE=1; return 0; fi
+    if [ "$2" = closed ]; then PR_NOTE="PR #$1 closed"; PR_DONE=1; return 0; fi
+    if [ "$3" = true ]; then PR_NOTE="PR #$1 is a draft"; return 1; fi
+    PR_NOTE="PR #$1 open, ready for review"
     return 0
 }
 
-discover_worktrees
+# worktree_verdict WT -> sets WHY and MAIN, returns 0 when the worktree can go.
+# It must be clean and its commits on a branch. A merged or closed PR is
+# enough on its own; otherwise it also has to be untouched for --older-than.
+worktree_verdict() {
+    MAIN=$(git -C "$1" worktree list --porcelain 2>/dev/null | sed -n 's/^worktree //p' | head -1)
+    main_real=""
+    if [ -n "$MAIN" ] && [ -d "$MAIN" ]; then
+        main_real=$(cd -P "$MAIN" 2>/dev/null && pwd -P) || main_real=""
+    fi
+    if [ -z "$main_real" ] || [ "$main_real" = "$1" ]; then
+        WHY="main checkout, kept"; return 1
+    fi
+    if ! status=$(GIT_OPTIONAL_LOCKS=0 git -C "$1" status --porcelain --untracked-files=all --ignore-submodules=none 2>/dev/null); then
+        WHY="git status failed, kept"; return 1
+    fi
+    dirty=$(printf '%s\n' "$status" | sed '/^$/d' | wc -l | tr -d ' ')
+    if [ "${dirty:-0}" -gt 0 ]; then
+        WHY="$dirty changes, kept"; return 1
+    fi
+    head=$(git -C "$1" rev-parse HEAD 2>/dev/null) || { WHY="git failed, kept"; return 1; }
+    if [ -z "$(git -C "$1" for-each-ref --contains "$head" --count=1 refs/heads refs/tags --format='%(refname)' 2>/dev/null)" ]; then
+        WHY="commits not on a branch, kept"; return 1
+    fi
+    pr_check "$1" "$head" || { WHY="$PR_NOTE, kept"; return 1; }
+    if [ "$PR_DONE" = 1 ]; then
+        WHY=$PR_NOTE; return 0
+    fi
+    if ! stale_worktree "$1"; then
+        WHY="${PR_NOTE:+$PR_NOTE, }recent, kept"; return 1
+    fi
+    WHY="${PR_NOTE:-clean}, untouched ${WT_DAYS}d"
+    return 0
+}
+
+# classify_worktrees -> decide every worktree up front. Verdicts go to
+# WT_ROWS, removable ones to WT_REMOVE, and WORKTREE_LIST keeps only the rest,
+# so the Gradle and build-output scans skip trees that are going away.
+# Sizes are measured in the background (du on big checkouts is the slow
+# part) and only read back in report_worktrees.
+classify_worktrees() {
+    : > "$WT_ROWS"; : > "$WT_REMOVE"; : > "$WT_KEPT"; : > "$WT_SIZES"
+    while IFS= read -r wt; do
+        [ -d "$wt" ] || continue
+        du -sk "$wt" 2>/dev/null >> "$WT_SIZES" &
+        if worktree_verdict "$wt"; then
+            flag=1
+            printf '%s\t%s\n' "$MAIN" "$wt" >> "$WT_REMOVE"
+        else
+            flag=0
+            printf '%s\n' "$wt" >> "$WT_KEPT"
+        fi
+        printf '%s\t%s\t%s\n' "$flag" "$wt" "$WHY" >> "$WT_ROWS"
+    done < "$WORKTREE_LIST"
+    cp "$WT_KEPT" "$WORKTREE_LIST"
+}
+
+# report_worktrees -> print the rows, remove the safe ones with --apply
+report_worktrees() {
+    if [ ! -s "$WT_ROWS" ]; then
+        note "no agent worktrees found"; return 0
+    fi
+    wait
+    while IFS="$(printf '\t')" read -r flag wt why; do
+        size=$(awk -F'\t' -v p="$wt" '$2 == p { print $1; exit }' "$WT_SIZES")
+        [ "$flag" = 1 ] && printf '%s\t%s\n' "${size:-0}" "$wt" >> "$LOG"
+        printf '  %6s  %s (%s)\n' "$(fmt_kb "${size:-0}")" "$(tilde "$wt")" "$why"
+    done < "$WT_ROWS"
+    [ "$APPLY" = 1 ] || return 0
+    while IFS="$(printf '\t')" read -r main wt; do
+        # no --force: git itself refuses if anything changed since the checks
+        git -C "$main" worktree remove -- "$wt" >/dev/null 2>&1 ||
+            note "$(tilde "$wt"): remove failed, kept"
+    done < "$WT_REMOVE"
+    return 0
+}
 
 echo "${BOLD}sweep${OFF}  older-than ${DAYS}d  $([ "$APPLY" = 1 ] && echo APPLY || echo 'dry run')"
+discover_worktrees
+classify_worktrees
 
 # --- System and app caches -------------------------------------------------
 echo
@@ -352,12 +410,21 @@ fi
 echo
 echo "${BOLD}gradle${OFF}"
 
+# find_wrappers DEPTH DIR... -> gradle-wrapper.properties files, skipping the
+# big trees that never hold one
+find_wrappers() {
+    depth=$1; shift
+    find "$@" -maxdepth "$depth" \
+        \( -name node_modules -o -name .git -o -name build -o -name .gradle -o -name Pods \) -prune \
+        -o -name gradle-wrapper.properties -print 2>/dev/null
+}
+
 # a Gradle version is "in use" when a wrapper in one of the roots asks for it
 REFERENCED=$(
     {
-        find $ROOTS -maxdepth 7 -name gradle-wrapper.properties 2>/dev/null
+        find_wrappers 7 $ROOTS
         while IFS= read -r wt; do
-            find "$wt" -maxdepth 4 -name gradle-wrapper.properties 2>/dev/null
+            find_wrappers 4 "$wt"
         done < "$WORKTREE_LIST"
     } | xargs grep -h '^distributionUrl' 2>/dev/null |
         sed -E 's#.*gradle-([0-9]+(\.[0-9]+)+)-(bin|all)\.zip.*#\1#' | sort -u | tr '\n' ' '
@@ -393,15 +460,22 @@ for d in "$HOME"/.gradle/wrapper/dists/gradle-*; do
     esac
 done
 
-# build cache: only entries past the window
+# build cache: only entries past the window. One pass splits old from recent
+# by mtime (stat %b is 512-byte blocks), so the kept part is visible too.
 BC="$HOME/.gradle/caches/build-cache-1"
 if [ -d "$BC" ]; then
-    n=$(find "$BC" -type f ! -newer "$BUILD_MARKER" 2>/dev/null | wc -l | tr -d ' ')
-    if [ "${n:-0}" -gt 0 ]; then
-        k=$(find "$BC" -type f ! -newer "$BUILD_MARKER" -exec du -sk {} + 2>/dev/null | awk '{s+=$1} END {print s+0}')
+    cutoff=$(stat -f %m "$BUILD_MARKER")
+    set -- $(find "$BC" -type f -exec stat -f '%m %b' {} + 2>/dev/null | awk -v c="$cutoff" '
+        $1 <= c { n++; old += $2 } $1 > c { new += $2 }
+        END { printf "%d %d %d\n", n, old / 2, new / 2 }')
+    n=${1:-0}; k=${2:-0}; recent=${3:-0}
+    if [ "$n" -gt 0 ]; then
         printf '%s\t%s\n' "$k" "$BC" >> "$LOG"
         printf '  %6s  build-cache-1 entries (%s files)\n' "$(fmt_kb "$k")" "$n"
         [ "$APPLY" = 1 ] && find "$BC" -type f ! -newer "$BUILD_MARKER" -delete 2>/dev/null
+    fi
+    if [ "$BUILDS" = 0 ] && [ "$recent" -ge 1048576 ]; then
+        printf '  %6s  build-cache-1 recent entries, kept (run: sweep --builds)\n' "$(fmt_kb "$recent")"
     fi
 fi
 
@@ -430,15 +504,16 @@ scan_project_root() {
     [ -d "$1" ] || return 0
     find "$1" -mindepth 1 -maxdepth "$2" -type d -name build -prune 2>/dev/null | while read -r d; do
         case "$d" in */.git/*|*/src/*|*/node_modules/*) continue ;; esac
+        # cheap recency check first: most build dirs are recent and stop here
+        stale_build "$d" || continue
         # never delete a checkout, even one that happens to be named build
         if [ -e "$d/.git" ] || [ -n "$(find "$d" -maxdepth 2 -name .git -print -quit 2>/dev/null)" ]; then
             continue
         fi
-        stale_build "$d" || continue
         size=$(kb "$d")
         [ "${size:-0}" -ge 10240 ] || continue
         printf '%s\t%s\n' "$size" "$d" >> "$LOG"
-        printf '  %6s  %s\n' "$(human "$d")" "$(tilde "$d")"
+        printf '  %6s  %s\n' "$(fmt_kb "$size")" "$(tilde "$d")"
         [ "$APPLY" = 1 ] && rm -rf "$d"
     done
     find "$1" -mindepth 1 -maxdepth "$2" -type d -name .gradle -prune 2>/dev/null | while read -r g; do
@@ -450,7 +525,7 @@ scan_project_root() {
             size=$(kb "$sub")
             [ "${size:-0}" -ge 10240 ] || continue
             printf '%s\t%s\n' "$size" "$sub" >> "$LOG"
-            printf '  %6s  %s (project cache)\n' "$(human "$sub")" "$(tilde "$sub")"
+            printf '  %6s  %s (project cache)\n' "$(fmt_kb "$size")" "$(tilde "$sub")"
             [ "$APPLY" = 1 ] && rm -rf "$sub"
         done
     done
@@ -513,7 +588,7 @@ if [ -d "$HOME/.codex/packages" ]; then
     printf '  %6s  codex packages (installed runtime, kept)\n' "$(human "$HOME/.codex/packages")"
 fi
 
-# --- Worktrees (report only) -----------------------------------------------
+# --- Worktrees ---------------------------------------------------------------
 echo
 echo "${BOLD}worktrees${OFF}"
 report_worktrees
