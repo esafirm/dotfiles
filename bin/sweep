@@ -7,6 +7,7 @@
 #   sweep --root ~/code         add a project root to scan (repeatable)
 #   sweep --all                 include recent artifacts, but not worktrees
 #   sweep --builds              include recent build output and Gradle caches
+#   sweep --build-cache[=N]     Gradle build cache entries unused for N days (default: all)
 #   sweep --downloads           include old installers from ~/Downloads
 #   sweep --containers          also scan sandboxed app caches (slow)
 #
@@ -27,6 +28,8 @@ WT_DAYS=14
 APPLY=0
 ALL=0
 BUILDS=0
+BUILD_CACHE=0
+BC_DAYS=0
 DOWNLOAD_CLEAN=0
 CONTAINERS=0
 ROOTS="$HOME/Documents/bandlab $HOME/Documents/oss $HOME/AndroidStudioProjects"
@@ -47,13 +50,15 @@ while [ $# -gt 0 ]; do
         --dry-run) APPLY=0 ;;
         --all) ALL=1; DAYS=0 ;;
         --builds) BUILDS=1 ;;
+        --build-cache) BUILD_CACHE=1; BC_DAYS=0 ;;
+        --build-cache=*) BUILD_CACHE=1; BC_DAYS=${1#*=} ;;
         --downloads) DOWNLOAD_CLEAN=1 ;;
         --containers) CONTAINERS=1 ;;
         --older-than) shift; DAYS=${1:-14}; WT_DAYS=$DAYS ;;
         --older-than=*) DAYS=${1#*=}; WT_DAYS=$DAYS ;;
         --root) shift; ROOTS="$ROOTS ${1:-}" ;;
         --root=*) ROOTS="$ROOTS ${1#*=}" ;;
-        -h|--help) sed -n '2,21p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+        -h|--help) sed -n '2,22p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
         *) echo "unknown option: $1 (try --help)" >&2; exit 1 ;;
     esac
     shift
@@ -82,6 +87,17 @@ set_marker "$WT_DAYS" "$WT_MARKER"
 if [ "$BUILDS" = 1 ]; then
     BUILD_MARKER=$(mktemp -t sweep-builds) || exit 1
     touch "$BUILD_MARKER"
+fi
+# the build cache follows --builds, or --build-cache[=N]. Gradle touches an
+# entry each time it is used, so mtime is "last used".
+BC_MARKER="$BUILD_MARKER"
+if [ "$BUILD_CACHE" = 1 ] && [ "$BUILDS" = 0 ]; then
+    case "$BC_DAYS" in
+        ''|*[!0-9]*) echo "--build-cache= needs a number of days" >&2; exit 1 ;;
+    esac
+    BC_MARKER=$(mktemp -t sweep-bc) || exit 1
+    if [ "$BC_DAYS" = 0 ]; then touch "$BC_MARKER"; else set_marker "$BC_DAYS" "$BC_MARKER"; fi
+    trap 'rm -f "$MARKER" "$WT_MARKER" "$BUILD_MARKER" "$BC_MARKER" "$WORKTREE_LIST" "$WT_ROWS" "$WT_REMOVE" "$WT_KEPT" "$WT_SIZES" "$LOG"' EXIT
 fi
 
 HOME_REAL=$(cd -P "$HOME" >/dev/null 2>&1 && pwd -P)
@@ -464,7 +480,7 @@ done
 # by mtime (stat %b is 512-byte blocks), so the kept part is visible too.
 BC="$HOME/.gradle/caches/build-cache-1"
 if [ -d "$BC" ]; then
-    cutoff=$(stat -f %m "$BUILD_MARKER")
+    cutoff=$(stat -f %m "$BC_MARKER")
     set -- $(find "$BC" -type f -exec stat -f '%m %b' {} + 2>/dev/null | awk -v c="$cutoff" '
         $1 <= c { n++; old += $2 } $1 > c { new += $2 }
         END { printf "%d %d %d\n", n, old / 2, new / 2 }')
@@ -472,10 +488,10 @@ if [ -d "$BC" ]; then
     if [ "$n" -gt 0 ]; then
         printf '%s\t%s\n' "$k" "$BC" >> "$LOG"
         printf '  %6s  build-cache-1 entries (%s files)\n' "$(fmt_kb "$k")" "$n"
-        [ "$APPLY" = 1 ] && find "$BC" -type f ! -newer "$BUILD_MARKER" -delete 2>/dev/null
+        [ "$APPLY" = 1 ] && find "$BC" -type f ! -newer "$BC_MARKER" -delete 2>/dev/null
     fi
-    if [ "$BUILDS" = 0 ] && [ "$recent" -ge 1048576 ]; then
-        printf '  %6s  build-cache-1 recent entries, kept (run: sweep --builds)\n' "$(fmt_kb "$recent")"
+    if [ "$recent" -ge 1048576 ]; then
+        printf '  %6s  build-cache-1 recent entries, kept (run: sweep --build-cache)\n' "$(fmt_kb "$recent")"
     fi
 fi
 
@@ -567,6 +583,21 @@ report "$HOME/.npm/_cacache" "npm cache"
 report "$HOME/.bun/install/cache" "bun install cache"
 report "$HOME/go/pkg/mod/cache/download" "go module downloads"
 report "$HOME/.cargo/registry/cache" "cargo registry cache"
+
+# --- IDE caches ------------------------------------------------------------
+echo
+echo "${BOLD}ide caches${OFF}"
+# caches left behind by IDE versions a newer install has replaced
+for family in Google/AndroidStudio JetBrains/IntelliJIdea; do
+    newest=$(ls -d "$HOME/Library/Caches/$family"[0-9]* 2>/dev/null | sort -V | tail -1)
+    for d in "$HOME/Library/Caches/$family"[0-9]*; do
+        [ -d "$d" ] && [ "$d" != "$newest" ] || continue
+        report "$d" "${d##*/} cache (replaced by ${newest##*/})"
+    done
+done
+# Toolbox keeps installers and the previous IDE builds for rollback
+report "$HOME/Library/Caches/JetBrains/Toolbox/download" "toolbox downloads"
+report "$HOME/Library/Caches/JetBrains/Toolbox/backup" "toolbox rollback backups"
 
 # --- Agent caches ----------------------------------------------------------
 echo
